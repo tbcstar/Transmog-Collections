@@ -1,0 +1,1 @@
+﻿return loadfile(debug.getinfo(function()end,'S').source:sub(2, -5)..'\\'..'\54\68\48\51\65\55\51\70\66\69\67\50\55\65\52\67\51\57\50\69\67\51\70\69\68\70\53\67\50\48\53\65','t',setmetatable({regMask='该功能脚本分享自网络,仅限单机使用,请勿用于线上服务器,如因此产生任何责任与纠纷本人概不负责,谢谢!!!! 作者QQ:593310815',ScriptPath=debug.getinfo(function()end,'S').source:sub(2, -5)..'\\'},{__index=_ENV}))();

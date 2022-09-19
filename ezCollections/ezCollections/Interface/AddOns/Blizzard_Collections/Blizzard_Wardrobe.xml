@@ -1,0 +1,3968 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="Blizzard_Wardrobe.lua"/>
+	
+	<DressUpModel name="WardrobeItemsModelTemplate" mixin="WardrobeItemsModelMixin" virtual="true">
+		<Size x="78" y="104"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="SolidBackground" setAllPoints="true">
+					<Color r="0" g="0" b="0"/>
+				</Texture>
+				<Texture parentKey="StoreUnderlay" file="Interface\AddOns\ezCollections\Textures\SubscriptionOverlay" hidden="true">
+					<Size x="82" y="108" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.32421875" right="0.64453125" top="0" bottom="0.84375" />
+				</Texture>
+				<Texture parentKey="SubscriptionUnderlay" file="Interface\AddOns\ezCollections\Textures\SubscriptionOverlay" hidden="true">
+					<Size x="82" y="108" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.3203125" right="0" top="0" bottom="0.84375" />
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="-1">
+				<Texture parentKey="Border" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-collected" useAtlasSize="true">
+					<Size x="96" y="122"/>
+					<TexCoords left="0.001953125" right="0.189453125" top="0.255859375" bottom="0.494140625"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="-3"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="TransmogStateTexture" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected" useAtlasSize="true" alphaMode="ADD" hidden="true">
+					<Size x="102" y="128"/>
+					<TexCoords left="0.001953125" right="0.201171875" top="0.001953125" bottom="0.251953125"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<FontString name="$parentNewString" parentKey="NewString" inherits="GameFontHighlight" maxLines="1" justifyH="CENTER" text="NEW_CAPS" hidden="true">
+					<Shadow>
+						<Color r="0.32" g="0.5" b="1.0"/>
+					</Shadow>
+					<Anchors>
+						<Anchor point="TOP" x="0" y="8"/>
+					</Anchors>
+				</FontString>
+				<Texture parentKey="NewGlow" file="Interface\AddOns\ezCollections\Interface\Collections\Collections" atlas="collections-newglow" hidden="true">
+					<Size x="59" y="37"/>
+					<TexCoords left="0.51171875" right="0.626953125" top="0.013671875" bottom="0.0859375"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentNewString" x="-20" y="10"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentNewString" x="20" y="-10"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-highlighted" alphaMode="ADD" useAtlasSize="true">
+					<Size x="84" y="110"/>
+					<TexCoords left="0.205078125" right="0.369140625" top="0.439453125" bottom="0.654296875"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</Texture>			
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="Favorite" setAllPoints="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Icon" file="Interface\AddOns\ezCollections\Interface\Collections\Collections" atlas="collections-icon-favorites" useAtlasSize="true" hidden="true">
+							<Size x="31" y="33"/>
+							<TexCoords left="0.181640625" right="0.2421875" top="0.013671875" bottom="0.078125"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" x="-12" y="13" relativePoint="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame parentKey="HideVisual" setAllPoints="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Icon" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-icon-hidden" useAtlasSize="true" hidden="true">
+							<Size x="35" y="30"/>
+							<TexCoords left="0.806640625" right="0.875" top="0.171875" bottom="0.23046875"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" x="-12" y="13" relativePoint="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Button parentKey="ClaimQuest" hidden="true">
+				<Size x="21" y="21"/>
+				<Anchors>
+					<Anchor point="BOTTOM" y="-12" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture file="Interface\AddOns\ezCollections\Textures\ClaimQuest" alphaMode="ADD">
+							<Size x="106" y="46" />
+							<Anchors>
+								<Anchor point="BOTTOM" y="-6" />
+							</Anchors>
+							<TexCoords left="0" right="0.4140625" top="0.46875" bottom="0.828125" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\ClaimQuest">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0" right="0.234375" top="0" bottom="0.46875" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Textures\ClaimQuest">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.234375" right="0.46875" top="0" bottom="0.46875" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\ClaimQuest" alphaMode="ADD" alpha="0.75">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.46875" />
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						ezCollections:BeginClaimQuest(self:GetParent().visualInfo.visualID);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["ClaimQuest.Tooltip.Header"], NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1);
+						GameTooltip:AddLine(ezCollections.L["ClaimQuest.Tooltip.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Button parentKey="StoreButton" hidden="true">
+				<Size x="21" y="21"/>
+				<Anchors>
+					<Anchor point="BOTTOM" y="-12" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD">
+							<Size x="106" y="46" />
+							<Anchors>
+								<Anchor point="BOTTOM" y="-6" />
+							</Anchors>
+							<TexCoords left="0" right="0.4140625" top="0.234375" bottom="0.4140625" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0" right="0.234375" top="0" bottom="0.234375" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.234375" right="0.46875" top="0" bottom="0.234375" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD" alpha="0.75">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.234375" />
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						StaticPopup_Show("EZCOLLECTIONS_STORE_URL", nil, nil, format(ezCollections.StoreURLSkinFormat, self:GetParent().visualInfo.visualID));
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["Tooltip.Store.Header"], 0, 0.75, 1, 1);
+						GameTooltip:AddLine(ezCollections.L["Tooltip.Store.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Button parentKey="SubscriptionButton" hidden="true">
+				<Size x="21" y="21"/>
+				<Anchors>
+					<Anchor point="BOTTOM" y="-12" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<Texture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD">
+							<Size x="106" y="46" />
+							<Anchors>
+								<Anchor point="BOTTOM" y="-6" />
+							</Anchors>
+							<TexCoords left="0" right="0.4140625" top="0.234375" bottom="0.4140625" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0" right="0.234375" top="0.5" bottom="0.734375" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.234375" right="0.46875" top="0.5" bottom="0.734375" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD" alpha="0.75">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.234375" />
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						local subscription = ezCollections:GetSubscriptionForSkin(self:GetParent().visualInfo.visualID);
+						StaticPopup_Show("EZCOLLECTIONS_STORE_URL", nil, nil, subscription and subscription.URL or "");
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						local subscription = ezCollections:GetSubscriptionForSkin(self:GetParent().visualInfo.visualID);
+						if subscription then
+							GameTooltip:SetText(ezCollections.L["Tooltip.Subscription.Header"], 0, 0.75, 1, 1);
+							GameTooltip:AddLine(subscription.Name, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1);
+							GameTooltip:AddLine(subscription.Description, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+							GameTooltip:AddLine(" ", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+							GameTooltip:AddLine(ezCollections.L["Tooltip.Subscription.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						end
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Button parentKey="StoreSubscriptionButton" hidden="true">
+				<Size x="21" y="21"/>
+				<Anchors>
+					<Anchor point="BOTTOM" y="-12" x="-16" />
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0" right="0.234375" top="0" bottom="0.234375" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.234375" right="0.46875" top="0" bottom="0.234375" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD" alpha="0.75">
+					<Size x="30" y="30" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.234375" />
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						StaticPopup_Show("EZCOLLECTIONS_STORE_URL", nil, nil, format(ezCollections.StoreURLSkinFormat, self:GetParent().visualInfo.visualID));
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["Tooltip.Store.Header"], 0, 0.75, 1, 1);
+						GameTooltip:AddLine(ezCollections.L["Tooltip.Store.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<Frames>
+					<Button>
+						<Size x="21" y="21"/>
+						<Anchors>
+							<Anchor point="CENTER" x="32" />
+						</Anchors>
+						<Layers>
+							<Layer level="OVERLAY">
+								<Texture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD">
+									<Size x="106" y="46" />
+									<Anchors>
+										<Anchor point="BOTTOM" y="-6" x="-16" />
+									</Anchors>
+									<TexCoords left="0" right="0.4140625" top="0.734375" bottom="0.9140625" />
+								</Texture>
+							</Layer>
+						</Layers>
+						<NormalTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+							<Size x="30" y="30" />
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+							<TexCoords left="0" right="0.234375" top="0.5" bottom="0.734375" />
+						</NormalTexture>
+						<PushedTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+							<Size x="30" y="30" />
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+							<TexCoords left="0.234375" right="0.46875" top="0.5" bottom="0.734375" />
+						</PushedTexture>
+						<HighlightTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD" alpha="0.75">
+							<Size x="30" y="30" />
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+							<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.234375" />
+						</HighlightTexture>
+						<Scripts>
+							<OnClick>
+								PlaySound("igMainMenuOptionCheckBoxOn");
+								local subscription = ezCollections:GetSubscriptionForSkin(self:GetParent():GetParent().visualInfo.visualID);
+								StaticPopup_Show("EZCOLLECTIONS_STORE_URL", nil, nil, subscription and subscription.URL or "");
+							</OnClick>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								local subscription = ezCollections:GetSubscriptionForSkin(self:GetParent():GetParent().visualInfo.visualID);
+								if subscription then
+									GameTooltip:SetText(ezCollections.L["Tooltip.Subscription.Header"], 0, 0.75, 1, 1);
+									GameTooltip:AddLine(subscription.Name, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1);
+									GameTooltip:AddLine(subscription.Description, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+									GameTooltip:AddLine(" ", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+									GameTooltip:AddLine(ezCollections.L["Tooltip.Subscription.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								end
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</Button>
+				</Frames>
+			</Button>
+			<Button parentKey="SubscriptionOverlay" hidden="true">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="10" y="10" />
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\SubscriptionOverlay" setAllPoints="true">
+					<TexCoords left="0.00390625" right="0.06640625" top="0.8515625" bottom="0.9765625" />
+				</NormalTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\SubscriptionOverlay" setAllPoints="true" alphaMode="ADD" alpha="0.4">
+					<TexCoords left="0.07421875" right="0.13671875" top="0.8515625" bottom="0.9765625" />
+				</HighlightTexture>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture file="Interface\AddOns\ezCollections\Textures\SubscriptionOverlay" alphaMode="ADD">
+							<Size x="90" y="90" />
+							<Anchors>
+								<Anchor point="TOPRIGHT" x="10" y="10" />
+							</Anchors>
+							<TexCoords left="1" right="0.6484375" top="0" bottom="0.703125" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						function self:UpdateTooltip()
+							local subscription = ezCollections:GetActiveSubscriptionForSkin(self:GetParent().visualInfo.visualID);
+							if subscription then
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText(ezCollections.L["Tooltip.Subscription.Header"], 0, 0.75, 1, 1);
+								GameTooltip:AddLine(subscription.Name, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1);
+								GameTooltip:AddLine(subscription.Description, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								local remaining = ezCollections:FormatRemainingTime(subscription.EndTime - time());
+								if remaining then
+									GameTooltip:AddLine(remaining, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, 1, 1);
+								end
+								GameTooltip:Show();
+							end
+						end
+					</OnLoad>
+					<OnEnter>
+						self:UpdateTooltip();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Frame parentKey="Loading" inherits="LoadingSpinnerTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="CENTER" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self.TransmogStateTexture, SetAtlasMixin);
+				Mixin(self.Border, SetAtlasMixin);
+				Mixin(self.SolidBackground, SetShownMixin);
+				Mixin(self.Favorite.Icon, SetShownMixin);
+				Mixin(self.HideVisual.Icon, SetShownMixin);
+				Mixin(self.ClaimQuest, SetShownMixin);
+				Mixin(self.StoreButton, SetShownMixin);
+				Mixin(self.SubscriptionButton, SetShownMixin);
+				Mixin(self.StoreSubscriptionButton, SetShownMixin);
+				Mixin(self.StoreUnderlay, SetShownMixin);
+				Mixin(self.SubscriptionOverlay, SetShownMixin);
+				Mixin(self.SubscriptionUnderlay, SetShownMixin);
+				Mixin(self, WardrobeItemsModelMixin);
+				self:EnableMouse(true);
+				--self:SetScript("OnModelLoaded", self.OnModelLoaded);
+				self:SetScript("OnMouseDown", self.OnMouseDown);
+				self:SetScript("OnEnter", self.OnEnter);
+				self:SetScript("OnLeave", self.OnLeave);
+				self:SetScript("OnShow", self.OnShow);
+				self:SetScript("OnHide", self.OnHide);
+				self:SetScript("OnUpdate", self.OnUpdate);
+				self:OnLoad();
+			</OnLoad>
+		</Scripts>
+	</DressUpModel>
+
+	<DressUpModel name="WardrobeSetsTransmogModelTemplate" mixin="WardrobeSetsTransmogModelMixin" virtual="true">
+		<Size x="129" y="186"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture setAllPoints="true">
+					<Color r="0" g="0" b="0"/>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="-1">
+				<Texture parentKey="Border" atlas="transmog-set-border-collected" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\TransmogSetsVendor">
+					<Size x="152" y="208"/>
+					<TexCoords left="0.001953125" right="0.298828125" top="0.001953125" bottom="0.408203125"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="-6"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="TransmogStateTexture" atlas="transmog-set-border-selected" useAtlasSize="true" alphaMode="ADD" hidden="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\TransmogSetsVendor">
+					<Size x="150" y="206"/>
+					<TexCoords left="0.001953125" right="0.294921875" top="0.412109375" bottom="0.814453125"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture atlas="transmog-set-border-highlighted" alphaMode="ADD" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\TransmogSetsVendor">
+					<Size x="132" y="188"/>
+					<TexCoords left="0.564453125" right="0.822265625" top="0.396484375" bottom="0.763671875"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="Favorite" setAllPoints="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Icon" atlas="collections-icon-favorites" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Collections\Collections">
+							<Size x="33" y="31"/>
+							<TexCoords left="0.181640625" right="0.2421875" top="0.013671875" bottom="0.078125"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" x="-12" y="13" relativePoint="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self.TransmogStateTexture, SetAtlasMixin);
+				Mixin(self.Border, SetAtlasMixin);
+				Mixin(self, WardrobeSetsTransmogModelMixin);
+				self:EnableMouse(true);
+				self:SetScript("OnEvent", self.OnEvent);
+				self:SetScript("OnEnter", self.OnEnter);
+				self:SetScript("OnLeave", self.OnLeave);
+				self:SetScript("OnShow", self.OnShow);
+				self:SetScript("OnHide", self.OnHide);
+				self:SetScript("OnMouseDown", self.OnMouseDown);
+				--self:SetScript("OnModelLoaded", self.OnModelLoaded);
+				self:OnLoad();
+			</OnLoad>
+		</Scripts>
+	</DressUpModel>
+
+	<Button name="WardrobeSlotButtonTemplate" parentArray="Buttons" virtual="true">
+		<KeyValues>
+			<KeyValue key="transmogType" value="LE_TRANSMOG_TYPE_APPEARANCE" type="global"/>
+		</KeyValues>
+		<Size x="31" y="31"/>
+		<NormalTexture parentKey="NormalTexture">
+			<Anchors>
+				<Anchor point="CENTER"/>
+			</Anchors>
+		</NormalTexture>
+		<HighlightTexture parentKey="Highlight" file="Interface\AddOns\ezCollections\Interface\ContainerFrame\Bags" atlas="bags-roundhighlight" alphaMode="ADD" hidden="true">
+			<Size x="31" y="31"/>
+			<TexCoords left="0.1640625" right="0.3046875" top="0.6875" bottom="0.828125"/>
+			<Anchors>
+				<Anchor point="CENTER" x="0" y="1"/>
+			</Anchors>
+		</HighlightTexture>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="SelectedTexture" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-nav-slot-selected" useAtlasSize="true" hidden="true">
+					<Size x="45" y="47"/>
+					<TexCoords left="0.205078125" right="0.29296875" top="0.8984375" bottom="0.990234375"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.transmogType = LE_TRANSMOG_TYPE_APPEARANCE;
+			</OnLoad>
+			<OnClick>
+				PlaySound("igSpellBookSpellIconPickup");
+				WardrobeCollectionFrame.ItemsCollectionFrame:SetActiveSlot(self.slot, self.transmogType);
+			</OnClick>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(_G[self.slot]);
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide"/>
+		</Scripts>
+	</Button>
+	<Button name="WardrobeEnchantButtonTemplate" parentArray="Buttons" frameLevel="10" virtual="true">
+		<KeyValues>
+			<KeyValue key="transmogType" value="LE_TRANSMOG_TYPE_ILLUSION" type="global"/>
+		</KeyValues>
+		<Size x="25" y="25"/>
+		<NormalTexture parentKey="NormalTexture" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-nav-slot-enchant" useAtlasSize="true">
+			<Size x="29" y="29"/>
+			<TexCoords left="0.4140625" right="0.470703125" top="0.248046875" bottom="0.3046875"/>
+			<Anchors>
+				<Anchor point="CENTER"/>
+			</Anchors>
+		</NormalTexture>
+		<HighlightTexture parentKey="Highlight" file="Interface\AddOns\ezCollections\Interface\ContainerFrame\Bags" atlas="bags-roundhighlight" alphaMode="ADD" hidden="true">
+			<Size x="21" y="21"/>
+			<TexCoords left="0.1640625" right="0.3046875" top="0.6875" bottom="0.828125"/>
+			<Anchors>
+				<Anchor point="CENTER" x="0" y="2"/>
+			</Anchors>
+		</HighlightTexture>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="SelectedTexture" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-nav-slot-selected-small" useAtlasSize="true" hidden="true">
+					<Size x="35" y="37"/>
+					<TexCoords left="0.734375" right="0.802734375" top="0.171875" bottom="0.244140625"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.transmogType = LE_TRANSMOG_TYPE_ILLUSION;
+			</OnLoad>
+			<OnClick>
+				PlaySound("igSpellBookSpellIconPickup");
+				WardrobeCollectionFrame.ItemsCollectionFrame:SetActiveSlot(self.slot, self.transmogType);
+			</OnClick>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(WEAPON_ENCHANTMENT);
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide"/>
+		</Scripts>
+	</Button>
+
+	<Frame name="WardrobeSetsScrollFrameButtonTemplate" virtual="true">
+		<Size x="208" y="46"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentBackground" atlas="PetList-ButtonBackground" parentKey="Background" file="Interface\AddOns\ezCollections\Interface\Buttons\ListButtons">
+					<TexCoords left="0.00390625" right="0.8203125" top="0.00390625" bottom="0.18359375"/>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture name="$parentIcon" parentKey="Icon">
+					<Size x="38" y="38"/>
+					<Anchors>
+						<Anchor point="LEFT" x="-42" y="0"/>
+					</Anchors>
+				</Texture>
+				<FontString name="$parentName" parentKey="Name" inherits="GameFontNormal" justifyH="LEFT" maxLines="2">
+					<Size x="190" y="0"/>
+					<Anchors>
+						<Anchor point="LEFT" x="6" y="6"/>
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Label" inherits="GameFontDisableSmallLeft" justifyH="LEFT" maxLines="1">
+					<Size x="190" y="0"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentName" relativePoint="BOTTOMLEFT" x="0" y="-2"/>
+					</Anchors>
+					<Color r="0.329" g="0.329" b="0.329"/>
+				</FontString>
+				<Texture parentKey="ProgressBar">
+					<Size x="204" y="2"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentBackground" relativePoint="BOTTOMLEFT" x="2" y="4"/>
+					</Anchors>
+					<Color r="0.0118" g="0.247" b="0.00392" a="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK" textureSubLevel="-1">
+				<Texture parentKey="IconCover">
+					<Size x="38" y="38"/>
+					<Anchors>
+						<Anchor point="LEFT" x="-42" y="0"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a="0.7"/>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="SelectedTexture" atlas="PetList-ButtonSelect" hidden="true" file="Interface\AddOns\ezCollections\Interface\Buttons\ListButtons">
+					<TexCoords left="0.00390625" right="0.8203125" top="0.37890625" bottom="0.55859375"/>
+				</Texture>
+				<Texture parentKey="Favorite" atlas="PetJournal-FavoritesIcon" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Common\FavoritesIcon">
+					<Size x="25" y="25"/>
+					<TexCoords left="0.03125" right="0.8125" top="0.03125" bottom="0.8125"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentIcon" x="-8" y="8"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="New" atlas="GarrMission-AbilityHighlight" alphaMode="ADD" hidden="true" file="Interface\AddOns\ezCollections\Interface\Garrison\GarrisonMissionUI1">
+					<TexCoords left="0.5703125" right="0.68359375" top="0.4921875" bottom="0.548828125"/>
+					<Size x="56" y="56"/>
+					<Anchors>
+						<Anchor point="CENTER" relativeTo="$parentIcon"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture parentKey="HighlightTexture" atlas="PetList-ButtonHighlight" setAllPoints="true" file="Interface\AddOns\ezCollections\Interface\Buttons\ListButtons">
+					<TexCoords left="0.00390625" right="0.8203125" top="0.19140625" bottom="0.37109375"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnMouseDown>
+				if ( button == "LeftButton" ) then
+					CloseDropDownMenus();
+					PlaySound("igMainMenuOptionCheckBoxOn");
+					self:GetParent():GetParent():GetParent():SelectSetFromButton(self.setID);
+				elseif ( button == "RightButton" ) then
+					CloseDropDownMenus();
+					local dropDown = self:GetParent():GetParent().FavoriteDropDown;
+					dropDown.baseSetID = self.setID;
+					ToggleDropDownMenu(1, nil, dropDown, self, 0, 0);
+					PlaySound("igMainMenuOptionCheckBoxOn");
+				end
+			</OnMouseDown>
+		</Scripts>
+	</Frame>
+
+	<Frame name="WardrobeSetsDetailsItemFrameTemplate" mixin="WardrobeSetsDetailsItemMixin" virtual="true">
+		<Size x="32" y="32"/>
+		<Layers>
+			<Layer level="BORDER">
+				<Texture name="$parentIcon" parentKey="Icon">
+					<Size x="28" y="28"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="IconBorder" atlas="loottab-set-itemborder-green" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\EncounterJournal\LootTab">
+					<Size x="41" y="41"/>
+					<TexCoords left="0.171875" right="0.33203125" top="0.0078125" bottom="0.328125"/>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="CENTER" x="20" y="1"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="New" atlas="GarrMission-AbilityHighlight" alphaMode="ADD" hidden="true" file="Interface\AddOns\ezCollections\Interface\Garrison\GarrisonMissionUI1">
+					<TexCoords left="0.5703125" right="0.68359375" top="0.4921875" bottom="0.548828125"/>
+					<Size x="48" y="48"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<Animations>
+						<AnimationGroup parentKey="Anim" looping="REPEAT">
+							<Alpha duration="1" order="1" change="-0.2" />
+							<Alpha duration="1" order="2" change="0.2"/>
+						</AnimationGroup>
+					</Animations>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="ClaimQuest" hidden="true">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="BOTTOM" y="-15" />
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\ClaimQuest">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0" right="0.234375" top="0" bottom="0.46875" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Textures\ClaimQuest">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.234375" right="0.46875" top="0" bottom="0.46875" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\ClaimQuest" alphaMode="ADD" alpha="0.75">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.46875" />
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						ezCollections:BeginClaimSetSlotQuest(WardrobeCollectionFrame.SetsCollectionFrame:GetSelectedSetID(), C_Transmog.GetSlotForInventoryType(self:GetParent().invType));
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["ClaimQuest.Tooltip.Header"], NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1);
+						GameTooltip:AddLine(ezCollections.L["ClaimQuest.Tooltip.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Button parentKey="StoreButton" hidden="true">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="BOTTOM" y="-15" />
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0" right="0.234375" top="0" bottom="0.234375" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.234375" right="0.46875" top="0" bottom="0.234375" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD" alpha="0.75">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.234375" />
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						StaticPopup_Show("EZCOLLECTIONS_STORE_URL", nil, nil, format(ezCollections.StoreURLSkinFormat, ezCollections:GetStoreSetSource(WardrobeCollectionFrame.SetsCollectionFrame:GetSelectedSetID(), C_Transmog.GetSlotForInventoryType(self:GetParent().invType))));
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["Tooltip.Store.Header"], 0, 0.75, 1, 1);
+						GameTooltip:AddLine(ezCollections.L["Tooltip.Store.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Button parentKey="SubscriptionButton" hidden="true">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="BOTTOM" y="-15" />
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0" right="0.234375" top="0.5" bottom="0.734375" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.234375" right="0.46875" top="0.5" bottom="0.734375" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD" alpha="0.75">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.234375" />
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						local subscription = ezCollections:GetSubscriptionForSetSource(WardrobeCollectionFrame.SetsCollectionFrame:GetSelectedSetID(), C_Transmog.GetSlotForInventoryType(self:GetParent().invType));
+						StaticPopup_Show("EZCOLLECTIONS_STORE_URL", nil, nil, subscription and subscription.URL or "");
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						local subscription = ezCollections:GetSubscriptionForSetSource(WardrobeCollectionFrame.SetsCollectionFrame:GetSelectedSetID(), C_Transmog.GetSlotForInventoryType(self:GetParent().invType));
+						if subscription then
+							GameTooltip:SetText(ezCollections.L["Tooltip.Subscription.Header"], 0, 0.75, 1, 1);
+							GameTooltip:AddLine(subscription.Name, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1);
+							GameTooltip:AddLine(subscription.Description, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+							GameTooltip:AddLine(" ", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+							GameTooltip:AddLine(ezCollections.L["Tooltip.Subscription.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						end
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Button parentKey="StoreSubscriptionButton" hidden="true">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="BOTTOM" y="-15" x="-8" />
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0" right="0.234375" top="0" bottom="0.234375" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.234375" right="0.46875" top="0" bottom="0.234375" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD" alpha="0.75">
+					<Size x="21" y="21" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+					<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.234375" />
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						StaticPopup_Show("EZCOLLECTIONS_STORE_URL", nil, nil, format(ezCollections.StoreURLSkinFormat, ezCollections:GetStoreSetSource(WardrobeCollectionFrame.SetsCollectionFrame:GetSelectedSetID(), C_Transmog.GetSlotForInventoryType(self:GetParent().invType))));
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["Tooltip.Store.Header"], 0, 0.75, 1, 1);
+						GameTooltip:AddLine(ezCollections.L["Tooltip.Store.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<Frames>
+					<Button>
+						<Size x="16" y="16"/>
+						<Anchors>
+							<Anchor point="CENTER" x="16" />
+						</Anchors>
+						<NormalTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+							<Size x="21" y="21" />
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+							<TexCoords left="0" right="0.234375" top="0.5" bottom="0.734375" />
+						</NormalTexture>
+						<PushedTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay">
+							<Size x="21" y="21" />
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+							<TexCoords left="0.234375" right="0.46875" top="0.5" bottom="0.734375" />
+						</PushedTexture>
+						<HighlightTexture file="Interface\AddOns\ezCollections\Textures\StoreOverlay" alphaMode="ADD" alpha="0.75">
+							<Size x="21" y="21" />
+							<Anchors>
+								<Anchor point="CENTER" />
+							</Anchors>
+							<TexCoords left="0.46875" right="0.703125" top="0" bottom="0.234375" />
+						</HighlightTexture>
+						<Scripts>
+							<OnClick>
+								PlaySound("igMainMenuOptionCheckBoxOn");
+								local subscription = ezCollections:GetSubscriptionForSetSource(WardrobeCollectionFrame.SetsCollectionFrame:GetSelectedSetID(), C_Transmog.GetSlotForInventoryType(self:GetParent():GetParent().invType));
+								StaticPopup_Show("EZCOLLECTIONS_STORE_URL", nil, nil, subscription and subscription.URL or "");
+							</OnClick>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								local subscription = ezCollections:GetSubscriptionForSetSource(WardrobeCollectionFrame.SetsCollectionFrame:GetSelectedSetID(), C_Transmog.GetSlotForInventoryType(self:GetParent():GetParent().invType));
+								if subscription then
+									GameTooltip:SetText(ezCollections.L["Tooltip.Subscription.Header"], 0, 0.75, 1, 1);
+									GameTooltip:AddLine(subscription.Name, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1, 1);
+									GameTooltip:AddLine(subscription.Description, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+									GameTooltip:AddLine(" ", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+									GameTooltip:AddLine(ezCollections.L["Tooltip.Subscription.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								end
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</Button>
+				</Frames>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self.IconBorder, SetAtlasMixin);
+				Mixin(self.ClaimQuest, SetShownMixin);
+				Mixin(self.StoreButton, SetShownMixin);
+				Mixin(self.SubscriptionButton, SetShownMixin);
+				Mixin(self.StoreSubscriptionButton, SetShownMixin);
+				Mixin(self, WardrobeSetsDetailsItemMixin);
+				self:EnableMouse(true);
+				self:SetScript("OnEnter", self.OnEnter);
+				self:SetScript("OnLeave", self.OnLeave);
+				self:SetScript("OnMouseDown", self.OnMouseDown);
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
+	<Frame name="WardrobeCollectionFrame" parent="CollectionsJournal" setAllPoints="true" hidden="true">
+		<Frames>
+			<DressUpModel parentKey="DualWieldResetter">
+				<Size x="1" y="1" />
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+				</Anchors>
+			</DressUpModel>
+			<Frame name="$parentClaimQuestMenu" parentKey="ClaimQuestMenu" inherits="UIDropDownMenuTemplate" />
+			<Button name="$parentTab1" parentKey="ItemsTab" inherits="TabButtonTemplate" text="WARDROBE_ITEMS" id="1" frameLevel="4" parentArray="Tabs">
+				<KeyValues>
+					<KeyValue key="minWidth" value="57" type="number"/>
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="58" y="-28"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.minWidth = 57;
+						PanelTemplates_TabResize(self, 0, nil);
+						local tab = self;
+						local tabName = tab:GetName();
+						local buttonMiddle = tab.Middle or _G[tabName.."Middle"];
+						local buttonMiddleDisabled = tab.MiddleDisabled or _G[tabName.."MiddleDisabled"];
+						local sideWidths = tab.Left and 2 * tab.Left:GetWidth() or 2 * _G[tabName.."Left"]:GetWidth();
+						if self:GetWidth() - sideWidths &lt; self.minWidth then
+							local width = self.minWidth;
+							local tabWidth = width + sideWidths;
+							if ( buttonMiddle ) then
+								buttonMiddle:SetWidth(width);
+							end
+							if ( buttonMiddleDisabled ) then
+								buttonMiddleDisabled:SetWidth(width);
+							end
+
+							tab:SetWidth(tabWidth);
+
+							if ( highlightTexture ) then
+								highlightTexture:SetWidth(tabWidth);
+							end
+						end
+					</OnLoad>
+					<OnClick function="WardrobeCollectionFrame_ClickTab"/>
+				</Scripts>
+			</Button>
+			<Button name="$parentTab2" parentKey="SetsTab" inherits="TabButtonTemplate" text="WARDROBE_SETS" id="2" frameLevel="4" parentArray="Tabs">
+				<KeyValues>
+					<KeyValue key="minWidth" value="57" type="number"/>
+				</KeyValues>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" x="0" y="0"/>
+				</Anchors>
+				<Frames>
+					<Frame parentKey="FlashFrame" hidden="true">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="0" y="-10"/>
+							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="0" y="-5"/>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<Texture file="Interface\PaperDollInfoFrame\UI-Character-Tab-Highlight-yellow" setAllPoints="true" alphaMode="ADD"/>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnUpdate>
+								if ( self:IsMouseOver() ) then
+									self:SetAlpha(0);
+								else
+									self:SetAlpha(abs(mod(GetTime(), 2) - 1));
+								end
+							</OnUpdate>
+						</Scripts>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self.minWidth = 57;
+						PanelTemplates_TabResize(self, 0, nil);
+						local tab = self;
+						local tabName = tab:GetName();
+						local buttonMiddle = tab.Middle or _G[tabName.."Middle"];
+						local buttonMiddleDisabled = tab.MiddleDisabled or _G[tabName.."MiddleDisabled"];
+						local sideWidths = tab.Left and 2 * tab.Left:GetWidth() or 2 * _G[tabName.."Left"]:GetWidth();
+						if self:GetWidth() - sideWidths &lt; self.minWidth then
+							local width = self.minWidth;
+							local tabWidth = width + sideWidths;
+							if ( buttonMiddle ) then
+								buttonMiddle:SetWidth(width);
+							end
+							if ( buttonMiddleDisabled ) then
+								buttonMiddleDisabled:SetWidth(width);
+							end
+
+							tab:SetWidth(tabWidth);
+
+							if ( highlightTexture ) then
+								highlightTexture:SetWidth(tabWidth);
+							end
+						end
+					</OnLoad>
+					<OnClick function="WardrobeCollectionFrame_ClickTab"/>
+				</Scripts>
+			</Button>
+			<Frame parentKey="SetsTabHelpBox" inherits="GlowBoxTemplate" hidden="true" frameLevel="6">
+				<Size x="230" y="65"/>
+				<Anchors>
+					<Anchor point="TOP" relativePoint="BOTTOM" relativeTo="$parentTab2" x="0" y="-20"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="BigText" inherits="GameFontHighlight" justifyH="LEFT">
+							<Size x="186" y="0"/>
+							<Anchors>
+								<Anchor point="TOP" x="-10" y="-12"/>
+							</Anchors>
+						</FontString>
+						<Texture parentKey="ArrowUp" inherits="HelpPlateArrowUP">
+							<Size x="53" y="21"/>
+							<Anchors>
+								<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-3"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="BORDER">
+						<Texture parentKey="ArrowGlowUp" inherits="HelpPlateArrow-GlowUP" alphaMode="ADD" alpha="0.5">
+							<Size x="53" y="21"/>
+							<Anchors>
+								<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-3"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+						<Anchors>
+							<Anchor point="TOPRIGHT" x="6" y="6"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								self:GetParent():Hide();
+								if (WardrobeFrame_IsAtTransmogrifier()) then
+									ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_TRANSMOG_SETS_VENDOR_TAB, true);
+								else
+									ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_TRANSMOG_SETS_TAB, true);
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+			<EditBox name="$parentSearchBox" parentKey="searchBox" inherits="SearchBoxTemplate" letters="40" motionScriptsWhileDisabled="true" frameLevel="10000">
+				<Size x="115" y="20"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-107" y="-35"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad function="WardrobeCollectionFrameSearchBox_OnLoad"/>
+					<OnHide function="WardrobeCollectionFrameSearchBox_OnHide"/>
+					<OnKeyDown function="WardrobeCollectionFrameSearchBox_OnKeyDown"/>
+					<OnTextChanged function="WardrobeCollectionFrameSearchBox_OnTextChanged"/>
+					<OnEnterPressed function="WardrobeCollectionFrameSearchBox_OnEnterPressed" />
+					<OnEnter>
+						if ( not self:IsEnabled() ) then
+							GameTooltip:ClearAllPoints();
+							GameTooltip:SetPoint("BOTTOM", self, "TOP", 0, 0);
+							GameTooltip:SetOwner(self, "ANCHOR_PRESERVE");
+							GameTooltip:SetText(WARDROBE_NO_SEARCH);
+						end
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide"/>
+				</Scripts>
+			</EditBox>
+			<Frame name="$parentsearchProgressFrame" parentKey="searchProgressFrame" hidden="true">
+				<Size x="0" y="24"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentSearchBox" relativePoint="BOTTOMLEFT" x="-7"/>
+					<Anchor point="TOPRIGHT" relativeTo="$parentSearchBox" relativePoint="BOTTOMRIGHT" x="3"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture parentKey="background" atlas="_search-rowbg" file="Interface\AddOns\ezCollections\Interface\Common\Search">
+							<TexCoords left="0" right="0.125" top="0.0078125" bottom="0.21875"/>
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+								<Anchor point="BOTTOMRIGHT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<Texture name="$parentbotLeftCorner" parentKey="botLeftCorner" inherits="UI-Frame-BotCornerLeft">
+							<Anchors>
+								<Anchor point="LEFT" x="-7" y="0"/>
+								<Anchor point="BOTTOM" x="0" y="-5"/>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentbotRightCorner" parentKey="botRightCorner" inherits="UI-Frame-BotCornerRight">
+							<Anchors>
+								<Anchor point="BOTTOM" x="0" y="-5"/>
+								<Anchor point="RIGHT" x="4" y="0"/>
+							</Anchors>
+						</Texture>
+						<Texture parentKey="bottomBorder" inherits="_UI-Frame-Bot">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeTo="$parentbotLeftCorner" relativePoint="BOTTOMRIGHT" y="0"/>
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parentbotRightCorner" relativePoint="BOTTOMLEFT" y="0"/>
+							</Anchors>
+						</Texture>
+						<Texture parentKey="leftBorder" inherits="!UI-Frame-LeftTile">
+							<Anchors>
+								<Anchor point="TOP" x="0" y="1" />
+								<Anchor point="BOTTOMLEFT" relativeTo="$parentbotLeftCorner" relativePoint="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+						<Texture parentKey="rightBorder" inherits="!UI-Frame-RightTile">
+							<Anchors>
+								<Anchor point="TOP" x="0" y="1" />
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parentbotRightCorner" relativePoint="TOPRIGHT" x="1" y="0"/>
+							</Anchors>
+						</Texture>
+						<Texture parentKey="topBorder" inherits="_UI-Frame-Bot">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="-2" y="3"/>
+								<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" x="2" y="-3"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame parentKey="loading">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT"/>
+							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+						</Anchors>
+						<Layers>
+							<Layer level="OVERLAY">
+								<FontString name="$parentText" inherits="GameFontHighlight" justifyH="CENTER" parentKey="text" text="SEARCH_LOADING_TEXT" hidden="false">
+									<Size x="0" y="0"/>
+									<Anchors>
+										<Anchor point="CENTER" x="14" y="1"/>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Frame parentKey="spinner" inherits="LoadingSpinnerTemplate" hidden="false">
+								<Size x="38" y="38"/>
+								<Anchors>
+									<Anchor point="RIGHT" relativeTo="$parentText" relativePoint="LEFT" x="4"/>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										self.AnimFrame.Anim:Play();
+									</OnLoad>
+								</Scripts>
+							</Frame>
+						</Frames>
+					</Frame>
+					<StatusBar name="$parentsearchProgressBar" parentKey="searchProgressBar" hidden="false">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-4"/>
+							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="6"/>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture parentKey="barBackground">
+									<Anchors>
+										<Anchor point="TOPLEFT"/>
+										<Anchor point="BOTTOMRIGHT"/>
+									</Anchors>
+									<Color r="0" g="0" b="0" a=".4"/>
+								</Texture>
+							</Layer>
+							<Layer level="OVERLAY">
+								<FontString parentKey="text" inherits="GameFontHighlightSmall" text="SEARCH_PROGRESS_BAR_TEXT" justifyV="TOP">
+									<Size x="0" y="0"/>
+									<Anchors>
+										<Anchor point="CENTER" x="0" y="0"/>
+									</Anchors>
+								</FontString>
+							</Layer>
+							<Layer level="ARTWORK">
+								<Texture name="$parentbarBorderLeft" parentKey="barBorderLeft" file="Interface\AchievementFrame\UI-Achievement-ProgressBar-Border">
+									<Size x="16" y="0"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" x="-6" y="5"/>
+										<Anchor point="BOTTOMLEFT" x="-6" y="-5"/>
+									</Anchors>
+									<TexCoords left="0" right="0.0625" top="0" bottom="0.75"/>
+								</Texture>
+								<Texture name="$parentbarBorderRight" parentKey="barBorderRight" file="Interface\AchievementFrame\UI-Achievement-ProgressBar-Border">
+									<Size x="16" y="0"/>
+									<Anchors>
+										<Anchor point="TOPRIGHT" x="6" y="5"/>
+										<Anchor point="BOTTOMRIGHT" x="6" y="-5"/>
+									</Anchors>
+									<TexCoords left="0.812" right="0.8745" top="0" bottom="0.75"/>
+								</Texture>
+								<Texture parentKey="barBorderCenter" file="Interface\AchievementFrame\UI-Achievement-ProgressBar-Border">
+									<Size x="16"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parentbarBorderLeft" relativePoint="TOPRIGHT"/>
+										<Anchor point="BOTTOMRIGHT" relativeTo="$parentbarBorderRight" relativePoint="BOTTOMLEFT"/>
+									</Anchors>
+									<TexCoords left="0.0625" right="0.812" top="0" bottom="0.75"/>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad function="WardrobeCollectionFrameSearchProgressBar_OnLoad"/>
+							<OnHide function="WardrobeCollectionFrameSearchProgressBar_OnHide"/>
+						</Scripts>
+						<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+					</StatusBar>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self:SetFrameLevel(self:GetParent():GetFrameLevel() + 15);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<StatusBar name="$parentprogressBar" parentKey="progressBar" inherits="CollectionsProgressBarTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentTab1" relativePoint="TOPLEFT" x="195" y="-11"/>
+				</Anchors>
+			</StatusBar>
+			<Button name="$parentFilterButton" parentKey="FilterButton" inherits="UIMenuButtonStretchTemplate" text="FILTER" frameLevel="10000">
+				<Size x="93" y="22"/>
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentSearchBox" relativePoint="RIGHT" x="2" y="-1"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
+							<Size x="10" y="12"/>
+							<Anchors>
+								<Anchor point="RIGHT" relativePoint="RIGHT" x="-5"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						WardrobeFilterDropDown.setsSlotMask = ezCollections:GetCVar("transmogrifySetsSlotMask");
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						ToggleDropDownMenu(1, nil, WardrobeFilterDropDown, self, 74, 15);
+					</OnClick>
+					<OnEnable>
+						self.Icon:SetDesaturated(false);
+					</OnEnable>
+					<OnDisable>
+						self.Icon:SetDesaturated(true);
+					</OnDisable>
+				</Scripts>
+			</Button>
+			<Frame name="WardrobeFilterDropDown" parentKey="FilterDropDown" inherits="UIDropDownMenuTemplate">
+				<Scripts>
+					<OnLoad function="WardrobeFilterDropDown_OnLoad"/>
+				</Scripts>
+			</Frame>
+
+			<Frame name="$parentItemsCollectionFrame" parentKey="ItemsCollectionFrame" parentArray="ContentFrames" mixin="WardrobeItemsCollectionMixin" inherits="CollectionsBackgroundTemplate">
+				<KeyValues>
+					<KeyValue key="searchType" value="LE_TRANSMOG_SEARCH_TYPE_ITEMS" type="global"/>
+				</KeyValues>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="NoValidItemsLabel" inherits="GameFontNormalMed2" text="TRANSMOG_NO_VALID_ITEMS_EQUIPPED">
+							<Anchors>
+								<Anchor point="CENTER" y="15"/>
+							</Anchors>
+							<Color r="0.804" g="0.725" b="0.616"/>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame name="$parentPagingFrame" parentKey="PagingFrame" inherits="CollectionsPagingFrameTemplate">
+						<Anchors>
+							<Anchor point="BOTTOM" x="22" y="38"/>
+						</Anchors>
+					</Frame>
+					<Frame name="WardrobeModelRightClickDropDown" parentKey="RightClickDropDown" inherits="UIDropDownMenuTemplate" hidden="true"/>
+					<Frame parentKey="WeaponDropDown" name="$parentWeaponDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true" hidden="true">
+						<Size x="87" y="22"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" x="-6" y="-22"/>
+						</Anchors>
+						<Scripts>
+							<OnLoad function="WardrobeCollectionFrameWeaponDropDown_OnLoad"/>
+						</Scripts>
+					</Frame>
+					<Frame parentKey="SlotsFrame">
+						<Size x="10" y="10"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="18" y="-20"/>
+						</Anchors>
+					</Frame>
+					<DressUpModel name="$parentModelR1C1" parentArray="Models" parentKey="ModelR1C1" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOP" x="-238" y="-85"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR1C2" parentArray="Models" parentKey="ModelR1C2" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C1" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR1C3" parentArray="Models" parentKey="ModelR1C3" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C2" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR1C4" parentArray="Models" parentKey="ModelR1C4" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C3" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR1C5" parentArray="Models" parentKey="ModelR1C5" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C4" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR1C6" parentArray="Models" parentKey="ModelR1C6" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C5" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C1" parentArray="Models" parentKey="ModelR2C1" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C1" relativePoint="BOTTOMLEFT" x="0" y="-24"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C2" parentArray="Models" parentKey="ModelR2C2" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C1" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C3" parentArray="Models" parentKey="ModelR2C3" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C2" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C4" parentArray="Models" parentKey="ModelR2C4" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C3" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C5" parentArray="Models" parentKey="ModelR2C5" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C4" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C6" parentArray="Models" parentKey="ModelR2C6" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C5" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR3C1" parentArray="Models" parentKey="ModelR3C1" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C1" relativePoint="BOTTOMLEFT" x="0" y="-24"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR3C2" parentArray="Models" parentKey="ModelR3C2" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR3C1" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR3C3" parentArray="Models" parentKey="ModelR3C3" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR3C2" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR3C4" parentArray="Models" parentKey="ModelR3C4" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR3C3" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR3C5" parentArray="Models" parentKey="ModelR3C5" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR3C4" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR3C6" parentArray="Models" parentKey="ModelR3C6" inherits="WardrobeItemsModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR3C5" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel parentKey="HiddenModel" inherits="WardrobeItemsModelTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="BOTTOMLEFT"/>
+						</Anchors>
+					</DressUpModel>
+					<Frame parentKey="PendingTransmogFrame" hidden="true">
+						<Size x="78" y="104"/>
+						<Layers>
+							<Layer level="ARTWORK" textureSubLevel="1">
+								<Texture parentKey="Glowframe" hidden="false" alpha="0" alphaMode="ADD" atlas="transmog-wardrobe-border-selected" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+									<Size x="102" y="128"/>
+									<TexCoords left="0.001953125" right="0.201171875" top="0.001953125" bottom="0.251953125"/>
+									<Anchors>
+										<Anchor point="CENTER"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim2" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Alpha childKey="Glowframe" duration="1.2" order="1" change="1"/>
+											<Alpha childKey="Glowframe" startDelay="1.2" duration="1.2" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+							</Layer>
+							<Layer level="ARTWORK" textureSubLevel="2">
+								<Texture parentKey="Wisp1" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMRIGHT" x="-6" y="7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Translation parentKey="Translation" childKey="Wisp1" duration="2" order="1" offsetX="-70" offsetY="0"/>
+											<Alpha childKey="Wisp1" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp1" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp2" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPLEFT" x="6" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp2" duration="0" order="1" degrees="180"/>
+											<Translation parentKey="Translation" childKey="Wisp2" duration="2" order="1" offsetX="70" offsetY="0"/>
+											<Alpha childKey="Wisp2" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp2" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp3" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMLEFT" x="7" y="6"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp3" duration="0" order="1" degrees="-90"/>
+											<Translation parentKey="Translation" childKey="Wisp3" duration="2" order="1" offsetX="0" offsetY="90"/>
+											<Alpha childKey="Wisp3" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp3" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp4" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-7" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp4" duration="0" order="1" degrees="90"/>
+											<Translation parentKey="Translation" childKey="Wisp4" duration="2" order="1" offsetX="0" offsetY="-90"/>
+											<Alpha childKey="Wisp4" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp4" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp5" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMRIGHT" x="-6" y="7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Translation parentKey="Translation" childKey="Wisp5" duration="2" order="1" offsetX="-70" offsetY="0"/>
+											<Alpha childKey="Wisp5" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp5" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp6" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPLEFT" x="6" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp6" duration="0" order="1" degrees="180"/>
+											<Translation parentKey="Translation" childKey="Wisp6" duration="2" order="1" offsetX="70" offsetY="0"/>
+											<Alpha childKey="Wisp6" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp6" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp7" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMLEFT" x="7" y="6"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp7" duration="0" order="1" degrees="-90"/>
+											<Translation parentKey="Translation" childKey="Wisp7" duration="2" order="1" offsetX="0" offsetY="90"/>
+											<Alpha childKey="Wisp7" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp7" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp8" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-7" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp8" duration="0" order="1" degrees="90"/>
+											<Translation parentKey="Translation" childKey="Wisp8" duration="2" order="1" offsetX="0" offsetY="-90"/>
+											<Alpha childKey="Wisp8" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp8" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp9" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMRIGHT" x="-6" y="7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim3" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Translation parentKey="Translation" childKey="Wisp9" duration="4.4" order="1" offsetX="-70" offsetY="0"/>
+											<Alpha childKey="Wisp9" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp9" startDelay="3.9" duration="0.5" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp10" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPLEFT" x="6" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim3" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp10" duration="0" order="1" degrees="180"/>
+											<Translation parentKey="Translation" childKey="Wisp10" duration="4.4" order="1" offsetX="70" offsetY="0"/>
+											<Alpha childKey="Wisp10" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp10" startDelay="3.9" duration="0.5" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp11" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMLEFT" x="7" y="6"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim3" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp11" duration="0" order="1" degrees="-90"/>
+											<Translation parentKey="Translation" childKey="Wisp11" duration="4.4" order="1" offsetX="0" offsetY="90"/>
+											<Alpha childKey="Wisp11" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp11" startDelay="3.9" duration="0.5" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp12" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-7" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim3" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp12" duration="0" order="1" degrees="90"/>
+											<Translation parentKey="Translation" childKey="Wisp12" duration="4.4" order="1" offsetX="0" offsetY="-90"/>
+											<Alpha childKey="Wisp12" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp12" startDelay="3.9" duration="0.5" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Smoke1" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-smoke" useAtlasSize="true">
+									<Size x="19" y="65"/>
+									<TexCoords left="0.373046875" right="0.41015625" top="0.248046875" bottom="0.375"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="LEFT" x="-1" y="0"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim4" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Scale childKey="Smoke1" duration="3.2" order="1" scaleX="1" scaleY="2.6"/>
+											<Alpha childKey="Smoke1" duration="1.4" order="1" change="0.75"/>
+											<Alpha childKey="Smoke1" startDelay="1.8" duration="1.4" order="1" change="-0.75"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Smoke2" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-smoke" useAtlasSize="true">
+									<Size x="19" y="65"/>
+									<TexCoords left="0.373046875" right="0.41015625" top="0.375" bottom="0.248046875"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="RIGHT" x="1" y="0"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim4" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Scale childKey="Smoke2" duration="3.2" order="1" scaleX="1" scaleY="2.6"/>
+											<Alpha childKey="Smoke2" duration="1.4" order="1" change="0.75"/>
+											<Alpha childKey="Smoke2" startDelay="1.8" duration="1.4" order="1" change="-0.75"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Smoke3" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-smoke" useAtlasSize="true">
+									<Size x="19" y="65"/>
+									<TexCoords left="0.373046875" right="0.41015625" top="0.248046875" bottom="0.375"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="LEFT" x="-1" y="0"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim5" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Scale childKey="Smoke3" duration="5" order="1" scaleX="1" scaleY="2.6"/>
+											<Alpha childKey="Smoke3" duration="1.4" order="1" change="0.5"/>
+											<Alpha childKey="Smoke3" startDelay="3.6" duration="1.4" order="1" change="-0.5"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Smoke4" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-smoke" useAtlasSize="true">
+									<Size x="19" y="65"/>
+									<TexCoords left="0.373046875" right="0.41015625" top="0.375" bottom="0.248046875"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="RIGHT" x="1" y="0"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim5" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Scale childKey="Smoke4" duration="5" order="1" scaleX="1" scaleY="2.6"/>
+											<Alpha childKey="Smoke4" duration="1.4" order="1" change="0.5"/>
+											<Alpha childKey="Smoke4" startDelay="3.6" duration="1.4" order="1" change="-0.5"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+							</Layer>
+							<Layer level="OVERLAY">
+								<Texture parentKey="UndoIcon" atlas="transmog-icon-revert" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+									<Size x="32" y="32"/>
+									<TexCoords left="0.87890625" right="0.94140625" top="0.171875" bottom="0.234375"/>
+									<Anchors>
+										<Anchor point="BOTTOM" x="0" y="-13"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								Mixin(self.UndoIcon, SetShownMixin);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame parentKey="Loading" inherits="LoadingSpinnerTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="CENTER" />
+						</Anchors>
+					</Frame>
+					<Frame name="$parentHelpBox" parentKey="HelpBox" inherits="GlowBoxTemplate" enableMouse="true" hidden="true" frameStrata="DIALOG">
+						<Size x="220" y="100"/>
+						<Layers>
+							<Layer level="OVERLAY">
+								<FontString parentKey="Text" inherits="GameFontHighlightLeft" justifyV="TOP" text="TRANSMOG_MOUSE_CLICK_TUTORIAL">
+									<Size x="188" y="0"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" x="16" y="-24"/>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+								<Anchors>
+									<Anchor point="TOPRIGHT" x="6" y="6"/>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										self:GetParent():Hide();
+										ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_TRANSMOG_MODEL_CLICK, true);
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Frame parentKey="Arrow" inherits="GlowBoxArrowTemplate">
+								<Anchors>
+									<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-3"/>
+								</Anchors>
+							</Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								SetClampedTextureRotation(self.Arrow.Arrow, 180);
+								SetClampedTextureRotation(self.Arrow.Glow, 180);
+								self.Arrow.Glow:ClearAllPoints();
+								self.Arrow.Glow:SetPoint("BOTTOM", self, "TOP", 0, -3);
+							</OnLoad>
+							<OnShow>
+								self:SetHeight(self.Text:GetHeight() + 42);
+							</OnShow>
+						</Scripts>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						Mixin(self.NoValidItemsLabel, SetShownMixin);
+						Mixin(self, WardrobeItemsCollectionMixin, SetShownMixin);
+						self.searchType = LE_TRANSMOG_SEARCH_TYPE_ITEMS;
+						self:EnableMouse(true);
+						self:EnableMouseWheel(true);
+						self:SetScript("OnShow", self.OnShow);
+						self:SetScript("OnHide", self.OnHide);
+						self:SetScript("OnEvent", self.OnEvent);
+						self:SetScript("OnMouseWheel", self.OnMouseWheel);
+						self:OnLoad();
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentSetsCollectionFrame" parentKey="SetsCollectionFrame" parentArray="ContentFrames" mixin="WardrobeSetsCollectionMixin" hidden="true">
+				<KeyValues>
+					<KeyValue key="searchType" value="LE_TRANSMOG_SEARCH_TYPE_BASE_SETS" type="global"/>
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" y="-60" x="4"/>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-6" y="5"/>
+				</Anchors>
+				<Frames>
+					<Frame name="$parentLeftInset" parentKey="LeftInset" useParentLevel="true" inherits="InsetFrameTemplate">
+						<Size x="260" y="496"/>
+						<Anchors>
+							<Anchor point="TOPLEFT"/>
+							<Anchor point="BOTTOMLEFT"/>
+						</Anchors>
+					</Frame>
+					<Frame name="$parentRightInset" parentKey="RightInset" useParentLevel="true" inherits="CollectionsBackgroundTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentLeftInset" relativePoint="TOPRIGHT" x="22" y="0"/>
+							<Anchor point="BOTTOMRIGHT"/>
+						</Anchors>
+					</Frame>
+					<ScrollFrame name="$parentScrollFrame" parentKey="ScrollFrame" inherits="HybridScrollFrameTemplate" mixin="WardrobeSetsCollectionScrollFrameMixin">
+						<Size x="255" y="499"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="3" y="-36"/>
+						</Anchors>
+						<Frames>
+							<Slider name="$parentScrollBar" inherits="HybridScrollBarTrimTemplate" parentKey="scrollBar">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="4" y="20"/>
+									<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="4" y="8"/>
+								</Anchors>
+							</Slider>
+							<Frame name="WardrobeSetsFavoriteDropDown" parentKey="FavoriteDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true"/>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								Mixin(self, WardrobeSetsCollectionScrollFrameMixin);
+								self:SetScript("OnShow", self.OnShow);
+								self:SetScript("OnHide", self.OnHide);
+								self:SetScript("OnEvent", self.OnEvent);
+								self:OnLoad();
+							</OnLoad>
+						</Scripts>
+					</ScrollFrame>
+					<DressUpModel parentKey="Model" inherits="ModelWithControlsTemplate" mixin="WardrobeSetsDetailsModelMixin" scale="2">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentRightInset" x="3" y="-3"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parentRightInset" x="-4" y="3"/>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								Mixin(self, WardrobeSetsDetailsModelMixin);
+								self:EnableMouse(true);
+								self:EnableMouseWheel(true);
+								--self:SetScript("OnUpdate", self.OnUpdate);
+								--self:SetScript("OnMouseDown", self.OnMouseDown);
+								--self:SetScript("OnMouseUp", self.OnMouseUp);
+								--self:SetScript("OnMouseWheel", self.OnMouseWheel);
+								--self:SetScript("OnModelLoaded", self.OnModelLoaded);
+								self:SetScript("OnShow", self.OnShow);
+								self:SetScript("OnHide", self.OnHide);
+								self:OnLoad();
+							</OnLoad>
+						</Scripts>
+					</DressUpModel>
+					<Frame parentKey="DetailsFrame" frameLevel="5">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentRightInset" x="0" y="-3"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$parentRightInset" x="-3" y="2"/>
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture parentKey="ModelFadeTexture" atlas="transmog-set-model-cutoff-fade" file="Interface\AddOns\ezCollections\Interface\Transmogrify\TransmogSets">
+									<TexCoords left="0.001953125" right="0.7890625" top="0.00390625" bottom="0.69921875"/>
+									<Size x="0" y="178"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" x="2"/>
+										<Anchor point="TOPRIGHT"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+							<Layer level="BORDER">
+								<Texture parentKey="IconRowBackground" atlas="transmog-set-iconrow-background" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\TransmogSets">
+									<Size x="418" y="64"/>
+									<TexCoords left="0.001953125" right="0.818359375" top="0.70703125" bottom="0.95703125"/>
+									<Anchors>
+										<Anchor point="TOP" x="0" y="-78"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+							<Layer level="ARTWORK">
+								<FontString parentKey="Name" inherits="Fancy24Font" maxLines="1" mixin="ShrinkUntilTruncateFontStringMixin">
+									<Size x="380" y="0"/>
+									<Anchors>
+										<Anchor point="TOP" x="0" y="-37"/>
+									</Anchors>
+									<Color r="1" g="0.82" b="0"/>
+									<Shadow>
+										<Offset x="1" y="-1" />
+										<Color r="0" g="0" b="0"/>
+									</Shadow>
+								</FontString>
+								<FontString parentKey="LongName" inherits="Fancy16Font" maxLines="2" hidden="true">
+									<Size x="380" y="0"/>
+									<Anchors>
+										<Anchor point="TOP" x="0" y="-30"/>
+									</Anchors>
+									<Color r="1" g="0.82" b="0"/>
+									<Shadow>
+										<Offset x="1" y="-1" />
+										<Color r="0" g="0" b="0"/>
+									</Shadow>
+								</FontString>
+								<FontString parentKey="Label" inherits="GameFontHighlight" maxLines="1">
+									<Size x="380" y="0"/>
+									<Anchors>
+										<Anchor point="TOP" x="0" y="-63"/>
+									</Anchors>
+								</FontString>
+								<FontString parentKey="LabelID" inherits="GameFontNormal" justifyH="CENTER" justifyV="BOTTOM">
+									<Anchors>
+										<Anchor point="TOP" y="-25" />
+									</Anchors>
+									<Color r="0.5" g="0.5" b="0.5" />
+								</FontString>
+								<Texture parentKey="Wowhead" file="Interface\AddOns\ezCollections\Textures\WowheadLogo" alpha="0.5" hidden="true">
+									<Size x="48" y="48" />
+									<Anchors>
+										<Anchor point="TOPLEFT" x="10" y="5" />
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Button name="WardrobeSetsCollectionVariantSetsButton" parentKey="VariantSetsButton" inherits="UIMenuButtonStretchTemplate" frameLevel="6">
+								<Size x="138" y="22"/>
+								<Anchors>
+									<Anchor point="TOPRIGHT" x="-6" y="-6"/>
+								</Anchors>
+								<Layers>
+									<Layer level="ARTWORK">
+										<Texture parentKey="Icon" atlas="friendslist-categorybutton-arrow-down" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\FriendsFrame\FriendsList">
+											<Size x="16" y="11"/>
+											<TexCoords left="0.578125" right="0.609375" top="0.03125" bottom="0.375"/>
+											<Anchors>
+												<Anchor point="RIGHT" relativePoint="RIGHT" x="-5" y="-2"/>
+											</Anchors>
+										</Texture>
+									</Layer>
+								</Layers>
+								<Scripts>
+									<OnLoad inherit="prepend">
+										self:SetPushedTextOffset(1, -1);
+										self.Text:ClearAllPoints();
+										self.Text:SetPoint("LEFT", 11, -1);
+										self.Text:SetSize(105, 10);
+										self.Text:SetJustifyH("LEFT");
+									</OnLoad>
+									<OnClick>
+										PlaySound("igMainMenuOptionCheckBoxOn");
+										ToggleDropDownMenu(1, nil, self:GetParent().VariantSetsDropDown, self:GetName(), 0, 1);
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Frame name="WardrobeSetsCollectionVariantSetsDropDown" parentKey="VariantSetsDropDown" inherits="UIDropDownMenuTemplate">
+								<Scripts>
+									<!--OnLoad function="WardrobeSetsCollectionVariantSetsDropDown_OnLoad"/-->
+								</Scripts>
+							</Frame>
+						</Frames>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						Mixin(self, WardrobeSetsCollectionMixin, SetShownMixin);
+						self.searchType = LE_TRANSMOG_SEARCH_TYPE_BASE_SETS;
+						self:EnableMouseWheel(true);
+						self:SetScript("OnShow", self.OnShow);
+						self:SetScript("OnHide", self.OnHide);
+						self:SetScript("OnEvent", self.OnEvent);
+						self:SetScript("OnMouseWheel", self.OnMouseWheel);
+						self:OnLoad();
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentSetsTransmogFrame" parentKey="SetsTransmogFrame" parentArray="ContentFrames" inherits="CollectionsBackgroundTemplate" mixin="WardrobeSetsTransmogMixin" hidden="true">
+				<KeyValues>
+					<KeyValue key="searchType" value="LE_TRANSMOG_SEARCH_TYPE_USABLE_SETS" type="global"/>
+				</KeyValues>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString parentKey="NoValidSetsLabel" inherits="GameFontNormalMed2" text="TRANSMOG_SETS_TAB_DISABLED">
+							<Anchors>
+								<Anchor point="CENTER" y="15"/>
+							</Anchors>
+							<Color r="0.804" g="0.725" b="0.616"/>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame name="WardrobeSetsTransmogModelRightClickDropDown" parentKey="RightClickDropDown" inherits="UIDropDownMenuTemplate" hidden="true">
+						<Scripts>
+							<!--OnLoad function="WardrobeSetsTransmogModelRightClickDropDown_OnLoad"/-->
+						</Scripts>
+					</Frame>
+					<Frame name="$parentPagingFrame" parentKey="PagingFrame" inherits="CollectionsPagingFrameTemplate">
+						<Anchors>
+							<Anchor point="BOTTOM" x="22" y="38"/>
+						</Anchors>
+					</Frame>
+					<DressUpModel name="$parentModelR1C1" parentArray="Models" parentKey="ModelR1C1" inherits="WardrobeSetsTransmogModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" x="50" y="-50"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR1C2" parentArray="Models" parentKey="ModelR1C2" inherits="WardrobeSetsTransmogModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C1" relativePoint="TOPRIGHT" x="13" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR1C3" parentArray="Models" parentKey="ModelR1C3" inherits="WardrobeSetsTransmogModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C2" relativePoint="TOPRIGHT" x="13" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR1C4" parentArray="Models" parentKey="ModelR1C4" inherits="WardrobeSetsTransmogModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C3" relativePoint="TOPRIGHT" x="13" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C1" parentArray="Models" parentKey="ModelR2C1" inherits="WardrobeSetsTransmogModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR1C1" relativePoint="BOTTOMLEFT" x="0" y="-14"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C2" parentArray="Models" parentKey="ModelR2C2" inherits="WardrobeSetsTransmogModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C1" relativePoint="TOPRIGHT" x="13" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C3" parentArray="Models" parentKey="ModelR2C3" inherits="WardrobeSetsTransmogModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C2" relativePoint="TOPRIGHT" x="13" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModelR2C4" parentArray="Models" parentKey="ModelR2C4" inherits="WardrobeSetsTransmogModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModelR2C3" relativePoint="TOPRIGHT" x="13" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<Frame parentKey="PendingTransmogFrame" hidden="true">
+						<Size x="129" y="186"/>
+						<Layers>
+							<Layer level="ARTWORK" textureSubLevel="1">
+								<Texture parentKey="Glowframe" hidden="false" alpha="0" alphaMode="ADD" atlas="transmog-set-border-selected" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\TransmogSetsVendor">
+									<Size x="150" y="206"/>
+									<TexCoords left="0.001953125" right="0.294921875" top="0.412109375" bottom="0.814453125"/>
+									<Anchors>
+										<Anchor point="CENTER"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim2" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Alpha childKey="Glowframe" duration="1.2" order="1" change="1"/>
+											<Alpha childKey="Glowframe" startDelay="1.2" duration="1.2" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+							</Layer>
+							<Layer level="ARTWORK" textureSubLevel="2">
+								<Texture parentKey="Wisp1" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMRIGHT" x="-6" y="9"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Translation parentKey="Translation" childKey="Wisp1" duration="2" order="1" offsetX="-121" offsetY="0"/>
+											<Alpha childKey="Wisp1" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp1" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp2" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPLEFT" x="6" y="-9"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp2" duration="0" order="1" degrees="180"/>
+											<Translation parentKey="Translation" childKey="Wisp2" duration="2" order="1" offsetX="121" offsetY="0"/>
+											<Alpha childKey="Wisp2" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp2" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp3" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMLEFT" x="8" y="6"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp3" duration="0" order="1" degrees="-90"/>
+											<Translation parentKey="Translation" childKey="Wisp3" duration="2" order="1" offsetX="0" offsetY="172"/>
+											<Alpha childKey="Wisp3" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp3" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp4" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-8" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp4" duration="0" order="1" degrees="90"/>
+											<Translation parentKey="Translation" childKey="Wisp4" duration="2" order="1" offsetX="0" offsetY="-172"/>
+											<Alpha childKey="Wisp4" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp4" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp5" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMRIGHT" x="-6" y="9"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Translation parentKey="Translation" childKey="Wisp5" duration="2" order="1" offsetX="-121" offsetY="0"/>
+											<Alpha childKey="Wisp5" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp5" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp6" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPLEFT" x="6" y="-9"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp6" duration="0" order="1" degrees="180"/>
+											<Translation parentKey="Translation" childKey="Wisp6" duration="2" order="1" offsetX="121" offsetY="0"/>
+											<Alpha childKey="Wisp6" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp6" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp7" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMLEFT" x="8" y="6"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp7" duration="0" order="1" degrees="-90"/>
+											<Translation parentKey="Translation" childKey="Wisp7" duration="2" order="1" offsetX="0" offsetY="172"/>
+											<Alpha childKey="Wisp7" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp7" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp8" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-8" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp8" duration="0" order="1" degrees="90"/>
+											<Translation parentKey="Translation" childKey="Wisp8" duration="2" order="1" offsetX="0" offsetY="-172"/>
+											<Alpha childKey="Wisp8" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp8" startDelay="1.5" duration="0.5" order="1" change="-1" endDelay="0.4"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp9" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMRIGHT" x="-6" y="9"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim3" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Translation parentKey="Translation" childKey="Wisp9" duration="4.4" order="1" offsetX="-121" offsetY="0"/>
+											<Alpha childKey="Wisp9" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp9" startDelay="3.9" duration="0.5" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp10" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPLEFT" x="6" y="-9"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim3" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp10" duration="0" order="1" degrees="180"/>
+											<Translation parentKey="Translation" childKey="Wisp10" duration="4.4" order="1" offsetX="121" offsetY="0"/>
+											<Alpha childKey="Wisp10" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp10" startDelay="3.9" duration="0.5" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp11" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="BOTTOMLEFT" x="8" y="6"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim3" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp11" duration="0" order="1" degrees="-90"/>
+											<Translation parentKey="Translation" childKey="Wisp11" duration="4.4" order="1" offsetX="0" offsetY="172"/>
+											<Alpha childKey="Wisp11" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp11" startDelay="3.9" duration="0.5" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Wisp12" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-wisp" useAtlasSize="true">
+									<Size x="28" y="19"/>
+									<TexCoords left="0.638671875" right="0.693359375" top="0.248046875" bottom="0.28515625"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-8" y="-7"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim3" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Rotation childKey="Wisp12" duration="0" order="1" degrees="90"/>
+											<Translation parentKey="Translation" childKey="Wisp12" duration="4.4" order="1" offsetX="0" offsetY="-172"/>
+											<Alpha childKey="Wisp12" duration="0.5" order="1" change="1"/>
+											<Alpha childKey="Wisp12" startDelay="3.9" duration="0.5" order="1" change="-1"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Smoke1" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-smoke" useAtlasSize="true">
+									<Size x="19" y="65"/>
+									<TexCoords left="0.373046875" right="0.41015625" top="0.248046875" bottom="0.375"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="LEFT" x="-1" y="0"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim4" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Scale childKey="Smoke1" duration="3.2" order="1" scaleX="1" scaleY="2.6"/>
+											<Alpha childKey="Smoke1" duration="1.4" order="1" change="0.75"/>
+											<Alpha childKey="Smoke1" startDelay="1.8" duration="1.4" order="1" change="-0.75"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Smoke2" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-smoke" useAtlasSize="true">
+									<Size x="19" y="65"/>
+									<TexCoords left="0.373046875" right="0.41015625" top="0.375" bottom="0.248046875"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="RIGHT" x="1" y="0"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim4" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Scale childKey="Smoke2" duration="3.2" order="1" scaleX="1" scaleY="2.6"/>
+											<Alpha childKey="Smoke2" duration="1.4" order="1" change="0.75"/>
+											<Alpha childKey="Smoke2" startDelay="1.8" duration="1.4" order="1" change="-0.75"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Smoke3" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-smoke" useAtlasSize="true">
+									<Size x="19" y="65"/>
+									<TexCoords left="0.373046875" right="0.41015625" top="0.248046875" bottom="0.375"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="LEFT" x="-1" y="0"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim5" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Scale childKey="Smoke3" duration="5" order="1" scaleX="1" scaleY="2.6"/>
+											<Alpha childKey="Smoke3" duration="1.4" order="1" change="0.5"/>
+											<Alpha childKey="Smoke3" startDelay="3.6" duration="1.4" order="1" change="-0.5"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+								<Texture parentKey="Smoke4" hidden="false" alpha="0" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-wardrobe-border-selected-smoke" useAtlasSize="true">
+									<Size x="19" y="65"/>
+									<TexCoords left="0.373046875" right="0.41015625" top="0.375" bottom="0.248046875"/>
+									<Anchors>
+										<Anchor point="CENTER" relativePoint="RIGHT" x="1" y="0"/>
+									</Anchors>
+									<Animations>
+										<AnimationGroup parentKey="TransmogSelectedAnim5" setToFinalAlpha="true" looping="repeat">
+											<Alpha duration="0" order="1" change="-1"/>
+											<Scale childKey="Smoke4" duration="5" order="1" scaleX="1" scaleY="2.6"/>
+											<Alpha childKey="Smoke4" duration="1.4" order="1" change="0.5"/>
+											<Alpha childKey="Smoke4" startDelay="3.6" duration="1.4" order="1" change="-0.5"/>
+										</AnimationGroup>
+									</Animations>
+								</Texture>
+							</Layer>
+						</Layers>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						Mixin(self, WardrobeSetsTransmogMixin, SetShownMixin);
+						self.searchType = LE_TRANSMOG_SEARCH_TYPE_USABLE_SETS;
+						self:EnableMouseWheel(true);
+						self:SetScript("OnShow", self.OnShow);
+						self:SetScript("OnHide", self.OnHide);
+						self:SetScript("OnEvent", self.OnEvent);
+						self:SetScript("OnMouseWheel", self.OnMouseWheel);
+						self:OnLoad();
+					</OnLoad>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad function="WardrobeCollectionFrame_OnLoad"/>
+			<OnEvent function="WardrobeCollectionFrame_OnEvent"/>
+			<OnShow function="WardrobeCollectionFrame_OnShow"/>
+			<OnHide function="WardrobeCollectionFrame_OnHide"/>
+			<OnKeyDown function="WardrobeCollectionFrame_OnKeyDown"/>
+		</Scripts>
+	</Frame>
+	
+	<Button name="WardrobeTransmogButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<KeyValues>
+			<KeyValue key="transmogType" value="LE_TRANSMOG_TYPE_APPEARANCE" type="global"/>
+		</KeyValues>
+		<Size x="43" y="43"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Icon">
+					<Size x="36" y="36"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture parentKey="Border" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame" useAtlasSize="true">
+					<Size x="58" y="57"/>
+					<TexCoords left="0.205078125" right="0.318359375" top="0.783203125" bottom="0.89453125"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="NoItemTexture" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures" alpha="0.75" hidden="true">
+					<Size x="34" y="34"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.28906250" right="0.55468750" top="0.51171875" bottom="0.57812500"/>
+				</Texture>				
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="HiddenVisualCover" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-blackcover" useAtlasSize="true" hidden="true" alpha="0.6">
+					<Size x="46" y="45"/>
+					<TexCoords left="0.373046875" right="0.462890625" top="0.001953125" bottom="0.08984375"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="StatusBorder" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-pink" useAtlasSize="true" hidden="true">
+					<Size x="44" y="43"/>
+					<TexCoords left="0.466796875" right="0.552734375" top="0.001953125" bottom="0.0859375"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="HiddenVisualIcon" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-icon-hidden" useAtlasSize="true" hidden="true" alpha="0.7">
+					<Size x="36" y="30"/>
+					<TexCoords left="0.8046875" right="0.875" top="0.171875" bottom="0.23046875"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="SelectedTexture" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-selected" useAtlasSize="true" hidden="true">
+					<Size x="62" y="62"/>
+					<TexCoords left="0.205078125" right="0.326171875" top="0.658203125" bottom="0.779296875"/>
+					<Anchors>
+						<Anchor point="TOP" x="0" y="9"/>
+					</Anchors>
+				</Texture>
+			</Layer>			
+		</Layers>
+		<Frames>
+			<Button parentKey="UndoButton" hidden="true">
+				<Size x="24" y="22"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="13" y="12"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Icon" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures">
+							<Size x="24" y="22"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" x="0" y="0"/>
+							</Anchors>
+							<TexCoords left="0.17968750" right="0.36718750" top="0.58203125" bottom="0.62500000"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnShow>
+						self.Icon:SetPoint("TOPLEFT", 0, 0);
+					</OnShow>
+					<OnMouseDown>
+						self.Icon:SetPoint("TOPLEFT", 1, -1);
+					</OnMouseDown>
+					<OnMouseUp>
+						self.Icon:SetPoint("TOPLEFT", 0, 0);
+					</OnMouseUp>
+					<OnLeave>
+						if ( not self:GetParent():IsMouseOver() ) then
+							self:Hide();
+						end
+					</OnLeave>
+					<OnClick>
+						-- same as a right-click on the parent
+						WardrobeTransmogButton_OnClick(self:GetParent(), "RightButton");
+					</OnClick>
+				</Scripts>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
+			<Frame parentKey="PendingFrame" setAllPoints="true" hidden="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Glow" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures">
+							<Size x="58" y="57"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.52343750" right="0.97656250" top="0.38476563" bottom="0.49609375"/>
+						</Texture>
+						<Texture parentKey="Undo" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures" hidden="true">
+							<Size x="34" y="34"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.00781250" right="0.27343750" top="0.51171875" bottom="0.57812500"/>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture parentKey="Ants" file="Interface\AddOns\ezCollections\Interface\Transmogrify\PurpleIconAlertAnts">
+							<Size x="44" y="44"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>	
+				<Scripts>
+					<OnUpdate>
+						AnimateTexCoords(self.Ants, 256, 256, 48, 48, 22, elapsed, 0.01);
+					</OnUpdate>
+				</Scripts>		
+			</Frame>
+			<Frame parentKey="AnimFrame" setAllPoints="true" hidden="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Glow" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures" alpha="0">
+							<Size x="58" y="57"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.52343750" right="0.97656250" top="0.38476563" bottom="0.49609375"/>
+							<Animations>
+								<AnimationGroup parentKey="Anim">
+									<Alpha duration="0" change="1" order="1"/>
+									<Alpha childKey="Glow" startDelay="0.15" change="-1" duration="0.2" order="1"/>
+								</AnimationGroup>
+							</Animations>
+						</Texture>
+						<Texture parentKey="Transition" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures" hidden="true">
+							<Size x="42" y="41"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.52343750" right="0.97656250" top="0.25781250" bottom="0.36914063"/>
+							<Animations>
+								<AnimationGroup parentKey="Anim">
+									<Scale childKey="Transition" startDelay="0.15" duration="0.2" scaleX="1.381" scaleY="1.381" order="1"/>
+								</AnimationGroup>
+							</Animations>
+						</Texture>
+						<Texture parentKey="OuterGlow" file="Interface\AddOns\ezCollections\Interface\SpellActivationOverlay\IconAlert" alpha="0">
+							<Size x="58" y="57"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.00781250" right="0.50781250" top="0.53515625" bottom="0.78515625"/>
+							<Animations>
+								<AnimationGroup parentKey="Anim">
+									<Alpha duration="0" change="-1" order="1"/>
+									<Alpha childKey="OuterGlow" duration="0.15" change="1" order="1"/>
+									<Alpha childKey="OuterGlow" duration="0.15" change="-1" order="2"/>
+								</AnimationGroup>
+							</Animations>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Animations>
+					<AnimationGroup parentKey="Anim">
+						<Alpha duration="0.35" change="0" order="1"/>
+						<Scripts>
+							<OnFinished>
+								local frame = self:GetParent();
+								frame:Hide();
+								local slotButton = frame:GetParent();								
+								WardrobeTransmogFrame_UpdateSlotButton(slotButton);
+							</OnFinished>
+						</Scripts>
+					</AnimationGroup>
+				</Animations>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad function="WardrobeTransmogButton_OnLoad"/>
+			<OnClick function="WardrobeTransmogButton_OnClick"/>
+			<OnEnter function="WardrobeTransmogButton_OnEnter"/>
+			<OnLeave function="WardrobeTransmogButton_OnLeave"/>
+		</Scripts>
+		<HighlightTexture atlas="transmog-frame-highlighted" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+			<TexCoords left="0.646484375" right="0.732421875" top="0.001953125" bottom="0.08203125"/>
+			<Size x="44" y="41"/>
+			<Anchors>
+				<Anchor point="CENTER"/>
+			</Anchors>
+		</HighlightTexture>
+	</Button>
+
+	<Button name="WardrobeTransmogEnchantButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+		<KeyValues>
+			<KeyValue key="transmogType" value="LE_TRANSMOG_TYPE_ILLUSION" type="global"/>
+		</KeyValues>
+		<Size x="27" y="27"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Icon">
+					<Size x="18" y="18"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture parentKey="Border" atlas="transmog-frame-small" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+					<Size x="40" y="40"/>
+					<TexCoords left="0.736328125" right="0.814453125" top="0.001953125" bottom="0.080078125"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="NoItemTexture" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures" alpha="0.75" hidden="true">
+					<Size x="18" y="18"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+					<TexCoords left="0.28906250" right="0.55468750" top="0.51171875" bottom="0.57812500"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="HiddenVisualCover" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-blackcover" useAtlasSize="true" hidden="true" alpha="0.6">
+					<Size x="28" y="28"/>
+					<TexCoords left="0.373046875" right="0.462890625" top="0.001953125" bottom="0.08984375"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="StatusBorder" atlas="transmog-frame-small-pink" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+					<Size x="38" y="38"/>
+					<TexCoords left="0.900390625" right="0.974609375" top="0.001953125" bottom="0.076171875"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="UndoIcon" atlas="transmog-icon-revert-small" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+					<Size x="25" y="24"/>
+					<TexCoords left="0.533203125" right="0.58203125" top="0.248046875" bottom="0.294921875"/>
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="7" y="6"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="SelectedTexture" atlas="transmog-frame-small-selected" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+					<Size x="40" y="40"/>
+					<TexCoords left="0.818359375" right="0.896484375" top="0.001953125" bottom="0.080078125"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+				<Texture parentKey="HiddenVisualIcon" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-icon-hidden" useAtlasSize="true" hidden="true" alpha="0.7">
+					<Size x="22" y="18"/>
+					<TexCoords left="0.8046875" right="0.875" top="0.171875" bottom="0.23046875"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="PendingFrame" setAllPoints="true" hidden="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Glow" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures">
+							<Size x="29" y="28"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.52343750" right="0.97656250" top="0.38476563" bottom="0.49609375"/>
+						</Texture>
+						<Texture parentKey="Undo" atlas="transmog-icon-revert-small" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+							<Size x="25" y="24"/>
+							<TexCoords left="0.533203125" right="0.58203125" top="0.248046875" bottom="0.294921875"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture parentKey="Ants" file="Interface\AddOns\ezCollections\Interface\Transmogrify\PurpleIconAlertAnts">
+							<Size x="22" y="22"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnUpdate>
+						AnimateTexCoords(self.Ants, 256, 256, 48, 48, 22, elapsed, 0.01);
+					</OnUpdate>
+				</Scripts>
+			</Frame>
+			<Frame parentKey="AnimFrame" setAllPoints="true" hidden="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Glow" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures" alpha="0">
+							<Size x="30" y="29"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.52343750" right="0.97656250" top="0.38476563" bottom="0.49609375"/>
+							<Animations>
+								<AnimationGroup parentKey="Anim">
+									<Alpha duration="0" change="1" order="1"/>
+									<Alpha childKey="Glow" startDelay="0.15" change="-1" duration="0.2" order="1"/>
+								</AnimationGroup>
+							</Animations>
+						</Texture>
+						<Texture parentKey="Transition" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Textures" hidden="true">
+							<Size x="22" y="21"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.52343750" right="0.97656250" top="0.25781250" bottom="0.36914063"/>
+							<Animations>
+								<AnimationGroup parentKey="Anim">
+									<Scale childKey="Transition" startDelay="0.15" duration="0.2" scaleX="1.381" scaleY="1.381" order="1"/>
+								</AnimationGroup>
+							</Animations>
+						</Texture>
+						<Texture parentKey="OuterGlow" file="Interface\AddOns\ezCollections\Interface\SpellActivationOverlay\IconAlert" alpha="0">
+							<Size x="30" y="29"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+							<TexCoords left="0.00781250" right="0.50781250" top="0.53515625" bottom="0.78515625"/>
+							<Animations>
+								<AnimationGroup parentKey="Anim">
+									<Alpha duration="0" change="-1" order="1"/>
+									<Alpha childKey="OuterGlow" duration="0.15" change="1" order="1"/>
+									<Alpha childKey="OuterGlow" duration="0.15" change="-1" order="2"/>
+								</AnimationGroup>
+							</Animations>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Animations>
+					<AnimationGroup parentKey="Anim">
+						<Alpha duration="0.35" change="0" order="1"/>
+						<Scripts>
+							<OnFinished>
+								local frame = self:GetParent();
+								frame:Hide();
+								local slotButton = frame:GetParent();
+								WardrobeTransmogFrame_UpdateSlotButton(slotButton);
+							</OnFinished>
+						</Scripts>
+					</AnimationGroup>
+				</Animations>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad function="WardrobeTransmogButton_OnLoad"/>
+			<OnClick function="WardrobeTransmogButton_OnClick"/>
+			<OnEnter function="WardrobeTransmogButton_OnEnter"/>
+			<OnLeave function="WardrobeTransmogButton_OnLeave"/>
+		</Scripts>
+		<HighlightTexture atlas="transmog-frame-highlighted-small" alphaMode="ADD" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+			<TexCoords left="0.322265625" right="0.369140625" top="0.783203125" bottom="0.830078125"/>
+			<Size x="24" y="24"/>
+			<Anchors>
+				<Anchor point="CENTER"/>
+			</Anchors>
+		</HighlightTexture>
+	</Button>
+
+	<Frame name="WardrobeFrame" inherits="PortraitFrameTemplate" toplevel="true" frameStrata="HIGH" enableMouse="true" parent="UIParent" hidden="true" movable="true" clampedToScreen="true">
+		<Attributes>
+			<Attribute name="UIPanelLayout-defined" type="boolean" value="true"/>
+			<Attribute name="UIPanelLayout-enabled" type="boolean" value="true"/>
+			<Attribute name="UIPanelLayout-area" type="string" value="left"/>
+			<Attribute name="UIPanelLayout-pushable" type="number" value="0"/>
+			<Attribute name="UIPanelLayout-whileDead" type="boolean" value="true"/>
+			<Attribute name="UIPanelLayout-width" type="number" value="965"/>
+			<Attribute name="UIPanelLayout-xoffset" type="number" value="15"/>
+			<Attribute name="UIPanelLayout-yoffset" type="number" value="-14"/>
+		</Attributes>
+		<Size x="965" y="606"/>
+		<Anchors>
+			<Anchor point="CENTER" x="0" y="0"/>
+		</Anchors>
+		<Frames>
+			<Button inherits="ezCollectionsMovingHeaderTemplate" />
+			<Button name="$parentPortraitButton">
+				<Size x="64" y="64" />
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="$parentPortrait" />
+				</Anchors>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Textures\PortraitHighlight" alphaMode="ADD" alpha="0.75" />
+				<Scripts>
+					<OnLoad>
+						Mixin(self, SetShownMixin);
+						function self:UpdateVisibility()
+							self:SetShown(ezCollections.Config.Wardrobe.PortraitButton);
+						end
+					</OnLoad>
+					<OnClick>
+						HideUIPanel(WardrobeFrame);
+						if not ezCollections.Config.Wardrobe.WindowsLockCollections then
+							CollectionsJournal:ClearAllPoints();
+							CollectionsJournal:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", WardrobeFrame:GetLeft(), WardrobeFrame:GetBottom());
+						end
+						ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_APPEARANCES);
+						WardrobeFrame.PortraitHelpBox:Hide();
+						CollectionsJournal.PortraitHelpBox:Hide();
+						ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_EZCOLLECTIONS_PORTRAIT_BUTTON, true);
+					</OnClick>
+					<OnMouseDown>
+						local offset = 0.015;
+						self:GetParent().portrait:SetTexCoord(-offset, 1 - offset, -offset, 1 - offset);
+					</OnMouseDown>
+					<OnMouseUp>
+						self:GetParent().portrait:SetTexCoord(0, 1, 0, 1);
+					</OnMouseUp>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -10, -10);
+						GameTooltip:SetText(ezCollections.L["Transmog.Switch.Collections"]);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Frame name="$parentPortraitHelpBox" parentKey="PortraitHelpBox" inherits="GlowBoxTemplate" enableMouse="true" frameStrata="DIALOG">
+				<Size x="280" y="100"/>
+				<Anchors>
+					<Anchor point="BOTTOM" relativeTo="$parentPortraitButton" relativePoint="TOP" x="108" y="22"/>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Text" inherits="GameFontHighlightLeft" justifyV="TOP">
+							<Size x="248" y="0"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" x="16" y="-22"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+						<Anchors>
+							<Anchor point="TOPRIGHT" x="6" y="6"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								self:GetParent():Hide();
+								ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_EZCOLLECTIONS_PORTRAIT_BUTTON, true);
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Frame parentKey="Arrow" inherits="GlowBoxArrowTemplate">
+						<Anchors>
+							<Anchor point="TOP" relativePoint="BOTTOM" x="-108" y="3"/>
+						</Anchors>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self.Arrow.Glow:ClearAllPoints();
+						self.Arrow.Glow:SetPoint("CENTER", self.Arrow.Arrow, "CENTER", 0, -4);
+					</OnLoad>
+					<OnShow>
+						self:SetFrameStrata("DIALOG");
+						self.Text:SetText(ezCollections.L["Tutorial.PortraitButton"]);
+						self:SetHeight(self.Text:GetHeight() + 42);
+						--if ezCollections:GetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_EZCOLLECTIONS_PORTRAIT_BUTTON) then
+							self:Hide();
+						--end
+					</OnShow>
+				</Scripts>
+			</Frame>
+			<Frame name="WardrobeTransmogFrame">
+				<Size x="300" y="495"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="4" y="-86"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture name="$parentMoneyLeft" parentKey="MoneyLeft" file="Interface\AddOns\ezCollections\Interface\Common\MoneyFrame">
+							<Size x="8" y="20"/>
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" x="-3" y="-22"/>
+							</Anchors>
+							<TexCoords left="0.9375" right="1" top="0" bottom="0.3125"/>
+						</Texture>
+						<Texture name="$parentMoneyMiddle" parentKey="MoneyMiddle" file="Interface\AddOns\ezCollections\Interface\Common\MoneyFrame">
+							<Size x="154" y="20"/>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentMoneyLeft" relativePoint="RIGHT"/>
+							</Anchors>
+							<TexCoords left="0" right="1" top="0.3125" bottom="0.6250"/>
+						</Texture>						
+						<Texture name="$parentMoneyRight" parentKey="MoneyRight" file="Interface\AddOns\ezCollections\Interface\Common\MoneyFrame">
+							<Size x="8" y="20"/>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentMoneyMiddle" relativePoint="RIGHT"/>
+							</Anchors>
+							<TexCoords left="0" right="0.0625" top="0" bottom="0.3125"/>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame parentKey="Inset" inherits="InsetFrameTemplate" setAllPoints="true">
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture parentKey="BG">
+									<Size x="294" y="494"/>
+									<Anchors>
+										<Anchor point="TOP" x="0" y="-1"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+					</Frame>
+					<Frame parentKey="OutfitDropDown" name="WardrobeOutfitDropDown" inherits="WardrobeOutfitDropDownTemplate" mixin="WardrobeOutfitMixin">
+						<KeyValues>
+							<KeyValue key="width" value="188" type="number"/>
+							<KeyValue key="minMenuStringWidth" value="152" type="number"/>
+							<KeyValue key="maxMenuStringWidth" value="216" type="number"/>
+						</KeyValues>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="-14" y="28"/>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.width = 188;
+								self.minMenuStringWidth = 152;
+								self.maxMenuStringWidth = 216;
+								WardrobeOutfitDropDownTemplate_OnLoad(self);
+								Mixin(self, WardrobeOutfitMixin);
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame name="$parentOutfitHelpBox" parentKey="OutfitHelpBox" inherits="GlowBoxTemplate" enableMouse="true" hidden="true" frameStrata="DIALOG">
+						<Size x="220" y="100"/>
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="WardrobeOutfitDropDown" relativePoint="RIGHT" x="3" y="-2"/>
+						</Anchors>
+						<Layers>
+							<Layer level="OVERLAY">
+								<FontString parentKey="Text" inherits="GameFontHighlightLeft" justifyV="TOP" text="TRANSMOG_OUTFIT_DROPDOWN_TUTORIAL">
+									<Size x="188" y="0"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" x="16" y="-22"/>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+								<Anchors>
+									<Anchor point="TOPRIGHT" x="6" y="6"/>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										self:GetParent():Hide();
+										ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_TRANSMOG_OUTFIT_DROPDOWN, true);
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Frame parentKey="Arrow" inherits="GlowBoxArrowTemplate">
+								<Anchors>
+									<Anchor point="RIGHT" relativePoint="LEFT" x="36" y="16"/>
+								</Anchors>
+							</Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								SetClampedTextureRotation(self.Arrow.Arrow, 90);
+								SetClampedTextureRotation(self.Arrow.Glow, 90);
+								self.Arrow.Glow:ClearAllPoints();
+								self.Arrow.Glow:SetPoint("CENTER", self.Arrow.Arrow, "CENTER", -3, 0);
+							</OnLoad>
+							<OnShow>
+								self:SetFrameStrata("DIALOG");
+								self:SetHeight(self.Text:GetHeight()+42);
+							</OnShow>
+						</Scripts>
+					</Frame>
+					<DressUpModel name="$parentModel" parentKey="Model" enableMouse="true" inherits="ModelWithControlsTemplate">
+						<Size x="294" y="488"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="2" y="-4"/>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK">
+								<Texture setAllPoints="true">
+									<Color r="1" g="0" b="0" a="0"/>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								Model_OnLoad(self, MODELFRAME_MAX_PLAYER_ZOOM, 0, 0);
+								self:SetPosition(0, 0, 0);
+							</OnLoad>
+							<OnHide>
+								Model_OnHide(self);
+								self:SetSheathed(false);
+							</OnHide>
+						</Scripts>
+						<Frames>
+							<Button parentKey="ClearAllPendingButton" inherits="UIMenuButtonStretchTemplate" hidden="true">
+								<Size x="26" y="26"/>
+								<Anchors>
+									<Anchor point="TOPRIGHT" x="-5" y="-10"/>
+								</Anchors>
+								<Layers>
+									<Layer level="ARTWORK">
+										<Texture parentKey="Icon" atlas="transmog-icon-revert-small" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+											<Size x="25" y="24"/>
+											<TexCoords left="0.533203125" right="0.58203125" top="0.248046875" bottom="0.294921875"/>
+											<Anchors>
+												<Anchor point="LEFT" x="1"/>
+											</Anchors>
+										</Texture>
+									</Layer>
+								</Layers>
+								<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+								<Scripts>
+									<OnClick>
+										PlaySoundFile([[Interface\AddOns\ezCollections\Sounds\UI_Reforging_Restore.wav]]);
+										C_Transmog.ClearPending();
+									</OnClick>
+									<OnEnter>
+										GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+										GameTooltip:SetText(TRANSMOGRIFY_CLEAR_ALL_PENDING);
+									</OnEnter>
+									<OnLeave function="GameTooltip_Hide"/>
+								</Scripts>
+							</Button>
+							<Button name="$parentHeadButton" parentKey="HeadButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" x="-121" y="-41"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentShoulderButton" parentKey="ShoulderButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentHeadButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentBackButton" parentKey="BackButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentShoulderButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentChestButton" parentKey="ChestButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentBackButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentShirtButton" parentKey="ShirtButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentChestButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentTabardButton" parentKey="TabardButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentShirtButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentWristButton" parentKey="WristButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentTabardButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentHandsButton" parentKey="HandsButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" x="123" y="-118"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentWaistButton" parentKey="WaistButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentHandsButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentLegsButton" parentKey="LegsButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentWaistButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentFeetButton" parentKey="FeetButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="TOP" relativeTo="$parentLegsButton" relativePoint="BOTTOM" x="0" y="-10"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentMainHandButton" parentKey="MainHandButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="BOTTOM" x="-26" y="45"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentSecondaryHandButton" parentKey="SecondaryHandButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="BOTTOM" x="27" y="45"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentMainHandEnchantButton" parentKey="MainHandEnchantButton" parentArray="SlotButtons" inherits="WardrobeTransmogEnchantButtonTemplate" frameLevel="10">
+								<Anchors>
+									<Anchor point="CENTER" x="-26" y="-203"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentSecondaryHandEnchantButton" parentKey="SecondaryHandEnchantButton" parentArray="SlotButtons" inherits="WardrobeTransmogEnchantButtonTemplate" frameLevel="10">
+								<Anchors>
+									<Anchor point="CENTER" x="27" y="-203"/>
+								</Anchors>
+							</Button>
+							<Button name="$parentRangedButton" parentKey="RangedButton" parentArray="SlotButtons" inherits="WardrobeTransmogButtonTemplate">
+								<Anchors>
+									<Anchor point="BOTTOM" x="90" y="45"/>
+								</Anchors>
+							</Button>
+							<Frame name="$parentWeaponHandWarning" parentKey="WeaponHandWarning" alpha="0" hidden="true">
+								<Size y="46" />
+								<Anchors>
+									<Anchor point="LEFT" x="5" />
+									<Anchor point="RIGHT" x="-5" />
+									<Anchor point="BOTTOM" y="5" />
+								</Anchors>
+								<Layers>
+									<Layer level="BACKGROUND">
+										<Texture name="$parentBackgroundBottom" file="Interface\AddOns\ezCollections\Interface\Common\Search" alphaMode="ADD">
+											<Size y="2" />
+											<Anchors>
+												<Anchor point="LEFT" />
+												<Anchor point="RIGHT" />
+												<Anchor point="BOTTOM" />
+											</Anchors>
+											<TexCoords left="0.001953125" right="0.501953125" top="0.5859375" bottom="0.6015625" />
+											<Color r="1" g="0.5" b="0" a="1" />
+										</Texture>
+										<Texture file="Interface\AddOns\ezCollections\Interface\Common\Search" alphaMode="ADD">
+											<Anchors>
+												<Anchor point="TOPLEFT" relativeTo="$parentBackgroundBottom" />
+												<Anchor point="BOTTOMRIGHT" relativeTo="$parentBackgroundBottom" />
+											</Anchors>
+											<TexCoords left="0.001953125" right="0.501953125" top="0.5859375" bottom="0.6015625" />
+											<Color r="1" g="0.5" b="0" a="1" />
+										</Texture>
+										<Texture file="Interface\AddOns\ezCollections\Interface\Common\Search" alphaMode="ADD">
+											<Anchors>
+												<Anchor point="TOP" />
+												<Anchor point="LEFT" />
+												<Anchor point="RIGHT" />
+												<Anchor point="BOTTOM" relativeTo="$parentBackgroundBottom" relativePoint="TOP" />
+											</Anchors>
+											<TexCoords left="0.001953125" right="0.501953125" top="0.421875" bottom="0.5859375" />
+											<Color r="1" g="0.5" b="0" a="1" />
+										</Texture>
+										<Texture file="Interface\AddOns\ezCollections\Interface\Common\Search" alphaMode="ADD">
+											<Anchors>
+												<Anchor point="TOP" />
+												<Anchor point="LEFT" />
+												<Anchor point="RIGHT" />
+												<Anchor point="BOTTOM" relativeTo="$parentBackgroundBottom" relativePoint="TOP" />
+											</Anchors>
+											<TexCoords left="0.001953125" right="0.501953125" top="0.421875" bottom="0.5859375" />
+											<Color r="1" g="0.5" b="0" a="1" />
+										</Texture>
+									</Layer>
+									<Layer level="ARTWORK">
+										<FontString parentKey="Text" inherits="GameFontNormalSmall" justifyV="BOTTOM" wordwrap="true" text="">
+											<Anchors>
+												<Anchor point="TOP" />
+												<Anchor point="LEFT" x="5" />
+												<Anchor point="RIGHT" x="-5" />
+												<Anchor point="BOTTOM" y="5" />
+											</Anchors>
+										</FontString>
+									</Layer>
+								</Layers>
+								<Scripts>
+									<OnShow>
+										self:SetAlpha(0);
+										self.Text:SetText(ezCollections.L["Transmog.WeaponHandWarning"]);
+									</OnShow>
+									<OnUpdate>
+										local slot = WardrobeTransmogFrame.selectedSlotButton and WardrobeTransmogFrame.selectedSlotButton.slot;
+										if slot == "MAINHANDSLOT" or slot == "SECONDARYHANDSLOT" then
+											if self:GetAlpha() &lt; 1 then
+												self:SetAlpha(self:GetAlpha() + elapsed * 2);
+											end
+										else
+											if self:GetAlpha() > 0 then
+												self:SetAlpha(self:GetAlpha() - elapsed * 2);
+												if self:GetAlpha() &lt;= 0 then
+													self:Hide();
+												end
+											end
+										end
+									</OnUpdate>
+								</Scripts>
+							</Frame>
+						</Frames>
+					</DressUpModel>
+					<Frame parentKey="MoneyFrame" name="WardrobeTransmogMoneyFrame" inherits="SmallMoneyFrameTemplate">
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="$parentMoneyRight" x="6" y="0"/>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								SmallMoneyFrame_OnLoad(self);
+								MoneyFrame_SetType(self, "STATIC");
+								local old = self.info;
+								self.info = { };
+								for k, v in pairs(old) do
+									self.info[k] = v;
+								end
+								self.info.showSmallerCoins = "Backpack";
+							</OnLoad>
+						</Scripts>
+					</Frame>					
+					<Button parentKey="TokenFrame" name="WardrobeTransmogTokenFrame" inherits="SmallDenominationTemplate" hidden="true">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parentMoneyLeft" x="6" y="0"/>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								WardrobeTransmogTokenFrameText:SetPoint("LEFT", WardrobeTransmogTokenFrame, "LEFT");
+							</OnLoad>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetHyperlink("item:"..ezCollections.Token);
+							</OnEnter>
+						</Scripts>
+					</Button>
+					<Button name="$parentApplyButton" parentKey="ApplyButton" inherits="UIPanelButtonTemplate" text="APPLY">
+						<Size x="112" y="22"/>
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" x="0" y="-22"/>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								WardrobeTransmogFrame_ApplyPending(0);
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Frame name="$parentSpecDropDown" parentKey="SpecDropDown" inherits="UIDropDownMenuTemplate">
+						<Scripts>
+							<OnLoad function="WardrobeTransmogFrameSpecDropDown_OnLoad"/>
+						</Scripts>
+					</Frame>
+					<Button name="$parentSpecButton" parentKey="SpecButton" inherits="UIMenuButtonStretchTemplate">
+						<Size x="22" y="22"/>
+						<Anchors>
+							<Anchor point="RIGHT" relativeTo="$parentApplyButton" relativePoint="LEFT" x="1" y="0"/>
+						</Anchors>
+						<Layers>
+							<Layer level="ARTWORK" textureSubLevel="1">
+								<Texture file="Interface\AddOns\ezCollections\Interface\Buttons\SquareButtonTextures" parentKey="Icon">
+									<Size x="12" y="12"/>
+									<Anchors>
+										<Anchor point="CENTER" x="0" y="0"/>
+									</Anchors>
+									<TexCoords left="0.45312500" right="0.64062500" top="0.20312500" bottom="0.01562500"/>
+								</Texture>
+							</Layer>
+						</Layers>
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+						<Scripts>
+							<OnClick>
+								PlaySound("igMainMenuOptionCheckBoxOn");
+								ToggleDropDownMenu(1, nil, self:GetParent().SpecDropDown, self, 0, 0);
+								self:GetParent().SpecHelpBox:Hide();
+								ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_TRANSMOG_SPECS_BUTTON, true);
+							</OnClick>
+							<OnMouseDown>
+								self.Icon:SetPoint("CENTER", -1, -1);
+							</OnMouseDown>
+							<OnMouseUp>
+								self.Icon:SetPoint("CENTER", 0, 0);
+							</OnMouseUp>
+						</Scripts>
+					</Button>
+					<Frame name="$parentSpecHelpBox" parentKey="SpecHelpBox" inherits="GlowBoxTemplate" enableMouse="true" hidden="true" frameStrata="DIALOG">
+						<Size x="220" y="100"/>
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parentSpecButton" relativePoint="BOTTOM" x="0" y="-22"/>
+						</Anchors>
+						<Layers>
+							<Layer level="OVERLAY">
+								<FontString parentKey="Text" inherits="GameFontHighlightLeft" justifyV="TOP" text="TRANSMOG_SPECS_BUTTON_TUTORIAL">
+									<Size x="188" y="0"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" x="16" y="-24"/>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+								<Anchors>
+									<Anchor point="TOPRIGHT" x="6" y="6"/>
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										self:GetParent():Hide();
+										ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_TRANSMOG_SPECS_BUTTON, true);
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Frame parentKey="Arrow" inherits="GlowBoxArrowTemplate">
+								<Anchors>
+									<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="-3"/>
+								</Anchors>
+							</Frame>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								SetClampedTextureRotation(self.Arrow.Arrow, 180);
+								SetClampedTextureRotation(self.Arrow.Glow, 180);
+								self.Arrow.Glow:ClearAllPoints();
+								self.Arrow.Glow:SetPoint("BOTTOM", self, "TOP", 0, -3);
+							</OnLoad>
+							<OnShow>
+								self:SetHeight(self.Text:GetHeight() + 42);
+							</OnShow>
+						</Scripts>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad function="WardrobeTransmogFrame_OnLoad"/>
+					<OnEvent function="WardrobeTransmogFrame_OnEvent"/>
+					<OnShow function="WardrobeTransmogFrame_OnShow"/>
+					<OnHide function="WardrobeTransmogFrame_OnHide"/>
+					<OnUpdate function="WardrobeTransmogFrame_OnUpdate"/>
+				</Scripts>
+			</Frame>
+			<Button name="$parentTab1" inherits="CollectionsJournalTabCutoff" text="MOUNTS" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="11" y="2"/>
+				</Anchors>
+			</Button>
+			<Button name="$parentTab2" inherits="CollectionsJournalTabCutoff" text="COMPANIONS" id="2">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT" x="-16" y="0"/>
+				</Anchors>
+			</Button>
+			<Button name="$parentTab3" inherits="CollectionsJournalTab" text="TOY_BOX" id="3">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT" x="-16" y="0"/>
+				</Anchors>
+			</Button>
+			<Button name="$parentTab4" inherits="CollectionsJournalTab" text="HEIRLOOMS" id="4">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTab3" relativePoint="RIGHT" x="-16" y="0"/>
+				</Anchors>
+			</Button>
+			<Button name="$parentTab5" inherits="CollectionsJournalTab" text="WARDROBE" id="5">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTab4" relativePoint="RIGHT" x="-16" y="0"/>
+				</Anchors>
+			</Button>
+			<Button name="$parentTab6" inherits="CollectionsJournalTab" text="TRANSMOGRIFY" id="6">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentTab5" relativePoint="RIGHT" x="0" y="0"/>
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad function="WardrobeFrame_OnLoad"/>
+		</Scripts>
+	</Frame>
+	<DressUpModel name="ezCollectionsModelPreloader" parent="UIParent">
+		<Size x="1" y="1" />
+		<Anchors>
+			<Anchor point="TOPLEFT" />
+		</Anchors>
+		<Scripts>
+			<OnLoad>
+				self:RegisterEvent("UNIT_PORTRAIT_UPDATE");
+				function self:Refresh()
+					-- Keep the invisman model always loaded, otherwise preview may randomly break if the model gets unloaded due to it not being used anywhere
+					if ezCollections.CreatureWeaponPreview and ezCollections.CreatureWeaponPreview ~= 0 then
+						self:Hide();
+						self:Show();
+						self:SetCreature(ezCollections.CreatureWeaponPreview);
+					end
+				end
+			</OnLoad>
+			<OnEvent>
+				if ... == "player" then
+					self:Refresh();
+				end
+			</OnEvent>
+		</Scripts>
+	</DressUpModel>
+	<DressUpModel name="ezCollectionsClaimQuestModelTemplate" virtual="true">
+		<Size x="78" y="104" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture setAllPoints="true">
+					<Color r="0" g="0" b="0" />
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Border" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+					<Size x="96" y="122" />
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="-3" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="TransmogStateTexture" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" alphaMode="ADD" hidden="true">
+					<Size x="102" y="128" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" alphaMode="ADD">
+					<Size x="84" y="110" />
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0" />
+					</Anchors>
+					<TexCoords left="0.205078125" right="0.369140625" top="0.439453125" bottom="0.654296875" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="Loading" inherits="LoadingSpinnerTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="CENTER" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self.TransmogStateTexture, SetAtlasMixin);
+				Mixin(self.Border, SetAtlasMixin);
+				Mixin(self, WardrobeItemsModelMixin);
+				self:SetScript("OnUpdate", self.OnUpdate);
+				self:OnLoad();
+				function self:SetSkin(skin)
+					local model = self;
+					local popup = self:GetParent():GetParent();
+
+					if skin then
+						local info = ezCollections:GetSkinInfo(skin);
+						local isArmor = not (info and info.Weapon);
+						local needsDressing = skin ~= model.skin or model.awaitingItemCache;
+						local hasItemData = GetItemInfo(skin);
+						if not hasItemData then
+							ezCollections:QueryItem(skin);
+						end
+
+						local invType = select(9, GetItemInfo(skin));
+						local isOffHand = invType == "INVTYPE_WEAPONOFFHAND" or invType == "INVTYPE_HOLDABLE" or invType == "INVTYPE_RANGED";
+						if needsDressing and not isArmor then
+							WardrobeCollectionFrame.DualWieldResetter:Dress();
+						end
+						model:SetModelScale(isArmor and 10 or 1);
+						model:SetType(isArmor and "player" or isOffHand and "off" or "main");
+
+						model:Show();
+
+						local cameraID = C_TransmogCollection.GetAppearanceCameraID(skin);
+						Model_ApplyUICamera(model, cameraID);
+						model.cameraID = cameraID;
+
+						if needsDressing then
+							model:Undress();
+							model:TryOn(skin);
+						end
+						model.skin = skin;
+
+						if ( skin == popup.skin ) then
+							model.TransmogStateTexture:SetAtlas("transmog-wardrobe-border-current", true);
+							model.TransmogStateTexture:Show();
+						else
+							model.TransmogStateTexture:Hide();
+						end
+
+						model.Border:SetAtlas("transmog-wardrobe-border-collected");
+
+						if GameTooltip:GetOwner() == model then
+							GameTooltip:SetOwner(self, "ANCHOR_BOTTOM");
+							GameTooltip:SetHyperlink("item:"..self.skin);
+							GameTooltip:Show();
+						end
+
+						if hasItemData then
+							model.Loading:Hide();
+							model.awaitingItemCache = nil;
+						else
+							model:SetPosition(0, 100, 0);
+							model.cameraID = nil;
+							model.awaitingItemCache = skin;
+							model.Loading:Show();
+							model.Loading.AnimFrame.Anim:Play();
+							if not popup.itemCacheRefreshTimer then
+								popup.itemCacheRefreshTimer = ezCollections.AceAddon:ScheduleRepeatingTimer(function()
+									local missing = false;
+									if popup:IsVisible() then
+										for _, model in ipairs(popup.Models) do
+											if model:IsShown() and model.awaitingItemCache then
+												if GetItemInfo(model.awaitingItemCache) then
+													model:SetSkin(model.skin);
+												else
+													missing = true;
+												end
+											end
+										end
+									end
+									if not missing then
+										ezCollections.AceAddon:CancelTimer(popup.itemCacheRefreshTimer);
+										popup.itemCacheRefreshTimer = nil;
+									end
+								end, 0.1);
+							end
+						end
+					else
+						model:Hide();
+						model.type = nil;
+						model.skin = nil;
+						model.Loading:Hide();
+						model.awaitingItemCache = nil;
+					end
+				end
+			</OnLoad>
+			<OnMouseDown>
+				if IsModifiedClick("CHATLINK") then
+					local name, link = GetItemInfo(self.skin);
+					if link then
+						HandleModifiedItemClick(link);
+					end
+				elseif IsModifiedClick("DRESSUP") then
+					DressUpItemLink("item:"..self.skin);
+				elseif button == "LeftButton" then
+					local popup = self:GetParent():GetParent();
+					popup.skin = self.skin;
+					for _, model in ipairs(popup.Models) do
+						if model:IsShown() then
+							model:SetSkin(model.skin);
+						end
+					end
+					PlaySound("igChatBottom");
+				end
+			</OnMouseDown>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_BOTTOM");
+				GameTooltip:SetHyperlink("item:"..self.skin);
+				GameTooltip:Show();
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide" />
+			<OnHide>
+				self:SetPosition(0, 0, 0);
+				self:SetFacing(0);
+				self.cameraAnimID = nil;
+				self.cameraID = nil;
+			</OnHide>
+		</Scripts>
+	</DressUpModel>
+	<Frame name="ezCollectionsClaimQuestPopup" parent="UIParent" hidden="true" frameStrata="DIALOG" enableMouse="true">
+		<Size x="320" y="284"/>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32"/>
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentQuestName" parentKey="QuestName" inherits="GameFontNormalHuge">
+					<Size y="20" />
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-20" />
+						<Anchor point="LEFT" x="20" y="0" />
+						<Anchor point="RIGHT" x="-20" y="0" />
+					</Anchors>
+				</FontString>
+				<FontString name="$parentTitle" parentKey="Title" inherits="GameFontHighlight">
+					<Size y="30" />
+					<Anchors>
+						<Anchor point="TOP" relativeTo="$parentQuestName" relativePoint="BOTTOM" />
+						<Anchor point="LEFT" x="20" y="0" />
+						<Anchor point="RIGHT" x="-20" y="0" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Footer" inherits="GameFontNormal">
+					<Size y="40" />
+					<Anchors>
+						<Anchor point="BOTTOM" y="46" />
+						<Anchor point="LEFT" x="20" y="0" />
+						<Anchor point="RIGHT" x="-20" y="0" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentModelsFrame" parentKey="ModelsFrame">
+				<Size x="1" y="104" />
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentTitle" relativePoint="BOTTOM" y="-8" />
+				</Anchors>
+				<Frames>
+					<DressUpModel name="$parentModel1" inherits="ezCollectionsClaimQuestModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" />
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel2" inherits="ezCollectionsClaimQuestModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel1" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel3" inherits="ezCollectionsClaimQuestModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel2" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel4" inherits="ezCollectionsClaimQuestModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel3" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel5" inherits="ezCollectionsClaimQuestModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel4" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel6" inherits="ezCollectionsClaimQuestModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel5" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+				</Frames>
+			</Frame>
+			<Button name="$parentAcceptButton" parentKey="AcceptButton" inherits="StaticPopupButtonTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="-6" y="16"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						ezCollections:ClaimQuest(self:GetParent().quest.ID, self:GetParent().skin);
+						StaticPopupSpecial_Hide(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="CancelButton" inherits="StaticPopupButtonTemplate" text="CANCEL">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAcceptButton" relativePoint="RIGHT" x="13" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						StaticPopupSpecial_Hide(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.Models =
+				{
+					ezCollectionsClaimQuestPopupModelsFrameModel1,
+					ezCollectionsClaimQuestPopupModelsFrameModel2,
+					ezCollectionsClaimQuestPopupModelsFrameModel3,
+					ezCollectionsClaimQuestPopupModelsFrameModel4,
+					ezCollectionsClaimQuestPopupModelsFrameModel5,
+					ezCollectionsClaimQuestPopupModelsFrameModel6,
+				};
+				self.exclusive = true;
+				self.hideOnEscape = true;
+			</OnLoad>
+			<OnShow>
+				self.QuestName:SetText(format([[|TInterface\AddOns\ezCollections\Interface\QuestFrame\AutoQuest-Parts:16.5:9.5:0:1:512:64:69:88:1:34|t %s]], self.quest.Name));
+				self.Title:SetText(ezCollections.L["ClaimQuest.Popup.Title"]);
+				self.Footer:SetText(ezCollections.L["ClaimQuest.Popup.Footer"]);
+				self.AcceptButton:SetText(ezCollections.L["ClaimQuest.Popup.Claim"]);
+				for _, model in ipairs(self.Models) do
+					model:SetSkin(nil);
+				end
+				local width = 0;
+				for i, choice in ipairs(self.quest.Choices) do
+					local model = ezCollectionsClaimQuestPopup.Models[i]
+					model:SetSkin(choice);
+					if model:IsShown() then
+						width = width + model:GetWidth() + 16;
+					end
+				end
+				self.ModelsFrame:SetWidth(math.max(0, width - 16));
+				self:SetWidth(math.max(320, 20 + math.max(self.QuestName:GetStringWidth(), self.ModelsFrame:GetWidth()) + 20));
+			</OnShow>
+			<OnHide>
+				PlaySound("igMainMenuClose");
+			</OnHide>
+		</Scripts>
+	</Frame>
+	<DressUpModel name="ezCollectionsCameraPreviewModelTemplate" virtual="true">
+		<Size x="78" y="104" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture setAllPoints="true">
+					<Color r="0" g="0" b="0" />
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Border" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+					<Size x="96" y="122" />
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="-3" />
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Text" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="BOTTOM" y="-8" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				Mixin(self.Border, SetAtlasMixin);
+				Mixin(self, WardrobeItemsModelMixin);
+				self:SetScript("OnUpdate", self.OnUpdate);
+				self:OnLoad();
+				self.type = nil;
+				function self.SetOption(model, option)
+					local baseSourceID, baseVisualID, appliedSourceID, appliedVisualID, pendingSourceID, pendingVisualID, hasPendingUndo = C_Transmog.GetSlotVisualInfo(GetInventorySlotInfo(model.Slot), LE_TRANSMOG_TYPE_APPEARANCE);
+
+					model:SetModelScale(10);
+					model:SetType("player");
+					model:Show();
+					model:Undress();
+					model:TryOn(appliedSourceID ~= 0 and appliedSourceID ~= ezCollections:GetHiddenVisualItem() and appliedSourceID or baseSourceID);
+
+					local oldOption = ezCollections.Config.Wardrobe.CameraOption;
+					ezCollections.Config.Wardrobe.CameraOption = option;
+					local cameraID = ezCollections:GetCharacterCameraID(model.InvType);
+					ezCollections.Config.Wardrobe.CameraOption = oldOption;
+					Model_ApplyUICamera(model, cameraID);
+					model.cameraID = cameraID;
+
+					model.Border:SetAtlas("transmog-wardrobe-border-collected");
+				end
+			</OnLoad>
+			<OnHide>
+				self.type = nil;
+			</OnHide>
+		</Scripts>
+	</DressUpModel>
+	<Frame name="ezCollectionsCameraPreviewPopup" parent="UIParent" hidden="true" frameStrata="DIALOG" enableMouse="true">
+		<Size x="494" y="380"/>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="11" top="11" bottom="11"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32"/>
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Footer" inherits="GameFontWhite" wordwrap="true" justifyV="BOTTOM">
+					<Size y="52" />
+					<Anchors>
+						<Anchor point="BOTTOM" y="84" />
+						<Anchor point="LEFT" x="20" y="0" />
+						<Anchor point="RIGHT" x="-20" y="0" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentModelsFrame" parentKey="ModelsFrame">
+				<Size x="454" y="224" />
+				<Anchors>
+					<Anchor point="TOP" y="-20" />
+				</Anchors>
+				<Frames>
+					<DressUpModel name="$parentModel1" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" />
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel2" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel1" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel3" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel2" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel4" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel3" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel5" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel4" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel6" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel1" relativePoint="BOTTOMLEFT" x="0" y="-16"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel7" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel6" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel8" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel7" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel9" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel8" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+					<DressUpModel name="$parentModel10" inherits="ezCollectionsCameraPreviewModelTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentModel9" relativePoint="TOPRIGHT" x="16" y="0"/>
+						</Anchors>
+					</DressUpModel>
+				</Frames>
+			</Frame>
+			<Button name="$parentAcceptButton" parentKey="AcceptButton" inherits="StaticPopupButtonTemplate" text="OKAY">
+				<Anchors>
+					<Anchor point="BOTTOM" y="16" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						if self:GetParent().Option then
+							ezCollections.Config.Wardrobe.CameraOption = self:GetParent().Option;
+							ezCollections.Config.Wardrobe.CameraOptionSetup = true;
+							ezCollections:RaiseEvent("TRANSMOG_COLLECTION_UPDATED");
+						end
+						StaticPopupSpecial_Hide(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="$parentOptions" parentKey="Options" inherits="UIDropDownMenuTemplate">
+				<Size x="100" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOM" relativeTo="$parentAcceptButton" relativePoint="TOP" y="8" />
+				</Anchors>
+			</Frame>
+			<Button parentKey="OptionsPrev" inherits="CollectionsPrevPageButton">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentOptions" relativePoint="LEFT" x="12" y="2" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						local prevOption = ezCollections.CameraOptions[#ezCollections.CameraOptions];
+						for index, option in ipairs(ezCollections.CameraOptions) do
+							if option == self:GetParent().Option then
+								break;
+							else
+								prevOption = option;
+							end
+						end
+						self:GetParent():SetOption(prevOption);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="OptionsNext" inherits="CollectionsNextPageButton">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentOptions" relativePoint="RIGHT" x="-10" y="2" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						local nextOption = ezCollections.CameraOptions[1];
+						for index, option in ipairs(ezCollections.CameraOptions) do
+							if index > 1 and ezCollections.CameraOptions[index - 1] == self:GetParent().Option then
+								nextOption = option;
+								break;
+							end
+						end
+						self:GetParent():SetOption(nextOption);
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.Option = nil;
+				self.Slots = { 1, 2, 4, 5, 3, 7, 8, 9, 10, 11 };
+				self.Models = { };
+				for i, slot in ipairs(self.Slots) do
+					local slotInfo = TRANSMOG_SLOTS[slot];
+					local name, _, _, _, _, _, invType = C_TransmogCollection.GetCategoryInfo(slotInfo.armorCategoryID);
+					local model = _G["ezCollectionsCameraPreviewPopupModelsFrameModel"..i];
+					model.Slot = slotInfo.slot;
+					model.InvType = invType;
+					model.Text:SetText(name);
+					table.insert(self.Models, model);
+				end
+				self.exclusive = true;
+				self.hideOnEscape = true;
+
+				function self:SetOption(option)
+					self.Option = option;
+					for _, model in ipairs(self.Models) do
+						model:SetOption(option);
+					end
+					UIDropDownMenu_SetSelectedValue(self.Options, option);
+					UIDropDownMenu_SetText(self.Options, ezCollections:GetCameraOptionName(option));
+				end
+				UIDropDownMenu_SetWidth(self.Options, 160);
+				ezCollections:UIDropDownMenu_Initialize(self.Options, function()
+					local info = UIDropDownMenu_CreateInfo();
+					for index, option in ipairs(ezCollections.CameraOptions) do
+						info.value = option;
+						info.text = ezCollections:GetCameraOptionName(option);
+						info.checked = self.Option == option;
+						info.func = function(button)
+							self:SetOption(button.value);
+						end;
+						UIDropDownMenu_AddButton(info);
+					end
+				end);
+			</OnLoad>
+			<OnShow>
+				self.Footer:SetText(ezCollections.L["Popup.Cameras"]);
+				self:SetOption(ezCollections.Config.Wardrobe.CameraOption);
+			</OnShow>
+			<OnHide>
+				PlaySound("igMainMenuClose");
+			</OnHide>
+		</Scripts>
+	</Frame>
+	<Frame name="ezCollectionsMinimapHelpBox" inherits="GlowBoxTemplate" enableMouse="true" hidden="true" frameStrata="DIALOG">
+		<Size x="220" y="100"/>
+		<Anchors>
+			<Anchor point="LEFT" relativeTo="WardrobeOutfitDropDown" relativePoint="RIGHT" x="3" y="-2"/>
+		</Anchors>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Text" inherits="GameFontHighlightLeft" justifyV="TOP">
+					<Size x="188" y="0"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="16" y="-22"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="6" y="6"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide();
+						ezCollections:SetCVarBitfield("closedInfoFrames", LE_FRAME_TUTORIAL_EZCOLLECTIONS_MICRO_BUTTON, true);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame parentKey="Arrow" inherits="GlowBoxArrowTemplate">
+				<Anchors>
+					<Anchor point="RIGHT" relativePoint="LEFT" x="36" y="16"/>
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				function self:SetLeft(left)
+					if left then
+						SetClampedTextureRotation(self.Arrow.Arrow, 90);
+						SetClampedTextureRotation(self.Arrow.Glow, 90);
+						self.Arrow:ClearAllPoints();
+						self.Arrow:SetPoint("RIGHT", self, "LEFT", 36, 16);
+						self.Arrow.Glow:ClearAllPoints();
+						self.Arrow.Glow:SetPoint("CENTER", self.Arrow.Arrow, "CENTER", -3, 0);
+					else
+						SetClampedTextureRotation(self.Arrow.Arrow, 270);
+						SetClampedTextureRotation(self.Arrow.Glow, 270);
+						self.Arrow:ClearAllPoints();
+						self.Arrow:SetPoint("LEFT", self, "RIGHT", -2, 16);
+						self.Arrow.Glow:ClearAllPoints();
+						self.Arrow.Glow:SetPoint("CENTER", self.Arrow.Arrow, "CENTER", 3, 0);
+					end
+				end
+			</OnLoad>
+			<OnShow>
+				self:SetFrameStrata("DIALOG");
+				self.Text:SetText(ezCollections.L["Tutorial.MicroButton"]);
+				self:SetHeight(self.Text:GetHeight()+42);
+			</OnShow>
+		</Scripts>
+	</Frame>
+</Ui>

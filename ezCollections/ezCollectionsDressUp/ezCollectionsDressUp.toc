@@ -1,0 +1,10 @@
+## Interface: 30300
+## Title: |cFF00B0E8ez|rCollections|cFF00B0E8 [Dressing Room]|r
+## Title-ruRU: |cFF00B0E8ez|rCollections|cFF00B0E8 [Примерочная]|r
+## Notes: Adds support for new features to the Dressing Room UI
+## Notes-ruRU: Добавлеяет поддержку новых возможностей в интерфейс Примерочной
+## Author: ZEUStiger
+## Dependencies: ezCollections
+## X-Part-Of: ezCollections
+
+..\ezCollections\Interface\FrameXML\DressUpFrames.xml

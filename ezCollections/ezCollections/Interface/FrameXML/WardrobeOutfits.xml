@@ -1,0 +1,963 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="WardrobeOutfits.lua"/>
+	
+	<Button name="WardrobeOutfitButtonButtonTemplate" virtual="true">
+		<Scripts>
+			<OnEnter>
+				self:GetParent():GetParent():StopHideCountDown();
+				self.texture:SetAlpha(1.0);
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(self.tooltipText);
+			</OnEnter>
+			<OnLeave>
+				self:GetParent():GetParent():StartHideCountDown();
+				self.texture:SetAlpha(0.5);
+				GameTooltip_Hide();
+			</OnLeave>
+			<OnMouseDown>
+				self.texture:SetPoint("TOPLEFT", 1, -1);
+			</OnMouseDown>
+			<OnMouseUp>
+				self.texture:SetPoint("TOPLEFT", 0, 0);
+			</OnMouseUp>
+			<OnShow>
+				self.texture:SetPoint("TOPLEFT", 0, 0);
+			</OnShow>
+		</Scripts>
+	</Button>
+	<Button name="WardrobeOutfitButtonTemplate" parentArray="Buttons" virtual="true" mixin="WardrobeOutfitButtonMixin">
+		<Size x="0" y="20"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Selection" file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" setAllPoints="true" desaturated="true" hidden="true">
+					<Color r="0.5" g="0.5" b="0.5"/>
+				</Texture>
+			</Layer>
+			<Layer level="BORDER">
+				<Texture parentKey="Highlight" file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" setAllPoints="true" hidden="true"/>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Check" file="Interface\Buttons\UI-CheckBox-Check" hidden="false">
+					<Size x="16" y="16"/>
+				</Texture>
+				<Texture parentKey="Icon" hidden="false">
+					<Size x="19" y="19"/>
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="5" y="0"/>
+					</Anchors>
+					<Color r="0" g="1" b="0"/>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Prepaid" file="Interface\Minimap\Tracking\Auctioneer" hidden="true">
+					<Size x="14" y="14" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="EditButton" inherits="WardrobeOutfitButtonButtonTemplate">
+				<KeyValues>
+					<KeyValue key="tooltipText" value="TRANSMOG_OUTFIT_EDIT" type="global"/>
+				</KeyValues>
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="RIGHT" x="-2"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture file="Interface\WorldMap\GEAR_64GREY" alpha="0.5" parentKey="texture"/>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self.tooltipText = TRANSMOG_OUTFIT_EDIT;
+					</OnLoad>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						WardrobeOutfitEditFrame:ShowForOutfit(self:GetParent().outfitID);
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self.Prepaid, SetShownMixin);
+				Mixin(self, WardrobeOutfitButtonMixin);
+				self.Prepaid:ClearAllPoints();
+				self.Prepaid:SetPoint("LEFT", self.Text, "RIGHT", 4, 0);
+				self.Check:ClearAllPoints();
+				--self.Check:SetPoint("LEFT", self.Text, "RIGHT", 4, 0);
+				self.Check:SetPoint("LEFT", self.Prepaid, "RIGHT", 0, 0);
+			</OnLoad>
+			<OnClick function="WardrobeOutfitButtonTemplate_OnClick"/>
+			<OnEnter>
+				self.Highlight:Show();
+				self:GetParent():StopHideCountDown();
+				if self.outfitID then
+					GameTooltip:SetOwner(self:GetParent(), "ANCHOR_NONE");
+					GameTooltip:SetPoint("TOPLEFT", self:GetParent(), "TOPRIGHT");
+					local specs = "";
+					for specIndex = 1, GetNumSpecializations() do
+						if tonumber(ezCollections:GetCVar("lastTransmogOutfitIDSpec"..specIndex)) == self.outfitID then
+							local _, name, _, icon = GetSpecializationInfo(specIndex);
+							specs = specs .. (specs == "" and "" or ", ") .. format(" |T%s:14:14:0:0|t %s", icon, name);
+						end
+					end
+					if specs == "" or not ezCollections.Config.Wardrobe.OutfitsSelectLastUsed then
+						GameTooltip:SetText(C_TransmogCollection.GetOutfitName(self.outfitID));
+					else
+						GameTooltip:ClearLines();
+						GameTooltip:AddDoubleLine(C_TransmogCollection.GetOutfitName(self.outfitID), specs, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+					end
+					local appearanceSources, mainHandEnchant, offHandEnchant = C_TransmogCollection.GetOutfitSources(self.outfitID);
+					for _, slotInfo in ipairs(TRANSMOG_SLOTS) do
+						if slotInfo.transmogType == LE_TRANSMOG_TYPE_APPEARANCE then
+							if slotInfo.slot == "MAINHANDSLOT" then
+								GameTooltip:AddLine([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:16|t]]);
+							elseif slotInfo.slot == "SECONDARYHANDSLOT" or slotInfo.slot == "RANGEDSLOT" then
+								GameTooltip:AddLine([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:8|t]]);
+							end
+							local textureEmbedInfo = "24:24:0:0:64:64:5:59:5:59";
+							local slot, slotTexture = GetInventorySlotInfo(slotInfo.slot);
+							local slotName = _G[slotInfo.slot];
+							local source = appearanceSources[slot];
+							if source then
+								local name, _, quality = GetItemInfo(source);
+								local texture = ezCollections:GetSkinIcon(source);
+								if name and quality then
+									if source == ezCollections:GetHiddenVisualItem() then
+										texture = [[Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify]];
+										textureEmbedInfo = "24:24:0:0:512:512:414:446:88:118";
+									end
+									local color = ITEM_QUALITY_COLORS[quality];
+									GameTooltip:AddLine(format("|T%s:%s|t %s: %s%s|r", texture, textureEmbedInfo, slotName, color.hex, name), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+								else
+									ezCollections:QueryItem(source);
+									GameTooltip:AddLine(format("|T%s:%s|t %s: %s%s|r", QUESTION_MARK_ICON, textureEmbedInfo, slotName, RED_FONT_COLOR_CODE, RETRIEVING_ITEM_INFO), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+								end
+							else
+								GameTooltip:AddLine(format("|T%s:%s|t %s", slotTexture, textureEmbedInfo, slotName), 0.5, 0.5, 0.5);
+							end
+
+							textureEmbedInfo = "16:16:0:0:64:64:5:59:5:59";
+							if slotInfo.slot == "MAINHANDSLOT" or slotInfo.slot == "SECONDARYHANDSLOT" then
+								if slotInfo.slot == "MAINHANDSLOT" then
+									source = mainHandEnchant;
+								else
+									source = offHandEnchant;
+								end
+								if source then
+									local name, _, quality = GetItemInfo(source);
+									local texture = ezCollections:GetSkinIcon(source);
+									if name and quality then
+										if source == ezCollections:GetHiddenVisualItem() then
+											texture = [[Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify]];
+											textureEmbedInfo = "16:16:0:0:512:512:414:446:88:118";
+										end
+										GameTooltip:AddLine(format([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:16:24|t |T%s:%s|t %s]], texture, textureEmbedInfo, format(TRANSMOGRIFIED_ENCHANT, ezCollections:TransformEnchantName(name))), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+									else
+										ezCollections:QueryItem(source);
+										GameTooltip:AddLine(format([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:16:24|t |T%s:%s|t %s]], QUESTION_MARK_ICON, textureEmbedInfo, format(TRANSMOGRIFIED_ENCHANT, RED_FONT_COLOR_CODE..RETRIEVING_ITEM_INFO..FONT_COLOR_CODE_CLOSE)), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+									end
+								else
+									GameTooltip:AddLine(format([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:16:24|t |T%s:%s|t %s]], [[Interface\AddOns\ezCollections\Textures\EnchantSlotIcon]], textureEmbedInfo, format(TRANSMOGRIFIED_ENCHANT, NONE)), 0.5, 0.5, 0.5);
+								end
+							end
+						end
+					end
+					if self.prepaid then
+						GameTooltip:AddLine(" ");
+						GameTooltip:AddLine(ezCollections.L["Tooltip.Outfit.Prepaid.Header"], NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+						GameTooltip:AddLine(ezCollections.L["Tooltip.Outfit.Prepaid.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+					end
+					GameTooltip:Show();
+				end
+			</OnEnter>
+			<OnLeave>
+				self.Highlight:Hide();
+				self:GetParent():StartHideCountDown();
+				GameTooltip_Hide(self:GetParent());
+			</OnLeave>
+		</Scripts>
+		<ButtonText name="$parentText" parentKey="Text" maxLines="1">
+			<Size x="0" y="0"/>
+			<Anchors>
+				<Anchor point="LEFT" x="29" y="0"/>
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontHighlightSmallLeft"/>
+		<HighlightFont style="GameFontHighlightSmallLeft"/>
+		<DisabledFont style="GameFontDisableSmallLeft"/>
+	</Button>
+	<Frame name="WardrobeOutfitDropDownTemplate" inherits="UIDropDownMenuTemplate" virtual="true" mixin="WardrobeOutfitDropDownMixin">
+		<Size x="100" y="22"/>
+		<Frames>
+			<Button parentKey="SaveButton" inherits="UIPanelButtonTemplate" text="SAVE">
+				<Size x="88" y="22"/>
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="RIGHT" x="-13" y="-3"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						local dropDown = self:GetParent();
+						--dropDown:CheckOutfitForSave(UIDropDownMenu_GetText(dropDown));
+						dropDown:CheckOutfitForSave(dropDown.selectedOutfitID);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["Transmog.Outfit.SaveTooltip"]);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad function="WardrobeOutfitDropDownTemplate_OnLoad"/>
+			<OnEvent function="WardrobeOutfitDropDownTemplate_OnEvent"/>
+			<OnShow function="WardrobeOutfitDropDownTemplate_OnShow"/>
+			<OnHide function="WardrobeOutfitDropDownTemplate_OnHide"/>
+		</Scripts>
+	</Frame>
+	
+	<Frame name="WardrobeOutfitFrame" frameStrata="DIALOG" parent="UIParent" hidden="true" enableMouse="true" mixin="WardrobeOutfitFrameMixin">
+		<Size x="224" y="200"/>
+		<Anchors>
+			<Anchor point="TOPLEFT"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background-Dark" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="9"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32"/>
+			</EdgeSize>
+		</Backdrop>
+		<Frames>
+			<Button name="$parentOutfitButton" inherits="WardrobeOutfitButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="11" y="-15"/>
+					<Anchor point="TOPRIGHT" x="-11" y="-15"/>
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self, WardrobeOutfitFrameMixin);
+				self.Buttons = { WardrobeOutfitFrameOutfitButton };
+			</OnLoad>
+			<OnHide function="WardrobeOutfitFrame_OnHide"/>
+			<OnUpdate function="WardrobeOutfitFrame_OnUpdate"/>
+		</Scripts>
+	</Frame>
+	<Frame name="WardrobeOutfitEditFrame" parent="UIParent" hidden="true" frameStrata="DIALOG" mixin="WardrobeOutfitEditFrameMixin">
+		<Size x="320" y="174"/>
+		<Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32"/>
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Title" inherits="GameFontHighlight" text="TRANSMOG_OUTFIT_NAME">
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-20"/>
+					</Anchors>
+				</FontString>
+				<Texture parentKey="Separator">
+					<Size x="276" y="1"/>
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-127"/>
+					</Anchors>
+					<Color r="1" g="1" b="1" a="0.14"/>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<EditBox name="$parentEditBox" parentKey="EditBox" historyLines="1" letters="31">
+				<Size x="260" y="32"/>
+				<Anchors>
+					<Anchor point="TOP" x="0" y="-40"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentLeftTexture" parentKey="LeftTexture" file="Interface\ChatFrame\UI-ChatInputBorder-Left2">
+							<Size x="32" y="32"/>
+							<Anchors>
+								<Anchor point="LEFT" x="-10" y="0"/>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentRightTexture" parentKey="RightTexture" file="Interface\ChatFrame\UI-ChatInputBorder-Right2">
+							<Size x="32" y="32"/>
+							<Anchors>
+								<Anchor point="RIGHT" x="10" y="0"/>
+							</Anchors>
+						</Texture>
+						<Texture parentKey="MiddleTexture" file="Interface\ChatFrame\UI-ChatInputBorder-Mid2" horizTile="true">
+							<Size x="0" y="32"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentLeftTexture" relativePoint="TOPRIGHT"/>
+								<Anchor point="TOPRIGHT" relativeTo="$parentRightTexture" relativePoint="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnEnterPressed>
+						self:GetParent():OnAccept();
+					</OnEnterPressed>
+					<OnEscapePressed>
+						StaticPopupSpecial_Hide(self:GetParent());
+					</OnEscapePressed>
+					<OnTextChanged>
+						if ( self:GetText() == "" ) then
+							self:GetParent().AcceptButton:Disable();
+						else
+							self:GetParent().AcceptButton:Enable();
+						end
+					</OnTextChanged>
+				</Scripts>
+				<FontString inherits="ChatFontNormal"/>
+			</EditBox>
+			<Button parentKey="AcceptButton" inherits="StaticPopupButtonTemplate" text="ACCEPT">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="25" y="-80"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						self:GetParent():OnAccept();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="CancelButton" inherits="StaticPopupButtonTemplate" text="CANCEL">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-25" y="-80"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						StaticPopupSpecial_Hide(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="DeleteButton" inherits="StaticPopupButtonTemplate" text="TRANSMOG_OUTFIT_DELETE">
+				<Anchors>
+					<Anchor point="BOTTOM" x="0" y="17"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						self:GetParent():OnDelete();
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self, WardrobeOutfitEditFrameMixin);
+				self.exclusive = true;
+				self.hideOnEscape = true;
+				self.DeleteButton:SetWidth(self.DeleteButton:GetTextWidth() + 50);
+			</OnLoad>
+			<OnHide>
+				PlaySound("igMainMenuClose");
+			</OnHide>
+		</Scripts>
+	</Frame>
+
+	<Frame name="WardrobeOutfitCheckAppearancesFrame" inherits="LoadingSpinnerTemplate" hidden="true" mixin="WardrobeOutfitCheckAppearancesMixin">
+		<Scripts>
+			<OnLoad function="WardrobeOutfitCheckAppearancesFrame_OnLoad"/>
+			<OnShow function="WardrobeOutfitCheckAppearancesFrame_OnShow"/>
+			<OnHide function="WardrobeOutfitCheckAppearancesFrame_OnHide"/>
+			<OnEvent function="WardrobeOutfitCheckAppearancesFrame_OnEvent"/>
+		</Scripts>
+	</Frame>
+
+	<CheckButton name="WardrobeOutfitSlotsSelectionSlotTemplate" virtual="true">
+		<Size>
+			<AbsDimension x="26" y="26"/>
+		</Size>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Failed" file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+					<Color r="1" g="0" b="0" a="0.5" />
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture name="$parentIcon" parentKey="Icon">
+					<Size x="24" y="24" />
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT" x="-2" y="0" />
+					</Anchors>
+				</Texture>
+				<FontString name="$parentText" parentKey="Text" inherits="GameFontWhite" justifyH="LEFT" wordwrap="false">
+					<Size x="174" y="24" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentIcon" relativePoint="RIGHT" x="2" y="0" />
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="IconOverlayApplied" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPLEFT" x="-1" y="1" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon" relativePoint="BOTTOMRIGHT" x="1" y="-1" />
+					</Anchors>
+					<TexCoords left="0.466796875" right="0.552734375" top="0.001953125" bottom="0.0859375" />
+				</Texture>
+				<Texture parentKey="IconOverlayPending" file="Interface\AddOns\ezCollections\Interface\Transmogrify\PurpleIconAlertAnts" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPLEFT" x="-1" y="1" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon" relativePoint="BOTTOMRIGHT" x="1" y="-1" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				Mixin(self, SetEnabledMixin);
+				Mixin(self.Failed, SetShownMixin);
+				Mixin(self.IconOverlayApplied, SetShownMixin);
+				Mixin(self.IconOverlayPending, SetShownMixin);
+
+				function self:UpdateChecked()
+					self:SetAlpha(1);
+					self.Icon:SetAlpha(self:GetChecked() and 1 or 0.5);
+					self.IconOverlayApplied:SetAlpha(self:GetChecked() and 1 or 0.5);
+					self.IconOverlayPending:SetAlpha(self:GetChecked() and 1 or 0.5);
+					self.Text:SetAlpha(self:GetChecked() and 1 or 0.5);
+				end
+			</OnLoad>
+			<OnUpdate>
+				AnimateTexCoords(self.IconOverlayPending, 256, 256, 48, 48, 22, elapsed, 0.01);
+			</OnUpdate>
+			<OnClick>
+				self:UpdateChecked();
+				if ( self:GetChecked() ) then
+					PlaySound("igMainMenuOptionCheckBoxOn");
+				else
+					PlaySound("igMainMenuOptionCheckBoxOff");
+				end
+				self:GetParent():GetParent():GetParent():QueryInfo();
+			</OnClick>
+		</Scripts>
+		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+	 	<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>
+	</CheckButton>
+	<Frame name="WardrobeOutfitSlotsSelectionFrame" hidden="true" enableMouse="true">
+		<Size x="370" y="0" />
+		<Scripts>
+			<OnLoad>
+				self.Buttons = { };
+				local height = 0;
+				for i, slotInfo in ipairs(TRANSMOG_SLOTS) do
+					if slotInfo.transmogType == LE_TRANSMOG_TYPE_APPEARANCE then
+						if slotInfo.slot == "MAINHANDSLOT" then
+							height = height + 16;
+						elseif slotInfo.slot == "SECONDARYHANDSLOT" or slotInfo.slot == "RANGEDSLOT" then
+							height = height + 8;
+						end
+
+						local button = CreateFrame("CheckButton", self:GetName().."Slot"..i, self, "WardrobeOutfitSlotsSelectionSlotTemplate");
+						button.Slot = slotInfo.slot;
+						button.TransmogType = LE_TRANSMOG_TYPE_APPEARANCE;
+						button:SetPoint("TOPLEFT", self, "TOPLEFT", 0, -height);
+						button:SetHitRectInsets(0, -self:GetWidth() + button:GetWidth(), 0, 0);
+						button.Text:SetWidth(self:GetWidth() - button:GetWidth() - button.Icon:GetWidth() - 2);
+						button.Failed:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", self:GetWidth() - button:GetWidth(), 0);
+						table.insert(self.Buttons, button);
+						height = height + button:GetHeight();
+
+						if button.Slot == "MAINHANDSLOT" or button.Slot == "SECONDARYHANDSLOT" then
+							local button = CreateFrame("CheckButton", self:GetName().."Slot"..i.."Illusion", self, "WardrobeOutfitSlotsSelectionSlotTemplate");
+							button.Slot = slotInfo.slot;
+							button.TransmogType = LE_TRANSMOG_TYPE_ILLUSION;
+							button:SetSize(18, 18);
+							button.Icon:SetSize(16, 16);
+							button:SetPoint("TOPLEFT", self, "TOPLEFT", 30, -height);
+							button:SetHitRectInsets(0, -self:GetWidth() + button:GetWidth() + 30, 0, 0);
+							button.Text:SetWidth(self:GetWidth() - button:GetWidth() - 30 - button.Icon:GetWidth() - 2);
+							button.Failed:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", self:GetWidth() - button:GetWidth() - 30, 0);
+							table.insert(self.Buttons, button);
+							height = height + button:GetHeight();
+						end
+					end
+				end
+				self:SetHeight(height);
+
+				function self:GetSelectedSources()
+					local sources = {};
+					local mainHandEnchant, offHandEnchant;
+					for _, button in ipairs(self.Buttons) do
+						if button:GetChecked() then
+							if button.TransmogType == LE_TRANSMOG_TYPE_APPEARANCE then
+								sources[GetInventorySlotInfo(button.Slot)] = button.Source;
+							elseif button.TransmogType == LE_TRANSMOG_TYPE_ILLUSION then
+								if button.Slot == "MAINHANDSLOT" then
+									mainHandEnchant = button.Source;
+								else
+									offHandEnchant = button.Source;
+								end
+							end
+						end
+					end
+					return sources, mainHandEnchant, offHandEnchant;
+				end
+				function self:SetSlots(selectedSources, selectedMainHandEnchant, selectedOffHandEnchant, appearanceSources, mainHandEnchant, offHandEnchant, failedItemMask, failedEnchantMask)
+					for _, button in ipairs(self.Buttons) do
+						local slot, slotTexture = GetInventorySlotInfo(button.Slot);
+						local slotName = _G[button.Slot];
+
+						button.Icon:SetTexCoord(5/64, 59/64, 5/64, 59/64);
+
+						if button.TransmogType == LE_TRANSMOG_TYPE_APPEARANCE then
+							local source = appearanceSources[slot];
+							button.Source = source;
+							button:SetChecked(source and selectedSources[slot]);
+							button:SetEnabled(source ~= nil);
+							button:UpdateChecked();
+							if source then
+								local _, _, appliedSourceID, _, pendingSourceID, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, button.TransmogType);
+								local isApplied = appliedSourceID == source;
+								local isPending = pendingSourceID == source;
+								local slotColor = (isApplied or isPending) and TRANSMOGRIFY_FONT_COLOR or "";
+								local slotColorEnd = (isApplied or isPending) and FONT_COLOR_CODE_CLOSE or "";
+								local name, _, quality = GetItemInfo(source);
+								local texture = ezCollections:GetSkinIcon(source);
+								if name and quality then
+									if source == ezCollections:GetHiddenVisualItem() then
+										texture = [[Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify]];
+										button.Icon:SetTexCoord(414/512, 446/512, 88/512, 118/512);
+									end
+									local color = ITEM_QUALITY_COLORS[quality];
+									button.Icon:SetTexture(texture);
+									button.IconOverlayApplied:SetShown(isPending or isApplied);
+									button.IconOverlayPending:SetShown(isPending or hasPendingUndo);
+									button.Text:SetText(format("%s%s:%s %s%s|r", slotColor, slotName, slotColorEnd, color.hex, name));
+								else
+									ezCollections:QueryItem(source);
+									button.Icon:SetTexture(QUESTION_MARK_ICON);
+									button.IconOverlayApplied:Hide();
+									button.IconOverlayPending:Hide();
+									button.Text:SetText(format("%s%s:%s %s%s|r", slotColor, slotName, slotColorEnd, RED_FONT_COLOR_CODE, RETRIEVING_ITEM_INFO));
+								end
+							else
+								button.Icon:SetTexture(slotTexture);
+								button.Text:SetText(format("|cFF808080%s|r", slotName));
+								button.Icon:SetAlpha(1);
+								button.IconOverlayApplied:SetAlpha(1);
+								button.IconOverlayPending:SetAlpha(1);
+								button.Text:SetAlpha(1);
+								button:SetAlpha(0.5);
+							end
+						else
+							local source, selectedSource;
+							if button.Slot == "MAINHANDSLOT" then
+								source = mainHandEnchant;
+								button:SetChecked(selectedMainHandEnchant);
+							else
+								source = offHandEnchant;
+								button:SetChecked(selectedOffHandEnchant);
+							end
+							button.Source = source;
+							button:SetEnabled(source ~= nil);
+							button:UpdateChecked();
+							if source then
+								local _, _, appliedSourceID, _, pendingSourceID, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, button.TransmogType);
+								local isApplied = appliedSourceID == source;
+								local isPending = pendingSourceID == source;
+								local slotColor = (isApplied or isPending) and TRANSMOGRIFY_FONT_COLOR or "";
+								local slotColorEnd = (isApplied or isPending) and FONT_COLOR_CODE_CLOSE or "";
+								local name, _, quality = GetItemInfo(source);
+								local texture = ezCollections:GetSkinIcon(source);
+								if name and quality then
+									if source == ezCollections:GetHiddenVisualItem() then
+										texture = [[Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify]];
+										button.Icon:SetTexCoord(414/512, 446/512, 88/512, 118/512);
+									end
+									button.Icon:SetTexture(texture);
+									button.IconOverlayApplied:SetShown(isPending or isApplied);
+									button.IconOverlayPending:SetShown(isPending or hasPendingUndo);
+									button.Text:SetText(format("%s%s%s", slotColor, format(TRANSMOGRIFIED_ENCHANT, ezCollections:TransformEnchantName(name)), slotColorEnd));
+								else
+									ezCollections:QueryItem(source);
+									button.Icon:SetTexture(QUESTION_MARK_ICON);
+									button.IconOverlayApplied:Hide();
+									button.IconOverlayPending:Hide();
+									button.Text:SetText(format("%s%s%s", slotColor, format(TRANSMOGRIFIED_ENCHANT, RED_FONT_COLOR_CODE..RETRIEVING_ITEM_INFO..FONT_COLOR_CODE_CLOSE), slotColorEnd));
+								end
+							else
+								button.Icon:SetTexture([[Interface\AddOns\ezCollections\Textures\EnchantSlotIcon]]);
+								button.Text:SetText(format("|cFF808080%s|r", format(TRANSMOGRIFIED_ENCHANT, NONE)));
+								button.Icon:SetAlpha(1);
+								button.IconOverlayApplied:SetAlpha(1);
+								button.IconOverlayPending:SetAlpha(1);
+								button.Text:SetAlpha(1);
+								button:SetAlpha(0.5);
+							end
+						end
+					end
+				end
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="WardrobeOutfitSaveFrame" parent="UIParent" hidden="true" frameStrata="FULLSCREEN" enableMouse="true">
+		<Size x="450" y="500" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32" />
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Title" inherits="GameFontHighlight" text="TRANSMOG_OUTFIT_NAME">
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-20" />
+					</Anchors>
+				</FontString>
+				<FontString name="$parentTitleSlots" parentKey="TitleSlots" inherits="GameFontHighlight">
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-80" />
+					</Anchors>
+				</FontString>
+				<FontString name="$parentErrorText" parentKey="ErrorText" inherits="GameFontRed" outline="THICK">
+					<Anchors>
+						<Anchor point="BOTTOM" x="0" y="46" />
+						<Anchor point="LEFT" x="32" y="0" />
+						<Anchor point="RIGHT" x="-32" y="0" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="CostLabel" inherits="GameFontHighlight" justifyH="LEFT" hidden="true" />
+			</Layer>
+		</Layers>
+		<Frames>
+			<EditBox name="$parentEditBox" parentKey="EditBox" historyLines="1" letters="31" autoFocus="false">
+				<Size x="260" y="32"/>
+				<Anchors>
+					<Anchor point="TOP" x="0" y="-40"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentLeftTexture" parentKey="LeftTexture" file="Interface\ChatFrame\UI-ChatInputBorder-Left2">
+							<Size x="32" y="32"/>
+							<Anchors>
+								<Anchor point="LEFT" x="-10" y="0"/>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentRightTexture" parentKey="RightTexture" file="Interface\ChatFrame\UI-ChatInputBorder-Right2">
+							<Size x="32" y="32"/>
+							<Anchors>
+								<Anchor point="RIGHT" x="10" y="0"/>
+							</Anchors>
+						</Texture>
+						<Texture parentKey="MiddleTexture" file="Interface\ChatFrame\UI-ChatInputBorder-Mid2" horizTile="true">
+							<Size x="0" y="32"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentLeftTexture" relativePoint="TOPRIGHT"/>
+								<Anchor point="TOPRIGHT" relativeTo="$parentRightTexture" relativePoint="TOPLEFT"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+					<Layer level="ARTWORK">
+						<FontString parentKey="EnterHint" inherits="GameFontDisableSmall" justifyV="TOP" hidden="true">
+							<Anchors>
+								<Anchor point="TOP" relativePoint="BOTTOM" y="4" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						Mixin(self.EnterHint, SetShownMixin);
+					</OnLoad>
+					<OnShow>
+						self.EnterHint:SetText(ezCollections.L["Transmog.Outfit.EnterHint"]);
+					</OnShow>
+					<OnEnterPressed>
+						self:ClearFocus();
+					</OnEnterPressed>
+					<OnEscapePressed>
+						self:ClearFocus();
+					</OnEscapePressed>
+					<OnEditFocusGained>
+						self.oldText = self:GetText();
+					</OnEditFocusGained>
+					<OnEditFocusLost>
+						if self:GetText() ~= self.oldText then
+							self.EnterHint:Hide();
+							self:GetParent():QueryInfo();
+						end
+					</OnEditFocusLost>
+					<OnTextChanged>
+						self.EnterHint:SetShown(self:GetText() ~= self.oldText);
+					</OnTextChanged>
+				</Scripts>
+				<FontString inherits="ChatFontNormal"/>
+			</EditBox>
+			<Frame parentKey="SlotsContainer">
+				<Anchors>
+					<Anchor point="TOP" relativeTo="$parentTitleSlots" relativePoint="BOTTOM" x="0" y="-8" />
+				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+					<BackgroundInsets>
+						<AbsInset left="11" right="12" top="12" bottom="11" />
+					</BackgroundInsets>
+					<TileSize>
+						<AbsValue val="32" />
+					</TileSize>
+					<EdgeSize>
+						<AbsValue val="32" />
+					</EdgeSize>
+				</Backdrop>
+				<Scripts>
+					<OnLoad>
+						self:SetWidth(12 + WardrobeOutfitSlotsSelectionFrame:GetWidth() + 12);
+						self:SetHeight(12 + WardrobeOutfitSlotsSelectionFrame:GetHeight() + 12);
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Frame parentKey="LoadingSpinner" inherits="LoadingSpinnerTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="BOTTOM" x="0" y="60" />
+				</Anchors>
+			</Frame>
+			<CheckButton name="$parentPrepaid" parentKey="Prepaid" inherits="UICheckButtonTemplate" hidden="true">
+				<Size x="24" y="24" />
+				<Anchors>
+					<Anchor point="LEFT" relativePoint="BOTTOMLEFT" x="20" y="71" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if ( self:GetChecked() ) then
+							PlaySound("igMainMenuOptionCheckBoxOn");
+						else
+							PlaySound("igMainMenuOptionCheckBoxOff");
+						end
+						self:GetParent():QueryInfo();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["Tooltip.Outfit.Prepaid.Header"], NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
+						GameTooltip:AddLine(ezCollections.L["Transmog.Outfit.Prepaid.Tooltip"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</CheckButton>
+			<Frame name="$parentMoneyFrame" parentKey="MoneyFrame" inherits="SmallMoneyFrameTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="BOTTOM" x="0" y="64" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						SmallMoneyFrame_OnLoad(self);
+						MoneyFrame_SetType(self, "STATIC");
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Button name="$parentTokenFrame" parentKey="TokenFrame" inherits="SmallDenominationTemplate" hidden="true">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentMoneyFrame" relativePoint="LEFT" x="0" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetHyperlink("item:"..ezCollections.Token);
+					</OnEnter>
+				</Scripts>
+			</Button>
+			<Button parentKey="CostInfo" inherits="UIPanelInfoButton">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentMoneyFrame" relativePoint="RIGHT" x="-4" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						function self:FormatMoneyHint(text)
+							return text:gsub("{(%d+)([GgSsCc]?)}", function(amount, nominator)
+								amount = tonumber(amount);
+								if not amount then
+									return nil;
+								end
+								if nominator:match("[Gg]") then
+									amount = amount * 10000;
+								elseif nominator:match("[Ss]") then
+									amount = amount * 100;
+								end
+								return GetMoneyString(amount);
+							end);
+						end
+					</OnLoad>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ezCollections.L["Transmog.Outfit.Cost.Tooltip"]);
+						if self:GetParent().editedOutfitID and C_TransmogCollection.GetOutfitPrepaid(self:GetParent().editedOutfitID) then
+							GameTooltip:AddLine(self:FormatMoneyHint(ezCollections.OutfitEditCostHint or ""), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1);
+						else
+							GameTooltip:AddLine(self:FormatMoneyHint(ezCollections.OutfitCostHint or ""), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1);
+						end
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Button name="$parentAcceptButton" parentKey="AcceptButton" inherits="StaticPopupButtonTemplate" text="SAVE">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" x="-6" y="16"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						Mixin(self, SetEnabledMixin);
+					</OnLoad>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						self:Disable();
+						local name = self:GetParent().EditBox:GetText();
+						local sources, mainHandEnchant, offHandEnchant = WardrobeOutfitSlotsSelectionFrame:GetSelectedSources();
+						local prepaid = self:GetParent().Prepaid:GetChecked();
+						if name and next(sources) or mainHandEnchant or offHandEnchant then
+							WardrobeOutfitFrame.pendingOutfitSave = name;
+							C_TransmogCollection.SaveOutfit(name, sources, mainHandEnchant, offHandEnchant, nil, prepaid, self:GetParent().editedOutfitID);
+							self:GetParent():Update(true);
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="CancelButton" inherits="StaticPopupButtonTemplate" text="CANCEL">
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="$parentAcceptButton" relativePoint="RIGHT" x="13" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						StaticPopupSpecial_Hide(self:GetParent());
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self.exclusive = true;
+				self.hideOnEscape = true;
+				Mixin(self.Prepaid, SetShownMixin, SetEnabledMixin);
+				Mixin(self.CostLabel, SetShownMixin);
+				Mixin(self.CostInfo, SetShownMixin);
+				Mixin(self.TokenFrame, SetShownMixin);
+				Mixin(self.MoneyFrame, SetShownMixin);
+
+				self:RegisterEvent("PLAYER_EQUIPMENT_CHANGED");
+
+				self.CostLabel:ClearAllPoints();
+				self.CostLabel:SetPoint("RIGHT", self.TokenFrame, "LEFT", -4, 0);
+				self.TokenFrame:SetPoint("RIGHT", self.MoneyFrame, "LEFT", 4, 0);
+
+				function self:QueryInfo()
+					local sources, mainHandEnchant, offHandEnchant = WardrobeOutfitSlotsSelectionFrame:GetSelectedSources();
+					local prepaid = self.Prepaid:GetChecked();
+					if next(sources) or mainHandEnchant or offHandEnchant then
+						self:Update(true);
+						C_TransmogCollection.QueryOutfitCost(self.EditBox:GetText(), sources, mainHandEnchant, offHandEnchant, nil, prepaid, self.editedOutfitID);
+					else
+						self:Update(false, false);
+					end
+				end
+				function self:Update(loading, saveAllowed, errorText, moneyCost, tokenCost, failedItemMask, failedEnchantMask)
+					moneyCost = moneyCost ~= 0 and moneyCost or nil;
+					tokenCost = tokenCost ~= 0 and tokenCost or nil;
+					failedItemMask = failedItemMask ~= 0 and failedItemMask or nil;
+					failedEnchantMask = failedEnchantMask ~= 0 and failedEnchantMask or nil;
+					if loading then
+						self.LoadingSpinner:Show();
+						self.LoadingSpinner.AnimFrame.Anim:Play();
+						self.AcceptButton:Disable();
+						self.ErrorText:Hide();
+						self.Prepaid:Hide();
+						self.CostLabel:Hide();
+						self.CostInfo:Hide();
+						self.TokenFrame:Hide();
+						self.MoneyFrame:Hide();
+					else
+						self.LoadingSpinner:Hide();
+						self.AcceptButton:SetEnabled(saveAllowed and self.EditBox:GetText() ~= "");
+						self.ErrorText:SetText(errorText);
+						self.ErrorText:Show();
+						self.Prepaid:SetShown(ezCollections.PrepaidOutfitsEnabled);
+						self.CostLabel:SetShown(moneyCost or tokenCost);
+						self.CostInfo:SetShown(moneyCost or tokenCost);
+						self.TokenFrame:SetShown(tokenCost);
+						self.MoneyFrame:SetShown(moneyCost);
+						if tokenCost then
+							AltCurrencyFrame_Update(self.TokenFrame:GetName(), select(10, GetItemInfo(ezCollections.Token)), tokenCost);
+							self.CostLabel:SetPoint("RIGHT", self.TokenFrame, "LEFT", -4 - MONEY_ICON_WIDTH_SMALL, 0);
+							self.TokenFrame:SetNormalFontObject(GetItemCount(ezCollections.Token) >= tokenCost and NumberFontNormalRight or NumberFontNormalRightRed);
+						else
+							self.TokenFrame:SetWidth(0.000001);
+							self.CostLabel:SetPoint("RIGHT", self.MoneyFrame, "LEFT", -4, 0);
+						end
+						if moneyCost then
+							MoneyFrame_Update(self.MoneyFrame:GetName(), moneyCost);
+							SetMoneyFrameColor(self.MoneyFrame:GetName(), moneyCost > GetMoney() and "red" or nil);
+						else
+							self.MoneyFrame:SetWidth(0.000001);
+						end
+						self.MoneyFrame:SetPoint("BOTTOM", self, "BOTTOM", (self.CostLabel:GetStringWidth() + 4 + (self.TokenFrame:IsShown() and (MONEY_ICON_WIDTH_SMALL + self.TokenFrame:GetWidth() - 4) or 0) + MONEY_ICON_WIDTH_SMALL - (MONEY_ICON_WIDTH_SMALL - 4) - self.CostInfo:GetWidth()) / 2, 64);
+						for _, button in ipairs(WardrobeOutfitSlotsSelectionFrame.Buttons) do
+							local slot = GetInventorySlotInfo(button.Slot);
+							local failed;
+							if button.TransmogType == LE_TRANSMOG_TYPE_APPEARANCE then
+								failed = failedItemMask and bit.band(failedItemMask, bit.lshift(1, slot - 1)) ~= 0;
+							else
+								failed = failedEnchantMask and bit.band(failedEnchantMask, bit.lshift(1, slot - 1)) ~= 0;
+							end
+							button.Failed:SetShown(failed);
+						end
+					end
+				end
+			</OnLoad>
+			<OnShow>
+				self.TitleSlots:SetText(ezCollections.L["Transmog.Outfit.Slots"]);
+				_G[self.Prepaid:GetName().."Text"]:SetText(ezCollections.L["Transmog.Outfit.Prepaid"]);
+				self.Prepaid:SetHitRectInsets(0, 2 - _G[self.Prepaid:GetName().."Text"]:GetStringWidth(), 0, 0);
+				self.CostLabel:SetText(ezCollections.L["Transmog.Outfit.Cost"]);
+				self:ClearAllPoints();
+				self:SetPoint("CENTER", self:GetParent(), "CENTER");
+			</OnShow>
+			<OnHide>
+				PlaySound("igMainMenuClose");
+				WardrobeOutfitSlotsSelectionFrame:Hide();
+			</OnHide>
+			<OnEvent>
+				StaticPopupSpecial_Hide(self);
+			</OnEvent>
+		</Scripts>
+	</Frame>
+</Ui>

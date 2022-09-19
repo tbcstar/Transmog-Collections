@@ -1,0 +1,69 @@
+## Interface: 30300
+## Title: |cFF00B0E8ez|rCollections
+## Notes: Adds clientside support for Collections and Transmogrification features on ezwow.org, as well as retail UI for mounts and companions
+## Notes-ruRU: Добавляет клиентскую поддержку для коллекций и трансмогрификации на ezwow.org, а также интерфейс транспорта и спутников из новых версий WoW
+## Author: ZEUStiger
+## Version: 2.2
+## SavedVariables: ezCollectionsConfig, ezCollectionsCache
+
+embeds.xml
+
+# Emulation
+Interface\SharedXML\C_MountJournal.lua
+Interface\SharedXML\C_PetJournal.lua
+Interface\SharedXML\C_Timer.lua
+Interface\SharedXML\C_TimerAugment.lua
+Interface\SharedXML\C_Transmog.lua
+Interface\SharedXML\C_TransmogCollection.lua
+Interface\SharedXML\C_TransmogSets.lua
+Interface\SharedXML\Emulation.lua
+
+# UI Upgrades
+Interface\SharedXML\Util.lua
+Interface\SharedXML\Pools.lua
+Interface\FrameXML\Constants.lua
+Interface\FrameXML\Localization.enUS.lua
+Interface\FrameXML\Localization.ruRU.lua
+Interface\FrameXML\Fonts.xml
+Interface\FrameXML\UIParent.lua
+Interface\SharedXML\SharedUIPanelTemplates.xml
+Interface\FrameXML\UIDropDownMenu.lua
+Interface\FrameXML\UIPanelTemplates.lua
+Interface\FrameXML\UIPanelTemplates.xml
+Interface\SharedXML\ModelFrames.xml
+Interface\FrameXML\WardrobeOutfits.xml
+Interface\FrameXML\DressUpFrames.lua
+Interface\SharedXML\HybridScrollFrame.lua
+Interface\SharedXML\HybridScrollFrame.xml
+Interface\FrameXML\StaticPopup.lua
+Interface\FrameXML\MainMenuBarMicroButtons.xml
+Interface\FrameXML\ActionButtonTemplate.xml
+
+# Localization
+Locales\enUS.lua
+Locales\ruRU.lua
+
+# Core Code
+ezCollections.xml
+Data\Atlas.lua
+Data\Camera.lua
+Data\Encounters.enUS.lua
+Data\Encounters.ruRU.lua
+Data\Holidays.enUS.lua
+Data\Holidays.ruRU.lua
+Data\Instances.enUS.lua
+Data\Instances.ruRU.lua
+Data\ItemSet.lua
+Data\Mounts.enUS.lua
+Data\Mounts.ruRU.lua
+Data\Pets.enUS.lua
+Data\Pets.ruRU.lua
+
+# Collections Code
+Interface\AddOns\Blizzard_Collections\Blizzard_CollectionTemplates.xml
+Interface\AddOns\Blizzard_Collections\Blizzard_Collections.xml
+Interface\AddOns\Blizzard_Collections\Blizzard_MountCollection.xml
+Interface\AddOns\Blizzard_Collections\Blizzard_PetCollection.xml
+#Interface\AddOns\Blizzard_Collections\Blizzard_ToyBox.xml
+#Interface\AddOns\Blizzard_Collections\Blizzard_HeirloomCollection.xml
+Interface\AddOns\Blizzard_Collections\Blizzard_Wardrobe.xml

@@ -1,0 +1,174 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ FrameXML\UI.xsd">
+	<Script file="ezCollections.lua"/>
+
+	<StatusBar name="ezCollectionsProgressBarTemplate" virtual="true">
+		<Size y="13"/>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="barBackground">
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+						<Anchor point="BOTTOMRIGHT"/>
+					</Anchors>
+					<Color r="0" g="0" b="0" a=".4"/>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture name="$parentbarBorderLeft" parentKey="barBorderLeft" file="Interface\AchievementFrame\UI-Achievement-ProgressBar-Border">
+					<Size x="16" y="0"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="-6" y="5"/>
+						<Anchor point="BOTTOMLEFT" x="-6" y="-5"/>
+					</Anchors>
+					<TexCoords left="0" right="0.0625" top="0" bottom="0.75"/>
+				</Texture>
+				<Texture name="$parentbarBorderRight" parentKey="barBorderRight" file="Interface\AchievementFrame\UI-Achievement-ProgressBar-Border">
+					<Size x="16" y="0"/>
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="6" y="5"/>
+						<Anchor point="BOTTOMRIGHT" x="6" y="-5"/>
+					</Anchors>
+					<TexCoords left="0.812" right="0.8745" top="0" bottom="0.75"/>
+				</Texture>
+				<Texture parentKey="barBorderCenter" file="Interface\AchievementFrame\UI-Achievement-ProgressBar-Border">
+					<Size x="16"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentbarBorderLeft" relativePoint="TOPRIGHT"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentbarBorderRight" relativePoint="BOTTOMLEFT"/>
+					</Anchors>
+					<TexCoords left="0.0625" right="0.812" top="0" bottom="0.75"/>
+				</Texture>
+				<FontString parentKey="text" inherits="GameFontHighlightSmall">
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<BarTexture file="Interface\TargetingFrame\UI-StatusBar"/>
+		<BarColor r="0.03125" g="0.85" b="0.0" />
+	</StatusBar>
+	<Button name="ezCollectionsMovingHeaderTemplate" virtual="true">
+		<Size y="22" />
+		<Anchors>
+			<Anchor point="TOP" x="-5" />
+			<Anchor point="LEFT" x="55" />
+			<Anchor point="RIGHT" x="-20" />
+		</Anchors>
+		<Scripts>
+			<OnMouseDown>
+				if self:GetParent() == WardrobeFrame and ezCollections.Config.Wardrobe.WindowsLockTransmogrify then return; end
+				if self:GetParent() == CollectionsJournal and ezCollections.Config.Wardrobe.WindowsLockCollections then return; end
+				self:GetParent():StartMoving();
+			</OnMouseDown>
+			<OnMouseUp>
+				if self:GetParent() == WardrobeFrame and ezCollections.Config.Wardrobe.WindowsLockTransmogrify then return; end
+				if self:GetParent() == CollectionsJournal and ezCollections.Config.Wardrobe.WindowsLockCollections then return; end
+				self:GetParent():StopMovingOrSizing();
+
+				do return end
+
+				local function round(num, numDecimalPlaces)
+					local mult = 10 ^ (numDecimalPlaces or 0)
+					return math.floor(num * mult + 0.5) / mult
+				end
+
+				if self:GetParent():IsProtected() and InCombatLockdown() then return; end
+
+				local point, relativeFrame, relativePoint, x, y = self:GetParent():GetPoint(1);
+				x = round(x);
+				y = round(y);
+				if (point == "CENTER" or point == "TOP" or point == "BOTTOM") and (round(self:GetParent():GetWidth() ) % 2 == 1) then x = x + 0.5; end
+				if (point == "CENTER" or point == "LEFT" or point == "RIGHT") and (round(self:GetParent():GetHeight()) % 2 == 1) then y = y + 0.5; end
+				self:GetParent():ClearAllPoints();
+				self:GetParent():SetPoint(point, relativeFrame, relativePoint, x, y);
+			</OnMouseUp>
+		</Scripts>
+	</Button>
+	<Button name="ezCollectionsOptionsBigButtonTemplate" inherits="UIPanelLargeSilverButton" virtual="true">
+		<Frames>
+			<Frame name="$parentContentsFrame" parentKey="ContentsFrame">
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture name="$parentIcon" parentKey="Icon" file="Interface\AddOns\ezCollections\Textures\OptionsBigButtonChevron">
+							<Size x="34" y="0" />
+							<Anchors>
+								<Anchor point="TOPLEFT" x="6" y="-6" />
+								<Anchor point="BOTTOMLEFT" x="6" y="6" />
+							</Anchors>
+						</Texture>
+						<FontString name="$parentHeader" parentKey="Header" inherits="GameFontNormalMed3" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPRIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Text" inherits="GameFontWhiteSmall" justifyH="LEFT" justifyV="TOP" wordwrap="true">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentHeader" relativePoint="BOTTOMLEFT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				function self:UpdateText()
+					local width = self:GetRight() - self:GetLeft();
+					local offsetX = 6 + self.ContentsFrame.Icon:GetWidth();
+					self.ContentsFrame.Header:SetWidth(width - offsetX - 6);
+					self.ContentsFrame.Text:SetWidth(width - offsetX - 6);
+					self.ContentsFrame.Text:SetHeight(0);
+					local heightHeader = self.ContentsFrame.Header:GetHeight();
+					local heightText = self.ContentsFrame.Text:GetHeight();
+					if 6 + heightHeader + heightText + 6 > self:GetHeight() + 2 then
+						heightText = self:GetHeight() + 2 - 6 - heightHeader - 6;
+					end
+					self.ContentsFrame.Header:SetPoint("TOPLEFT", offsetX, -6 -(self:GetHeight() - 6 - 6 - heightHeader - heightText) / 2);
+					self.ContentsFrame.Text:SetHeight(heightText);
+				end
+			</OnLoad>
+			<OnUpdate>
+				self:UpdateText();
+			</OnUpdate>
+			<OnClick>
+				if self.obj and self.obj:GetUserDataTable() then
+					PlaySound("igMainMenuOptionCheckBoxOn");
+					self.obj:GetUserDataTable().option.func();
+				end
+			</OnClick>
+		</Scripts>
+	</Button>
+	<CheckButton name="ezCollectionsOptionsMicroButtonIconTemplate" virtual="true">
+		<Size x="28" y="37" />
+		<NormalTexture>
+			<TexCoords left="0" right="1" top="0.359375" bottom="1" />
+		</NormalTexture>
+		<PushedTexture>
+			<TexCoords left="0" right="1" top="0.359375" bottom="1" />
+		</PushedTexture>
+		<CheckedTexture>
+			<TexCoords left="0" right="1" top="0.359375" bottom="1" />
+		</CheckedTexture>
+		<HighlightTexture file="Interface\Buttons\UI-MicroButton-Hilight">
+			<TexCoords left="0" right="1" top="0.359375" bottom="1" />
+		</HighlightTexture>
+		<Scripts>
+			<OnUpdate>
+				if self.obj and self.obj:GetUserDataTable() then
+					self:SetChecked(ezCollections.Config.Wardrobe.MicroButtonsIcon == self.obj:GetUserDataTable().option.order);
+				end
+			</OnUpdate>
+			<OnClick>
+				if self.obj and self.obj:GetUserDataTable() then
+					PlaySound("igMainMenuOptionCheckBoxOn");
+					self.obj:GetUserDataTable().option.func();
+				end
+			</OnClick>
+		</Scripts>
+	</CheckButton>
+</Ui>

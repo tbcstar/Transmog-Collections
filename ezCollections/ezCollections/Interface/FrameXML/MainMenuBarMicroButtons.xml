@@ -1,0 +1,48 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="MainMenuBarMicroButtons.lua"/>
+	<Frame name="MicroButtonAlertTemplate" inherits="GlowBoxTemplate" parent="UIParent" enableMouse="true" hidden="true" frameStrata="DIALOG" frameLevel="2" toplevel="true" virtual="true">
+		<Size x="220" y="100"/>
+		<!--KeyValues>
+			Optional
+			<KeyValue key="label" value="DISPLAY_STRING" type="global"/>
+			<KeyValue key="tutorialIndex" value="LE_FRAME_TUTORIAL_X" type="global"/>
+		</KeyValues-->
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Text" inherits="GameFontHighlightLeft" justifyV="TOP">
+					<Size x="188" y="0"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="16" y="-24"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="CloseButton" inherits="UIPanelCloseButton">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="6" y="6"/>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide();
+						local tutIdx = self:GetParent().tutorialIndex;
+						if ( tutIdx ) then
+							ezCollections:SetCVarBitfield("closedInfoFrames", tutIdx, true);
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame parentKey="Arrow" inherits="GlowBoxArrowTemplate">
+				<Anchors>
+					<Anchor point="TOP" relativePoint="BOTTOM" y="4"/>
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad function="MicroButtonAlert_OnLoad"/>
+			<OnShow function="MicroButtonAlert_OnShow"/>
+			<OnHide function="MicroButtonAlert_OnHide"/>
+		</Scripts>
+	</Frame>
+</Ui>

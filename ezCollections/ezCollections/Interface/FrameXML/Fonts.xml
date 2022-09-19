@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Font name="Fancy16Font" font="Fonts\MORPHEUS.TTF" virtual="true">
+		<FontHeight val="16" />
+	</Font>
+	<Font name="Fancy18Font" font="Fonts\MORPHEUS.TTF" virtual="true">
+		<FontHeight val="18" />
+	</Font>
+	<Font name="Fancy20Font" font="Fonts\MORPHEUS.TTF" virtual="true">
+		<FontHeight val="20" />
+	</Font>
+	<Font name="Fancy22Font" font="Fonts\MORPHEUS.TTF" virtual="true">
+		<FontHeight val="22" />
+	</Font>
+	<Font name="Fancy24Font" font="Fonts\MORPHEUS.TTF" virtual="true">
+		<FontHeight val="24" />
+	</Font>
+	<Font name="GameFontNormalMed2" inherits="SystemFont_Shadow_Med2" virtual="true">
+		<Color r="1.0" g="0.82" b="0"/>
+	</Font>
+</Ui>

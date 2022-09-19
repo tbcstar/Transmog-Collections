@@ -1,0 +1,569 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="Blizzard_PetCollection.lua"/>
+
+    <Button name="PetListButtonTemplate" motionScriptsWhileDisabled="true" virtual="true">
+        <Size x="208" y="46"/>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture atlas="PetList-ButtonBackground" parentKey="background" file="Interface\AddOns\ezCollections\Interface\Buttons\ListButtons">
+                    <TexCoords left="0.00390625" right="0.8203125" top="0.00390625" bottom="0.18359375"/>
+                </Texture>
+            </Layer>
+            <Layer level="BORDER">
+                <Texture name="$parenticon" parentKey="icon">
+                    <Size x="38" y="38"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="-42" y="0"/>
+                    </Anchors>
+                </Texture>
+                <Texture name="$parentPetTypeIcon" parentKey="petTypeIcon">
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT" x="-1" y="1"/>
+                    </Anchors>
+                    <Size x="90" y="44"/>
+                    <TexCoords left="0.00781250" right="0.71093750" top="0.74609375" bottom="0.91796875"/>
+                </Texture>
+                <Texture atlas="PetList-ButtonBackground" parentKey="SubscriptionOverlay" file="Interface\AddOns\ezCollections\Textures\MountSubscriptionOverlay" alphaMode="ADD" hidden="true">
+                    <TexCoords left="0.00390625" right="0.8203125" top="0.00390625" bottom="0.18359375"/>
+                </Texture>
+            </Layer>
+            <Layer level="ARTWORK" textureSubLevel="-1">
+                <Texture parentKey="iconBorder" file="Interface\AddOns\ezCollections\Interface\Common\WhiteIconFrame" hidden="true">
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parenticon"/>
+                        <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parenticon"/>
+                    </Anchors>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="name" inherits="GameFontNormal" justifyH="LEFT">
+                    <Size x="147" y="25"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parenticon" x="10" y="-5"/>
+                    </Anchors>
+                </FontString>
+                <Texture parentKey="favorite" atlas="PetJournal-FavoritesIcon" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Common\FavoritesIcon">
+                    <Size x="25" y="25"/>
+                    <TexCoords left="0.03125" right="0.8125" top="0.03125" bottom="0.8125"/>
+                    <Anchors>
+                        <Anchor point="TOPLEFT" relativeTo="$parenticon" x="-8" y="8"/>
+                    </Anchors>
+                </Texture>
+                <Texture parentKey="unusable" hidden="true">
+                    <Size x="38" y="38"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="-42" y="0"/>
+                    </Anchors>
+                    <Color r="1" g="0" b="0" a="0.2"/>
+                </Texture>
+            </Layer>
+            <Layer level="OVERLAY" textureSubLevel="1">
+                <Texture parentKey="selectedTexture" atlas="PetList-ButtonSelect" hidden="true" file="Interface\AddOns\ezCollections\Interface\Buttons\ListButtons">
+                    <TexCoords left="0.00390625" right="0.8203125" top="0.37890625" bottom="0.55859375"/>
+                </Texture>
+            </Layer>
+			<Layer level="OVERLAY" textureSubLevel="2">
+				<FontString name="$parentnew" parentKey="new" inherits="GameFontHighlight" wordwrap="false" justifyH="CENTER" text="NEW_CAPS" hidden="true">
+					<Anchors>
+						<Anchor point="RIGHT" x="-15" y="0"/>
+					</Anchors>
+					<Shadow>
+						<Color r="0.32" g="0.5" b="1.0"/>
+					</Shadow>
+				</FontString>
+
+				<Texture parentKey="newGlow" atlas="collections-newglow" file="Interface\AddOns\ezCollections\Interface\Collections\Collections"  hidden="true">
+					<TexCoords left="0.51171875" right="0.626953125" top="0.013671875" bottom="0.0859375"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentnew" x="-20" y="10"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentnew" x="20" y="-10"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+        </Layers>
+        <Frames>
+            <Button parentKey="DragButton" motionScriptsWhileDisabled="true">
+                <Size x="40" y="40"/>
+                <Anchors>
+                    <Anchor point="CENTER" relativeTo="$parenticon" x="0" y="0"/>
+                </Anchors>
+                <Layers>
+                    <Layer level="OVERLAY">
+                        <Texture file="Interface\Buttons\CheckButtonHilight" parentKey="ActiveTexture" alphaMode="ADD"/>
+                    </Layer>
+                </Layers>
+                <HighlightTexture name="$parentHighlight" file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+                <Scripts>
+                    <OnClick function="PetListDragButton_OnClick"/>
+                    <OnEnter>
+                        GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+                        local spellID = self:GetParent().spellID;
+                        if (spellID) then
+                            PetJournalSummonButton_UpdateTooltip(self:GetParent());
+                            self.showingTooltip = true;
+                        end
+                    </OnEnter>
+                    <OnLeave>
+                        GameTooltip:Hide();
+                        self.showingTooltip = false;
+                    </OnLeave>
+                    <OnLoad>
+                        self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+                        self:RegisterForDrag("LeftButton");
+                    </OnLoad>
+                    <OnDragStart>
+                        C_PetJournal.PickupPet(self:GetParent().index);
+                    </OnDragStart>
+                </Scripts>
+            </Button>
+        </Frames>
+        <HighlightTexture atlas="PetList-ButtonHighlight" file="Interface\AddOns\ezCollections\Interface\Buttons\ListButtons">
+            <TexCoords left="0.00390625" right="0.8203125" top="0.19140625" bottom="0.37109375"/>
+        </HighlightTexture>
+        <Scripts>
+            <OnLoad>
+                Mixin(self.SubscriptionOverlay, SetShownMixin);
+                Mixin(self, SetEnabledMixin);
+                Mixin(self.new, SetShownMixin);
+                Mixin(self.newGlow, SetShownMixin);
+                Mixin(self.DragButton, SetEnabledMixin);
+                self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+            </OnLoad>
+            <OnMouseDown function="PetListItem_OnClick"/>
+        </Scripts>
+    </Button>
+
+	<Frame name="PetJournal" parent="CollectionsJournal" setAllPoints="true" hidden="true">
+		<Frames>
+			<Button name="$parentSummonRandomFavoritePetButton" parentKey="SummonRandomFavoritePetButton">
+				<Size>
+					<AbsDimension x="33" y="33"/>
+				</Size>
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-24" y="-42"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BORDER">
+						<Texture name="$parentIconTexture" parentKey="texture" file="Interface\Icons\Ability_Hunter_BeastCall" setAllPoints="true"/> <!-- Interface\AddOns\ezCollections\Interface\Icons\INV_Pet_BabyMoose -->
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture parentKey="BlackCover" setAllPoints="true" hidden="true">
+							<Color r="0" g="0" b="0" a="0.6"/>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY" textureSubLevel="1">
+						<Texture name="$parentBorder" inherits="ActionBarFlyoutButton-IconFrame">
+							<Size x="35" y="35"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+						<Texture name="$parentLockIcon" parentKey="LockIcon" file="Interface\AddOns\ezCollections\Interface\PetBattles\PetBattle-LockIcon" setAllPoints="true" hidden="true"/>
+						<FontString name="$parentSpellName" inherits="GameFontNormal" maxLines="2" justifyH="RIGHT" parentKey="spellname" text="Summon Random Favorite Pet">
+							<Size x="170" y="0"/>
+							<Color r="1" g="1" b="1"/>
+							<Anchors>
+								<Anchor point="RIGHT" relativePoint="LEFT" relativeTo="$parentBorder" x="-2" y="0"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad function="PetJournalSummonRandomFavoritePetButton_OnLoad"/>
+					<OnClick function="PetJournalSummonRandomFavoritePetButton_OnClick"/>
+					<OnDragStart function="PetJournalSummonRandomFavoritePetButton_OnDragStart"/>
+					<OnEnter function="PetJournalSummonRandomFavoritePetButton_OnEnter"/>
+					<OnLeave>
+						GameTooltip:Hide();
+					</OnLeave>
+				</Scripts>
+				<PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
+				<HighlightTexture name="$parentHighlight" file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+			</Button>
+			<Frame name="$parentLeftInset" parentKey="LeftInset" useParentLevel="true" inherits="InsetFrameTemplate">
+				<Size x="260" y="496"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="4" y="-60" />
+					<Anchor point="BOTTOMLEFT" x="4" y="26" />
+				</Anchors>
+			</Frame>
+			<Frame name="$parentRightInset" parentKey="RightInset" useParentLevel="true" inherits="InsetFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-6" y="-60" />
+					<Anchor point="BOTTOMLEFT" relativeTo="$parentLeftInset" relativePoint="BOTTOMRIGHT" x="20" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.InsetBorderTopLeft:SetDrawLayer("OVERLAY");
+						self.InsetBorderTopRight:SetDrawLayer("OVERLAY");
+						self.InsetBorderBottomLeft:SetDrawLayer("OVERLAY");
+						self.InsetBorderBottomRight:SetDrawLayer("OVERLAY");
+						self.InsetBorderTop:SetDrawLayer("OVERLAY");
+						self.InsetBorderBottom:SetDrawLayer("OVERLAY");
+						self.InsetBorderLeft:SetDrawLayer("OVERLAY");
+						self.InsetBorderRight:SetDrawLayer("OVERLAY");
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<EditBox name="$parentSearchBox" inherits="SearchBoxTemplate" parentKey="searchBox" letters="40" frameLevel="10000">
+				<Size x="145" y="20"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentLeftInset" x="15" y="-9"/>
+				</Anchors>
+				<Scripts>
+					<OnTextChanged function="PetJournal_OnSearchTextChanged"/>
+					<OnHide function="PetJournal_ClearSearch"/>
+				</Scripts>
+			</EditBox>
+			<Button name="$parentFilterButton" inherits="UIMenuButtonStretchTemplate" text="FILTER" frameLevel="10001">
+				<Size x="93" y="22"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeTo="$parentLeftInset" x="-5" y="-9"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
+							<Size x="10" y="12"/>
+							<Anchors>
+								<Anchor point="RIGHT" x="-5"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOptionCheckBoxOn");
+						ToggleDropDownMenu(1, nil, PetJournalFilterDropDown, "PetJournalFilterButton", 74, 15);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame name="$parentFilterDropDown" inherits="UIDropDownMenuTemplate">
+				<Scripts>
+					<OnLoad function="PetJournalFilterDropDown_OnLoad"/>
+				</Scripts>
+			</Frame>
+			<Frame name="$parentPetCount" parentKey="PetCount" useParentLevel="true" inherits="InsetFrameTemplate3">
+				<Size x="130" y="20"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="70" y="-35"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<FontString name="$parentCount" parentKey="Count" inherits="GameFontHighlightSmall" justifyH="RIGHT">
+							<Anchors>
+								<Anchor point="RIGHT" x="-10" y="0"/>
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Label" inherits="GameFontNormalSmall" text="BATTLE_PETS_TOTAL_PETS" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="LEFT" x="10" y="0"/>
+								<Anchor point="RIGHT" relativeTo="$parentCount" relativePoint="LEFT" x="-3" y="0"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Frame name="$parentSubscriptionStatus" parentKey="SubscriptionStatus" useParentLevel="true" inherits="InsetFrameTemplate3">
+				<Size x="210" y="20"/>
+				<Anchors>
+					<Anchor point="TOP" x="0" y="-35" />
+				</Anchors>
+				<Frames>
+					<Button name="$parentSubscriptionInfo" parentKey="SubscriptionInfo" hidden="true">
+						<Size x="14" y="14" />
+						<Anchors>
+							<Anchor point="LEFT" x="10" />
+						</Anchors>
+						<NormalTexture file="Interface\AddOns\ezCollections\Textures\SubscriptionOverlay" setAllPoints="true">
+							<TexCoords left="0.00390625" right="0.06640625" top="0.8515625" bottom="0.9765625" />
+						</NormalTexture>
+						<HighlightTexture file="Interface\AddOns\ezCollections\Textures\SubscriptionOverlay" setAllPoints="true" alphaMode="ADD" alpha="0.4">
+							<TexCoords left="0.07421875" right="0.13671875" top="0.8515625" bottom="0.9765625" />
+						</HighlightTexture>
+						<Layers>
+							<Layer level="ARTWORK">
+								<FontString name="$parentTimer" parentKey="Timer" inherits="GameFontHighlightSmall" justifyH="RIGHT">
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="LEFT" x="190" y="0" />
+									</Anchors>
+								</FontString>
+								<FontString parentKey="Label" inherits="GameFontNormalSmall" justifyH="LEFT">
+									<Color r="0" g="0.75" b="1" />
+									<Anchors>
+										<Anchor point="LEFT" relativePoint="RIGHT" x="2" y="0" />
+										<Anchor point="RIGHT" relativeTo="$parentTimer" relativePoint="LEFT" x="-3" y="0" />
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								Mixin(self, SetShownMixin);
+								function self:UpdateTooltip()
+									if ezCollections:IsActivePetSubscription() then
+										GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+										GameTooltip:SetText(ezCollections.L["Pet.Subscription.Info"], 0, 0.75, 1, 1);
+										GameTooltip:AddLine(ezCollections.ActivePetSubscriptionInfo or "", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+										local remaining = ezCollections:FormatRemainingTime(ezCollections:GetActivePetSubscriptionEndTime() - time());
+										if remaining then
+											GameTooltip:AddLine(remaining, GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, 1, 1);
+										end
+										GameTooltip:Show();
+									end
+								end
+							</OnLoad>
+							<OnShow>
+								self.Timer:SetText(ezCollections:IsActivePetSubscription() and ezCollections:FormatRemainingTime(ezCollections:GetActivePetSubscriptionEndTime() - time(), true) or "");
+								self.Label:SetText(ezCollections.L["Pet.Subscription.Info"]);
+							</OnShow>
+							<OnEnter>
+								self:UpdateTooltip();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+							<OnUpdate>
+								self.updateDelay = (self.updateDelay or 0) - elapsed;
+								if self.updateDelay &lt;= 0 then
+									self.updateDelay = 1;
+									if ezCollections:IsActivePetSubscription() then
+										self.Timer:SetText(ezCollections:FormatRemainingTime(ezCollections:GetActivePetSubscriptionEndTime() - time(), true) or "");
+									else
+										ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+									end
+								end
+							</OnUpdate>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+			<Frame parentKey="PetDisplay">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentRightInset" relativePoint="TOPLEFT" x="3" y="-3"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parentRightInset" relativePoint="BOTTOMRIGHT" x="-3" y="3"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="YesPetsTex" file="Interface\AddOns\ezCollections\Interface\PetBattles\MountJournal-BG" setAllPoints="true">
+							<TexCoords left="0" right="0.78515625" top="0" bottom="1"/>
+						</Texture>
+						<Texture parentKey="NoPetsTex" file="Interface\AddOns\ezCollections\Interface\PetBattles\MountJournal-NoMounts" setAllPoints="true" hidden="true">
+							<TexCoords left="0" right="0.78515625" top="0" bottom="1"/>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<FontString parentKey="NoPets" inherits="GameFontHighlightLarge" justifyH="CENTER" text="ERR_NO_RIDING_SKILL">
+							<Size x="280" y="80"/>
+							<Anchors>
+								<Anchor point="CENTER" x="0" y="0"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame parentKey="ShadowOverlay" inherits="ShadowOverlayTemplate" useParentLevel="true" setAllPoints="true"/>
+					<Button parentKey="InfoButton" motionScriptsWhileDisabled="true">
+						<KeyValues>
+							<KeyValue key="hasIconHyperlinks" value="true" type="boolean"/>
+						</KeyValues>
+						<Size x="208" y="46"/>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="6" y="-6"/>
+						</Anchors>
+						<Layers>
+							<Layer level="BORDER">
+								<Texture name="$parentIcon" parentKey="Icon">
+									<Size x="38" y="38"/>
+									<Anchors>
+										<Anchor point="LEFT" x="20" y="-20"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+							<Layer level="OVERLAY">
+								<FontString name="$parentName" inherits="GameFontHighlightLarge" justifyH="LEFT" justifyV="MIDDLE" parentKey="Name" maxLines="2">
+									<Size x="270" y="35"/>
+									<Anchors>
+										<Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parentIcon" x="10" y="0"/>
+									</Anchors>
+								</FontString>
+								<FontString name="$parentSubscriptionInfo" inherits="GameFontHighlight" justifyH="LEFT" parentKey="SubscriptionInfo">
+									<Size x="345" y="0"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentIcon" x="0" y="-6"/>
+									</Anchors>
+								</FontString>
+								<FontString name="$parentSource" inherits="GameFontHighlight" justifyH="LEFT" parentKey="Source">
+									<Size x="345" y="0"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentSubscriptionInfo"/>
+									</Anchors>
+								</FontString>
+								<FontString name="$parentLore" inherits="GameFontNormal" justifyH="LEFT" parentKey="Lore">
+									<Size x="345" y="0"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" relativeTo="$parentSource"/>
+									</Anchors>
+								</FontString>
+							</Layer>
+							<Layer level="OVERLAY" textureSubLevel="2">
+								<FontString name="$parentNew" parentKey="New" inherits="GameFontHighlight" wordwrap="false" justifyH="CENTER" text="NEW_CAPS" hidden="true">
+									<Anchors>
+										<Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT" x="8" y="0"/>
+									</Anchors>
+									<Shadow>
+										<Color r="0.32" g="0.5" b="1.0"/>
+									</Shadow>
+								</FontString>
+
+								<Texture parentKey="NewGlow" atlas="collections-newglow" file="Interface\AddOns\ezCollections\Interface\Collections\Collections"  hidden="true">
+									<TexCoords left="0.51171875" right="0.626953125" top="0.013671875" bottom="0.0859375"/>
+									<Anchors>
+										<Anchor point="TOPLEFT" relativeTo="$parentNew" x="-20" y="10"/>
+										<Anchor point="BOTTOMRIGHT" relativeTo="$parentNew" x="20" y="-10"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+					</Button>
+					<Frame name="$parentTypeInfo" parentKey="TypeInfo">
+						<Size x="28" y="28"/>
+						<Anchors>
+							<Anchor point="TOPRIGHT" x="-12" y="-12"/>
+						</Anchors>
+						<Layers>
+							<Layer level="OVERLAY">
+								<Texture name="$parentTypeIcon" parentKey="typeIcon"  file="Interface\AddOns\ezCollections\Interface\PetBattles\PetIcon-Mechanical">
+									<Size x="28" y="28"/>
+									<Anchors>
+										<Anchor point="TOPRIGHT" x="0" y="0"/>
+									</Anchors>
+									<TexCoords left="0.79687500" right="0.49218750" top="0.50390625" bottom="0.65625000"/>
+								</Texture>
+								<FontString name="$parentType" parentKey="type" inherits="GameFontNormal" justifyH="RIGHT" text="XXXXXXXXXXX">
+									<Size x="0" y="0"/>
+									<Anchors>
+										<Anchor point="RIGHT" relativePoint="LEFT" relativeTo="$parentTypeIcon" x="-4" y="2"/>
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnEnter>
+								--PetJournal_ShowAbilityTooltip(self, self.abilityID, self.speciesID, self.petID);
+							</OnEnter>
+							<OnLeave>
+								--PetJournal_HideAbilityTooltip(self);
+							</OnLeave>
+						</Scripts>
+					</Frame>
+					<!--
+					<PlayerModel parentKey="WrappedModelFrame" useParentLevel="true" frameStrata="DIALOG" inherits="CollectionsWrappedModelFrame">
+						<Anchors>
+							<Anchor point="TOPLEFT" x="0" y="-160"/>
+							<Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+						</Anchors>
+						<Scripts>
+							<OnMouseUp>
+								PetJournalPetButton_UsePet(PetJournal.selectedPetID);
+							</OnMouseUp>
+						</Scripts>
+					</PlayerModel>
+					-->
+					<DressUpModel parentKey="ModelFrame" useParentLevel="true" inherits="ModelWithZoomTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" x="0" y="-160"/>
+							<Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+						</Anchors>
+						<Frames>
+							<Button parentKey="RotateLeftButton">
+								<Size x="35" y="35"/>
+								<Anchors>
+									<Anchor point="TOPRIGHT" relativePoint="BOTTOM" x="-5" y="50"/>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										self:RegisterForClicks("LeftButtonDown", "LeftButtonUp");
+									</OnLoad>
+									<OnClick>
+										Model_RotateLeft(self:GetParent());
+									</OnClick>
+								</Scripts>
+								<NormalTexture file="Interface\Buttons\UI-RotationLeft-Button-Up"/>
+								<PushedTexture file="Interface\Buttons\UI-RotationLeft-Button-Down"/>
+								<HighlightTexture file="Interface\Buttons\ButtonHilight-Round" alphaMode="ADD"/>
+							</Button>
+							<Button parentKey="RotateRightButton">
+								<Size>
+									<AbsDimension x="35" y="35"/>
+								</Size>
+								<Anchors>
+									<Anchor point="TOPLEFT" relativePoint="BOTTOM" x="5" y="50"/>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										self:RegisterForClicks("LeftButtonDown", "LeftButtonUp");
+									</OnLoad>
+									<OnClick>
+										Model_RotateRight(self:GetParent());
+									</OnClick>
+								</Scripts>
+								<NormalTexture file="Interface\Buttons\UI-RotationRight-Button-Up"/>
+								<PushedTexture file="Interface\Buttons\UI-RotationRight-Button-Down"/>
+								<HighlightTexture file="Interface\Buttons\ButtonHilight-Round" alphaMode="ADD"/>
+							</Button>
+						</Frames>
+					</DressUpModel>
+				</Frames>
+				<!--
+				<Animations>
+					<AnimationGroup parentKey="UnwrapAnim" setToFinalAlpha="true">
+						<Alpha childKey="WrappedModelFrame" startDelay="1.2" fromAlpha="1" toAlpha="0" duration=".3" order="1"/>
+						<Alpha childKey="ModelFrame" startDelay="1.2" fromAlpha="0" toAlpha="1" duration=".3" order="1"/>
+						<Scripts>
+							<OnFinished>
+								self:GetParent().WrappedModelFrame:Hide();
+							</OnFinished>
+						</Scripts>
+					</AnimationGroup>
+				</Animations>
+				-->
+			</Frame>
+			<!--Name needed for HybridScrollFrameTemplate-->
+			<ScrollFrame name="$parentListScrollFrame" parentKey="ListScrollFrame" inherits="HybridScrollFrameTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="$parentLeftInset" x="3" y="-36"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$parentLeftInset" x="-2" y="5"/>
+				</Anchors>
+				<Frames>
+					<Slider name="$parentScrollBar" inherits="HybridScrollBarTrimTemplate" parentKey="scrollBar">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="4" y="20"/>
+							<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="4" y="11"/>
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.trackBG:Show();
+								self.trackBG:SetVertexColor(0, 0, 0, 0.75);
+							</OnLoad>
+						</Scripts>
+					</Slider>
+				</Frames>
+			</ScrollFrame>
+			<Button parentKey="SummonButton" name="$parentSummonButton" inherits="MagicButtonTemplate" text="BATTLE_PET_SUMMON" frameLevel="10002">
+				<Size x="140" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT"/>
+				</Anchors>
+				<Scripts>
+					<OnClick function="PetJournalSummonButton_OnClick"/>
+				</Scripts>
+			</Button>
+			<Frame name="$parentPetOptionsMenu" inherits="UIDropDownMenuTemplate" enableMouse="true" parentKey="petOptionsMenu"/>
+		</Frames>
+		<Scripts>
+			<OnShow function="PetJournal_OnShow"/>
+			<OnHide function="PetJournal_OnHide"/>
+			<OnLoad function="PetJournal_OnLoad"/>
+			<OnEvent function="PetJournal_OnEvent"/>
+		</Scripts>
+	</Frame>
+</Ui>
