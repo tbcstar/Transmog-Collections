@@ -1,18 +1,18 @@
 local Transmogrify = {}
 Transmogrify.VisualWeapon = {}
 Transmogrify.STORE = {}
-local VisualWeapon = Transmogrify.VisualWeapon;
-local STORE = Transmogrify.STORE;
+local VisualWeapon = Transmogrify;
+local STORE = Transmogrify;
 _ENV = require("MiscDefine");
 
 --#######################################################
---#######  幻化功能的设置选项,按照注释根据需要改写 ######
+--####### 幻化功能的设置选项,按照注释根据需要改写  ######
 --#######################################################
 
 --功能Npc的ID
 Transmogrify.NPC_Entry = 80010;
 
---设定幻化菜单每页显示多少项
+-- 设定幻化菜单每页显示多少项
 Transmogrify.PageItemLimit = 8
 
 --设置能幻化的物品ID的范围
@@ -23,29 +23,29 @@ Transmogrify.MaxItemEntry = 70000;
 
 --[[
 允许幻化的物品品质
-    true    => 允许
-    false   => 不允许
+    true => 允许
+    false => 不允许
 ]]--
-Transmogrify.Qualities ={
-    [0]  = true, -- 允许灰色装备幻化
-    [1]  = true, -- 允许白色装备
-    [2]  = true, -- 允许绿色装备
-    [3]  = true, -- 允许蓝色装备
-    [4]  = true, -- 允许紫色装备
-    [5]  = true, -- 允许橙色装备
-    [6]  = true, -- 允许红色神器
-    [7]  = true, -- 允许传家宝
+Transmogrify.Qualities = {
+    [0] = true, -- 允许灰色装备幻化
+    [1] = true, -- 允许白色装备
+    [2] = true, -- 允许绿色装备
+    [3] = true, -- 允许蓝色装备
+    [4] = true, -- 允许紫色装备
+    [5] = true, -- 允许橙色装备
+    [6] = true, -- 允许红色神器
+    [7] = true, -- 允许传家宝
 }
 
 --[[
 需要金币
-    1 => 需要金币数 = 按照物品买价(买价低于1G的按照1G) * 倍率(GoldModifier)
+    1 => 需要金币数 = 按照物品买价(买价低于1G的按照1G) * 倍率 (GoldModifier)
     2 => 需要金币数 = 固定金币(GoldCost)
 ]]--
 Transmogrify.RequireGold = 1;
---倍率
+--- 倍率
 Transmogrify.GoldModifier = 1.0;
---固定消耗金币数
+-- 固定消耗金币数
 Transmogrify.GoldCost = 100000;
 
 --[[
@@ -59,7 +59,7 @@ Transmogrify.GoldCost = 100000;
 ]]--
 Transmogrify.Model = 2;
 
---收集模式下是否开启账号共享(该设置仅收集模式下生效)
+-- 收集模式下是否开启账号共享(该设置仅收集模式下生效)
 Transmogrify.AccountMode = false;
 
 --收集模式下查询玩家藏品事件更新间隔(该设置仅收集模式下生效)
@@ -70,7 +70,7 @@ Transmogrify.UpdateSkinsEventTime = 1000;
 
 --是否开启牌子
 Transmogrify.RequireToken = true;
---牌子ID
+--牌子（Token） ID
 Transmogrify.TokenEntry = 49426;
 --牌子数量
 Transmogrify.TokenAmount = 1;
@@ -84,10 +84,10 @@ Transmogrify.AllowMixedWeaponTypes = true;
 Transmogrify.HIDE_ITEM = 15;
 
 --#######################################################
---#####         武器幻光系统功能相关设置设置         ####
+--##### 		武器幻光系统功能相关设置设置 	   	 ####
 --#######################################################
 
---幻光功能是否开启
+---幻光功能是否开启
 VisualWeapon.Enable = true;
 
 --在幻化需要消耗金币基础上幻光系统的倍率,如果1.0则和幻化消耗的金币一样
@@ -119,7 +119,7 @@ VisualWeapon.RemoveItem = false;
 --设定可使用的武器幻光效果
 VisualWeapon.Data = {
 -- 如果自己有新的附魔光效自己按格式填写
--- 对应关系, 物品 -> 技能效果 -> 技能misc ->SpellItemEnchantment
+-- 对应关系, Item -> Skill Effect -> Skill misc -> SpellItemEnchantment
 
  -- [物品ID] = SpellItemEnchantment, 
     [Transmogrify.HIDE_ITEM] = 0, --隐藏幻光
@@ -185,9 +185,9 @@ VisualWeapon.Data = {
     
 }
 
---#######################################################
---##                   商城功能设置                    ##
---#######################################################
+--############################
+--## 	  商城功能设置 	    ##
+--############################
 
 --是否启用商城功能,如果关闭下面的设置也会无效
 STORE.Enable = true;
