@@ -1,3 +1,34 @@
+function UIDropDownMenu_AddSeparator(level)
+	local separatorInfo = {
+		hasArrow = false;
+		dist = 0;
+		isTitle = true;
+		isUninteractable = true;
+		notCheckable = true;
+		iconOnly = true;
+		icon = [[Interface\AddOns\ezCollections\Interface\Common\UI-TooltipDivider-Transparent]];
+		tCoordLeft = 0;
+		tCoordRight = 1;
+		tCoordTop = 0;
+		tCoordBottom = 1;
+		tSizeX = 0;
+		tSizeY = 8;
+		tFitDropDownSizeX = true;
+		iconInfo = {
+			tCoordLeft = 0,
+			tCoordRight = 1,
+			tCoordTop = 0,
+			tCoordBottom = 1,
+			tSizeX = 0,
+			tSizeY = 8,
+			tFitDropDownSizeX = true
+		},
+		text = "", -- Custom
+	};
+
+	UIDropDownMenu_AddButton(separatorInfo, level);
+end
+
 function UIDropDownMenu_AddSpace(level)
 	local spaceInfo = {
 		hasArrow = false,
@@ -77,3 +108,31 @@ function UIDropDownMenu_Refresh2(frame, useValue, dropdownLevel)
 	end
 	_G["DropDownList"..dropdownLevel]:SetWidth(maxWidth+25);
 end
+
+hooksecurefunc("UIDropDownMenu_AddButton", function(info, level)
+	level = level or 1;
+	if info.text and info.icon then
+		local listFrame = _G["DropDownList"..level];
+		local button = _G[listFrame:GetName().."Button"..listFrame.numButtons];
+		local icon = _G[button:GetName().."Icon"];
+		icon:ClearAllPoints();
+		if info.iconOnly then
+			icon:SetPoint("LEFT");
+		else
+			icon:SetPoint("RIGHT", info.iconXOffset or 0, 0);
+		end
+		if info.tFitDropDownSizeX then
+			icon:SetPoint("RIGHT", -5, 0);
+		end
+		if info.tSizeX then
+			icon:SetWidth(info.tSizeX);
+		else
+			icon:SetWidth(16);
+		end
+		if info.tSizeY then
+			icon:SetHeight(info.tSizeY);
+		else
+			icon:SetHeight(16);
+		end
+	end
+end);

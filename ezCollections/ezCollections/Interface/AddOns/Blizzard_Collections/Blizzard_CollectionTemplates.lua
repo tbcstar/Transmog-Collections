@@ -33,14 +33,14 @@ function CollectionsSpellButton_UpdateCooldown(self)
 	end
 
 	local cooldown = self.cooldown;
-	local start, duration, enable = GetItemCooldown(self.itemID);
+	local start, duration, enable = ezCollections:GetItemCooldown(self.itemID);
 	if (cooldown and start and duration) then
 		if (enable) then
 			cooldown:Hide();
 		else
 			cooldown:Show();
 		end
-		CooldownFrame_Set(cooldown, start, duration, enable);
+		CooldownFrame_SetTimer(cooldown, start, duration, enable);
 	else
 		cooldown:Hide();
 	end

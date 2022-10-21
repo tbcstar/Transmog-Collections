@@ -126,12 +126,19 @@
 								local name, _, quality = GetItemInfo(source);
 								local texture = ezCollections:GetSkinIcon(source);
 								if name and quality then
+									local isHiddenVisual;
+									local hex = select(4, GetItemQualityColor(quality)) or "";
 									if source == ezCollections:GetHiddenVisualItem() then
+										isHiddenVisual = true;
+										hex = NORMAL_FONT_COLOR_CODE;
 										texture = [[Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify]];
 										textureEmbedInfo = "24:24:0:0:512:512:414:446:88:118";
 									end
-									local color = ITEM_QUALITY_COLORS[quality];
-									GameTooltip:AddLine(format("|T%s:%s|t %s: %s%s|r", texture, textureEmbedInfo, slotName, color.hex, name), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+									if isHiddenVisual or ezCollections:HasAvailableSkin(source) then
+										GameTooltip:AddLine(format("|T%s:%s|t %s: %s%s|r", texture, textureEmbedInfo, slotName, hex, name), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+									else
+										GameTooltip:AddDoubleLine(format("|T%s:%s|t %s: %s%s|r", texture, textureEmbedInfo, slotName, hex, name), NOT_COLLECTED, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
+									end
 								else
 									ezCollections:QueryItem(source);
 									GameTooltip:AddLine(format("|T%s:%s|t %s: %s%s|r", QUESTION_MARK_ICON, textureEmbedInfo, slotName, RED_FONT_COLOR_CODE, RETRIEVING_ITEM_INFO), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
@@ -151,11 +158,17 @@
 									local name, _, quality = GetItemInfo(source);
 									local texture = ezCollections:GetSkinIcon(source);
 									if name and quality then
+										local isHiddenVisual;
 										if source == ezCollections:GetHiddenVisualItem() then
+											isHiddenVisual = true;
 											texture = [[Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify]];
 											textureEmbedInfo = "16:16:0:0:512:512:414:446:88:118";
 										end
-										GameTooltip:AddLine(format([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:16:24|t |T%s:%s|t %s]], texture, textureEmbedInfo, format(TRANSMOGRIFIED_ENCHANT, ezCollections:TransformEnchantName(name))), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+										if isHiddenVisual or ezCollections:HasAvailableSkin(source) then
+											GameTooltip:AddLine(format([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:16:24|t |T%s:%s|t %s]], texture, textureEmbedInfo, format(TRANSMOGRIFIED_ENCHANT, NORMAL_FONT_COLOR_CODE..ezCollections:TransformEnchantName(name)..FONT_COLOR_CODE_CLOSE)), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+										else
+											GameTooltip:AddDoubleLine(format([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:16:24|t |T%s:%s|t %s]], texture, textureEmbedInfo, format(TRANSMOGRIFIED_ENCHANT, NORMAL_FONT_COLOR_CODE..ezCollections:TransformEnchantName(name)..FONT_COLOR_CODE_CLOSE)), NOT_COLLECTED, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
+										end
 									else
 										ezCollections:QueryItem(source);
 										GameTooltip:AddLine(format([[|TInterface\AddOns\ezCollections\Interface\Common\spacer:16:24|t |T%s:%s|t %s]], QUESTION_MARK_ICON, textureEmbedInfo, format(TRANSMOGRIFIED_ENCHANT, RED_FONT_COLOR_CODE..RETRIEVING_ITEM_INFO..FONT_COLOR_CODE_CLOSE)), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
@@ -540,22 +553,28 @@
 							button:UpdateChecked();
 							if source then
 								local _, _, appliedSourceID, _, pendingSourceID, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, button.TransmogType);
+								if not self.isFromTransmogrify then
+									appliedSourceID = nil;
+									pendingSourceID = nil;
+									hasPendingUndo = nil;
+								end
 								local isApplied = appliedSourceID == source;
 								local isPending = pendingSourceID == source;
-								local slotColor = (isApplied or isPending) and TRANSMOGRIFY_FONT_COLOR or "";
+								local slotColor = (isApplied or isPending) and TRANSMOGRIFY_FONT_COLOR_CODE or "";
 								local slotColorEnd = (isApplied or isPending) and FONT_COLOR_CODE_CLOSE or "";
 								local name, _, quality = GetItemInfo(source);
 								local texture = ezCollections:GetSkinIcon(source);
 								if name and quality then
+									local hex = select(4, GetItemQualityColor(quality)) or "";
 									if source == ezCollections:GetHiddenVisualItem() then
+										hex = NORMAL_FONT_COLOR_CODE;
 										texture = [[Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify]];
 										button.Icon:SetTexCoord(414/512, 446/512, 88/512, 118/512);
 									end
-									local color = ITEM_QUALITY_COLORS[quality];
 									button.Icon:SetTexture(texture);
 									button.IconOverlayApplied:SetShown(isPending or isApplied);
 									button.IconOverlayPending:SetShown(isPending or hasPendingUndo);
-									button.Text:SetText(format("%s%s:%s %s%s|r", slotColor, slotName, slotColorEnd, color.hex, name));
+									button.Text:SetText(format("%s%s:%s %s%s|r", slotColor, slotName, slotColorEnd, hex, name));
 								else
 									ezCollections:QueryItem(source);
 									button.Icon:SetTexture(QUESTION_MARK_ICON);
@@ -567,7 +586,9 @@
 								button.Icon:SetTexture(slotTexture);
 								button.Text:SetText(format("|cFF808080%s|r", slotName));
 								button.Icon:SetAlpha(1);
+								button.IconOverlayApplied:Hide();
 								button.IconOverlayApplied:SetAlpha(1);
+								button.IconOverlayPending:Hide();
 								button.IconOverlayPending:SetAlpha(1);
 								button.Text:SetAlpha(1);
 								button:SetAlpha(0.5);
@@ -586,9 +607,14 @@
 							button:UpdateChecked();
 							if source then
 								local _, _, appliedSourceID, _, pendingSourceID, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, button.TransmogType);
+								if not self.isFromTransmogrify then
+									appliedSourceID = nil;
+									pendingSourceID = nil;
+									hasPendingUndo = nil;
+								end
 								local isApplied = appliedSourceID == source;
 								local isPending = pendingSourceID == source;
-								local slotColor = (isApplied or isPending) and TRANSMOGRIFY_FONT_COLOR or "";
+								local slotColor = (isApplied or isPending) and TRANSMOGRIFY_FONT_COLOR_CODE or "";
 								local slotColorEnd = (isApplied or isPending) and FONT_COLOR_CODE_CLOSE or "";
 								local name, _, quality = GetItemInfo(source);
 								local texture = ezCollections:GetSkinIcon(source);
@@ -600,7 +626,7 @@
 									button.Icon:SetTexture(texture);
 									button.IconOverlayApplied:SetShown(isPending or isApplied);
 									button.IconOverlayPending:SetShown(isPending or hasPendingUndo);
-									button.Text:SetText(format("%s%s%s", slotColor, format(TRANSMOGRIFIED_ENCHANT, ezCollections:TransformEnchantName(name)), slotColorEnd));
+									button.Text:SetText(format("%s%s%s", slotColor, format(TRANSMOGRIFIED_ENCHANT, NORMAL_FONT_COLOR_CODE..ezCollections:TransformEnchantName(name)..FONT_COLOR_CODE_CLOSE), slotColorEnd));
 								else
 									ezCollections:QueryItem(source);
 									button.Icon:SetTexture(QUESTION_MARK_ICON);
@@ -612,7 +638,9 @@
 								button.Icon:SetTexture([[Interface\AddOns\ezCollections\Textures\EnchantSlotIcon]]);
 								button.Text:SetText(format("|cFF808080%s|r", format(TRANSMOGRIFIED_ENCHANT, NONE)));
 								button.Icon:SetAlpha(1);
+								button.IconOverlayApplied:Hide();
 								button.IconOverlayApplied:SetAlpha(1);
+								button.IconOverlayPending:Hide();
 								button.IconOverlayPending:SetAlpha(1);
 								button.Text:SetAlpha(1);
 								button:SetAlpha(0.5);

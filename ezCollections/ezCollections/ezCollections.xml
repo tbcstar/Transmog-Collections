@@ -1,4 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ Interface\FrameXML\UI.xsd">
 	<Script file="ezCollections.lua"/>
 
 	<StatusBar name="ezCollectionsProgressBarTemplate" virtual="true">
@@ -143,6 +143,242 @@
 			</OnClick>
 		</Scripts>
 	</Button>
+	<Button name="ezCollectionsOptionsMediumButtonTemplate" virtual="true">
+		<Size y="26" />
+		<HitRectInsets left="16" right="0" top="0" bottom="0" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="$parentTopLeft" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Up">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="16" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="0.125" />
+				</Texture>
+				<Texture name="$parentTopRight" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Up">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="TOPRIGHT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="0.125" />
+				</Texture>
+				<Texture name="$parentTopMiddle" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Up">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="TOPRIGHT" />
+						<Anchor point="TOPRIGHT" relativeTo="$parentTopRight" relativePoint="TOPLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="0.125" />
+				</Texture>
+				<Texture name="$parentBotLeft" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Up">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="16" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.59375" bottom="0.71875" />
+				</Texture>
+				<Texture name="$parentBotRight" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Up">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.59375" bottom="0.71875" />
+				</Texture>
+				<Texture name="$parentBotMiddle" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Up">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentBotLeft" relativePoint="BOTTOMRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentBotRight" relativePoint="BOTTOMLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.59375" bottom="0.71875" />
+				</Texture>
+				<Texture name="$parentMidLeft" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Up">
+					<Size x="32" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="BOTTOMLEFT" />
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentBotLeft" relativePoint="TOPLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.125" bottom="0.59375" />
+				</Texture>
+				<Texture name="$parentMidRight" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Up">
+					<Size x="32" />
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeTo="$parentTopRight" relativePoint="BOTTOMRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentBotRight" relativePoint="TOPRIGHT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.125" bottom="0.59375" />
+				</Texture>
+				<Texture name="$parentMidMiddle" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Up">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="BOTTOMRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentBotRight" relativePoint="TOPLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.125" bottom="0.59375" />
+				</Texture>
+			</Layer>
+			<Layer level="HIGHLIGHT">
+				<Texture name="$parentTopLeft" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Hi">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="16" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="0.125" />
+				</Texture>
+				<Texture name="$parentTopRight" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Hi">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="TOPRIGHT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="0.125" />
+				</Texture>
+				<Texture name="$parentTopMiddle" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Hi">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="TOPRIGHT" />
+						<Anchor point="TOPRIGHT" relativeTo="$parentTopRight" relativePoint="TOPLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0" bottom="0.125" />
+				</Texture>
+				<Texture name="$parentBotLeft" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Hi">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" x="16" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.59375" bottom="0.71875" />
+				</Texture>
+				<Texture name="$parentBotRight" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Hi">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.59375" bottom="0.71875" />
+				</Texture>
+				<Texture name="$parentBotMiddle" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Hi">
+					<Size x="32" y="8" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentBotLeft" relativePoint="BOTTOMRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentBotRight" relativePoint="BOTTOMLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.59375" bottom="0.71875" />
+				</Texture>
+				<Texture name="$parentMidLeft" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Hi">
+					<Size x="32" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="BOTTOMLEFT" />
+						<Anchor point="BOTTOMLEFT" relativeTo="$parentBotLeft" relativePoint="TOPLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.125" bottom="0.59375" />
+				</Texture>
+				<Texture name="$parentMidRight" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Hi">
+					<Size x="32" />
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativeTo="$parentTopRight" relativePoint="BOTTOMRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentBotRight" relativePoint="TOPRIGHT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.125" bottom="0.59375" />
+				</Texture>
+				<Texture name="$parentMidMiddle" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Hi">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentTopLeft" relativePoint="BOTTOMRIGHT" />
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentBotRight" relativePoint="TOPLEFT" />
+					</Anchors>
+					<TexCoords left="0" right="1" top="0.125" bottom="0.59375" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame name="$parentContentsFrame" parentKey="ContentsFrame">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="16" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture name="$parentIcon" parentKey="Icon" file="Interface\AddOns\ezCollections\Textures\OptionsBigButtonChevron">
+							<Size x="18" y="0" />
+							<Anchors>
+								<Anchor point="TOPLEFT" x="4" y="-4" />
+								<Anchor point="BOTTOMLEFT" x="4" y="4" />
+							</Anchors>
+						</Texture>
+						<FontString name="$parentHeader" parentKey="Header" inherits="GameFontNormalMed2" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentIcon" relativePoint="TOPRIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Text" inherits="GameFontWhiteSmall" justifyH="LEFT" justifyV="TOP" wordwrap="true">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentHeader" relativePoint="BOTTOMLEFT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				function self:UpdateText()
+					local width = self:GetRight() - self:GetLeft();
+					local offsetX = 6 + self.ContentsFrame.Icon:GetWidth();
+					self.ContentsFrame.Header:SetWidth(width - offsetX - 6);
+					self.ContentsFrame.Text:SetWidth(width - offsetX - 6);
+					self.ContentsFrame.Text:SetHeight(0);
+					local heightHeader = self.ContentsFrame.Header:GetHeight();
+					local heightText = self.ContentsFrame.Text:GetHeight();
+					if 6 + heightHeader + heightText + 6 > self:GetHeight() + 2 then
+						heightText = self:GetHeight() + 2 - 6 - heightHeader - 6;
+					end
+					self.ContentsFrame.Header:SetPoint("TOPLEFT", offsetX, -6 -(self:GetHeight() - 6 - 6 - heightHeader - heightText) / 2);
+					self.ContentsFrame.Text:SetHeight(heightText);
+				end
+			</OnLoad>
+			<OnUpdate>
+				self:UpdateText();
+			</OnUpdate>
+			<OnClick>
+				if self.obj and self.obj:GetUserDataTable() then
+					PlaySound("igMainMenuOptionCheckBoxOn");
+					self.obj:GetUserDataTable().option.func();
+				end
+			</OnClick>
+			<OnMouseDown>
+				if ( self:IsEnabled() == 1 ) then
+					local name = self:GetName();
+					_G[name.."TopLeft"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Down]]);
+					_G[name.."TopMiddle"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Down]]);
+					_G[name.."TopRight"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Down]]);
+					_G[name.."MidLeft"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Down]]);
+					_G[name.."MidMiddle"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Down]]);
+					_G[name.."MidRight"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Down]]);
+					_G[name.."BotLeft"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Down]]);
+					_G[name.."BotMiddle"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Down]]);
+					_G[name.."BotRight"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Down]]);
+					local contentsFrame = _G[name.."ContentsFrame"];
+					if ( contentsFrame ) then
+						contentsFrame:SetPoint("TOPLEFT", -2+16, -1);
+					end
+				end
+			</OnMouseDown>
+			<OnMouseUp>
+				if ( self:IsEnabled() == 1 ) then
+					local name = self:GetName();
+					_G[name.."TopLeft"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Up]]);
+					_G[name.."TopMiddle"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Up]]);
+					_G[name.."TopRight"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Up]]);
+					_G[name.."MidLeft"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Up]]);
+					_G[name.."MidMiddle"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Up]]);
+					_G[name.."MidRight"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Up]]);
+					_G[name.."BotLeft"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Up]]);
+					_G[name.."BotMiddle"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Up]]);
+					_G[name.."BotRight"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Right-Up]]);
+					local contentsFrame = _G[name.."ContentsFrame"];
+					if ( contentsFrame ) then
+						contentsFrame:SetPoint("TOPLEFT", 0+16, 0);
+					end
+				end
+			</OnMouseUp>
+		</Scripts>
+	</Button>
 	<CheckButton name="ezCollectionsOptionsMicroButtonIconTemplate" virtual="true">
 		<Size x="28" y="37" />
 		<NormalTexture>
@@ -171,4 +407,94 @@
 			</OnClick>
 		</Scripts>
 	</CheckButton>
+	<CheckButton name="ezCollectionsOptionsCheckBoxWithSettingsTemplate" inherits="UIMenuButtonStretchTemplate" virtual="true">
+		<Size x="20" y="20" />
+		<HitRectInsets left="-5" right="-5" top="-5" bottom="-5" />
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Icon" file="Interface\AddOns\ezCollections\Interface\Buttons\UI-OptionsButton">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+		<Scripts>
+			<OnLoad>
+				self:SetPushedTextOffset(1, -1);
+				function self:UpdateButtonState()
+					if self:GetChecked() then
+						self:SetButtonState("PUSHED");
+						self:LockHighlight();
+						self.Icon:SetPoint("CENTER", self, "CENTER", self:GetPushedTextOffset());
+					else
+						self:SetButtonState("NORMAL");
+						self:UnlockHighlight();
+						self.Icon:SetPoint("CENTER", self, "CENTER");
+					end
+				end
+			</OnLoad>
+			<OnMouseDown>
+				self.Icon:SetPoint("CENTER", self, "CENTER", self:GetPushedTextOffset());
+			</OnMouseDown>
+			<OnMouseUp>
+				self.Icon:SetPoint("CENTER", self, "CENTER");
+			</OnMouseUp>
+			<OnUpdate>
+				self:SetPoint("LEFT", self.obj.text, "LEFT", self.obj.text:GetStringWidth() + 5, 1);
+				local checked = self:GetArg().get();
+				if self:GetChecked() ~= checked then
+					self:SetChecked(checked);
+					self:UpdateButtonState();
+				end
+			</OnUpdate>
+			<OnClick>
+				if self:GetChecked() then
+					PlaySound("igMainMenuOptionCheckBoxOn");
+				else
+					PlaySound("igMainMenuOptionCheckBoxOff");
+				end
+				self:UpdateButtonState();
+				self:GetArg().set(self:GetChecked());
+				self.obj:Fire("OnValueChanged", self.obj.checked);
+			</OnClick>
+			<OnEnter>
+				local name = self:GetArg().name;
+				local desc = self:GetArg().desc;
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(name, 1, .82, 0, 1);
+				if type(desc) == "string" then
+					GameTooltip:AddLine(desc, 1, 1, 1, 1);
+				end
+				GameTooltip:Show();
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide" />
+		</Scripts>
+	</CheckButton>
+	<Frame name="ezCollectionsOptionsChatFontTextTemplate" virtual="true">
+		<Layers>
+			<Layer>
+				<FontString parentKey="Text" justifyH="LEFT" justifyV="MIDDLE" setAllPoints="true" />
+			</Layer>
+		</Layers>
+	</Frame>
+	<Frame name="LFGRewardsLootShortageTemplate" virtual="true">
+		<Size x="19" y="19"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture name="$parentTexture" file="Interface\LFGFrame\UI-LFG-ICON-PORTRAITROLES" parentKey="texture"/>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(format(LFG_CALL_TO_ARMS, _G[self.role]), 1, 1, 1);
+				GameTooltip:AddLine(LFG_CALL_TO_ARMS_EXPLANATION, nil, nil, nil, 1);
+				GameTooltip:Show();
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide"/>
+		</Scripts>
+	</Frame>
 </Ui>

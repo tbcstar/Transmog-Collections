@@ -45,7 +45,7 @@ local function PrepareFilter()
     for filterIndex = 1, C_PetJournal.GetNumPetSources() do
         _sources[filterIndex] = C_MountJournal.IsSourceChecked(filterIndex);
     end
-    _search = _search and _search:utf8lower();
+    _search = ezCollections:PrepareSearchQuery(_search);
 end
 
 local function IsMountUsable(mountID)
@@ -92,7 +92,7 @@ local function MatchesFilter(mountID)
         if not _showSubscription then
             return false;
         end
-    elseif not (_showCollected and isCollected and not subscription or _showUncollected and not isCollected) then
+    elseif not (_showCollected and isCollected or _showUncollected and not isCollected) then
         return false;
     end
 
@@ -147,7 +147,7 @@ local function MatchesFilter(mountID)
         return false;
     end
 
-    if _search and _search ~= "" and not name:utf8lower():find(_search, 1, true) then
+    if not ezCollections:TextMatchesSearch(name, _search) then
         return false;
     end
 
@@ -284,7 +284,7 @@ function C_MountJournal.RefreshMounts() -- Custom
     PrepareFilter();
 
     for mountID, info in pairs(ezCollections.Mounts) do
-        local _, _, name, _, _, _, faction = unpack(info);
+        local _, _, name = unpack(info);
         if name then
             table.insert(_mountIDs, mountID);
         end
@@ -473,23 +473,28 @@ function C_MountJournal.Pickup(displayIndex)
     end
 end
 
+local function SearchUpdated()
+    ezCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
+    MountJournalResetFiltersButton_UpdateVisibility();
+end
+
 function C_MountJournal.SetAllSourceFilters(isChecked)
     for filterIndex = 1, C_PetJournal.GetNumPetSources() do
         ezCollections:SetCVarBitfield("mountJournalSourcesFilter", filterIndex, not isChecked);
     end
-    ezCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_MountJournal.SetAllTypeFilters(isChecked)
     for filterIndex = 1, 3 do
         ezCollections:SetCVarBitfield("mountJournalTypeFilter", filterIndex, not isChecked);
     end
-    ezCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_MountJournal.SetCollectedFilterSetting(filterIndex, isChecked)
     ezCollections:SetCVarBitfield("mountJournalGeneralFilters", filterIndex, not isChecked);
-    ezCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_MountJournal.SetIsFavorite(mountIndex, isFavorite)
@@ -497,22 +502,35 @@ function C_MountJournal.SetIsFavorite(mountIndex, isFavorite)
     if mountID then
         ezCollections:GetMountFavoritesContainer()[mountID] = isFavorite and true or nil;
     end
-    ezCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_MountJournal.SetSearch(searchValue)
     _search = searchValue;
-    ezCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_MountJournal.SetSourceFilter(filterIndex, isChecked)
     ezCollections:SetCVarBitfield("mountJournalSourcesFilter", filterIndex, not isChecked);
-    ezCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_MountJournal.SetTypeFilter(filterIndex, isChecked)
     ezCollections:SetCVarBitfield("mountJournalTypeFilter", filterIndex, not isChecked);
-    ezCollections:RaiseEvent("MOUNT_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
+end
+
+function C_MountJournal.SetDefaultFilters()
+    ezCollections:SetCVar("mountJournalGeneralFilters", 0);
+    ezCollections:SetCVar("mountJournalSourcesFilter", 0);
+    ezCollections:SetCVar("mountJournalTypeFilter", 0);
+    SearchUpdated();
+end
+
+function C_MountJournal.IsUsingDefaultFilters()
+    return ezCollections:GetCVar("mountJournalGeneralFilters") == 0
+        and ezCollections:GetCVar("mountJournalSourcesFilter") == 0
+        and ezCollections:GetCVar("mountJournalTypeFilter") == 0;
 end
 
 function C_MountJournal.SummonByID(mountID)

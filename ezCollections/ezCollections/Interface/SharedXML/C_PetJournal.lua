@@ -23,12 +23,12 @@ local function PrepareFilter()
         _types[filterIndex] = C_PetJournal.IsPetTypeChecked(filterIndex);
     end
     _sort = C_PetJournal.GetPetSortParameter();
-    _search = _search and _search:utf8lower();
+    _search = ezCollections:PrepareSearchQuery(_search);
 end
 
 local function MatchesFilter(petID)
     local isCollected = petID and _petIDToCompanionIndex[petID] ~= nil;
-    local sourceType = select(6, ezCollections:GetPetInfo(petID));
+    local _, _, flags, _, _, sourceType = ezCollections:GetPetInfo(petID);
     local name, _, petType = C_PetJournal.GetPetInfoBySpeciesID(petID);
 
     if ezCollections:IsActivePetSubscriptionPet(petID) then
@@ -36,6 +36,8 @@ local function MatchesFilter(petID)
             return false;
         end
     elseif not (_showCollected and isCollected or _showUncollected and not isCollected) then
+        return false;
+    elseif bit.band(flags or 0, 0x20) ~= 0 and not isCollected and not ezCollections.Config.Wardrobe.PetsShowHidden then
         return false;
     end
 
@@ -47,7 +49,7 @@ local function MatchesFilter(petID)
         return false;
     end
 
-    if _search and _search ~= "" and not name:utf8lower():find(_search, 1, true) then
+    if not ezCollections:TextMatchesSearch(name, _search) then
         return false;
     end
 
@@ -156,7 +158,7 @@ function C_PetJournal.RefreshPets() -- Custom
     PrepareFilter();
 
     for petID, info in pairs(ezCollections.Pets) do
-        local _, _, name, _, _, _, faction = unpack(info);
+        local _, _, name = unpack(info);
         if name then
             table.insert(_petIDs, petID);
         end
@@ -309,6 +311,11 @@ end
 
 -- Search
 
+local function SearchUpdated()
+    ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+    PetJournalResetFiltersButton_UpdateVisibility();
+end
+
 function C_PetJournal.SetSearchFilter(searchString)
     _search = searchString;
     ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
@@ -431,6 +438,7 @@ function C_PetJournal.SummonPetByGUID(petGUID)
 
     if C_PetJournal.GetSummonedPetGUID() == petID then
         DismissCompanion("CRITTER");
+        return;
     end
 
     local companionIndex = _petIDToCompanionIndex[petID];
@@ -467,6 +475,11 @@ function C_PetJournal.SummonRandomPet()
         C_PetJournal.RefreshPets();
     end
 
+    if C_PetJournal.GetSummonedPetGUID() then
+        DismissCompanion("CRITTER");
+        return;
+    end
+
     local petID = SelectRandomFavoritePet();
     if not petID then
         return;
@@ -494,7 +507,7 @@ function C_PetJournal.SetFavorite(petID, bool)
     if petID then
         ezCollections:GetPetFavoritesContainer()[petID] = bool and true or nil;
     end
-    ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_PetJournal.PetIsFavorite(ID)
@@ -541,7 +554,7 @@ end
 
 function C_PetJournal.SetPetSortParameter(parameterID)
     ezCollections:SetCVar("petJournalSort", parameterID);
-    ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_PetJournal.GetPetSortParameter()
@@ -554,7 +567,7 @@ end
 
 function C_PetJournal.SetPetTypeFilter(petTypeIndex, value)
     ezCollections:SetCVarBitfield("petJournalTypeFilters", petTypeIndex, not value);
-    ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_PetJournal.IsPetTypeChecked(petTypeIndex)
@@ -565,7 +578,7 @@ function C_PetJournal.SetAllPetTypesChecked(checked)
     for filterIndex = 1, C_PetJournal.GetNumPetTypes() do
         ezCollections:SetCVarBitfield("petJournalTypeFilters", filterIndex, not checked);
     end
-    ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_PetJournal.GetNumPetSources()
@@ -574,7 +587,7 @@ end
 
 function C_PetJournal.SetPetSourceChecked(petSourceIndex, value)
     ezCollections:SetCVarBitfield("petJournalSourceFilters", petSourceIndex, not value);
-    ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_PetJournal.IsPetSourceChecked(petSourceIndex)
@@ -585,16 +598,29 @@ function C_PetJournal.SetAllPetSourcesChecked(checked)
     for filterIndex = 1, C_PetJournal.GetNumPetSources() do
         ezCollections:SetCVarBitfield("petJournalSourceFilters", filterIndex, not checked);
     end
-    ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_PetJournal.SetFilterChecked(filter, value)
     ezCollections:SetCVarBitfield("petJournalFilters", filter, not value);
-    ezCollections:RaiseEvent("PET_JOURNAL_SEARCH_UPDATED");
+    SearchUpdated();
 end
 
 function C_PetJournal.IsFilterChecked(filter)
     return not ezCollections:GetCVarBitfield("petJournalFilters", filter);
+end
+
+function C_PetJournal.SetDefaultFilters()
+    ezCollections:SetCVar("petJournalFilters", 0);
+    ezCollections:SetCVar("petJournalSourceFilters", 0);
+    ezCollections:SetCVar("petJournalTypeFilters", 0);
+    SearchUpdated();
+end
+
+function C_PetJournal.IsUsingDefaultFilters()
+    return ezCollections:GetCVar("petJournalFilters") == 0
+        and ezCollections:GetCVar("petJournalSourceFilters") == 0
+        and ezCollections:GetCVar("petJournalTypeFilters") == 0;
 end
 
 -- Global

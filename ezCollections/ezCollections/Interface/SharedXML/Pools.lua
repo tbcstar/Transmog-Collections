@@ -8,6 +8,7 @@ function ObjectPoolMixin:OnLoad(creationFunc, resetterFunc)
 	self.inactiveObjects = {};
 
 	self.numActiveObjects = 0;
+	self.numAllocatedObjects = 0;
 end
 
 function ObjectPoolMixin:Acquire()
@@ -20,6 +21,7 @@ function ObjectPoolMixin:Acquire()
 		return obj, false;
 	end
 
+	self.numAllocatedObjects = self.numAllocatedObjects + 1;
 	local newObj = self.creationFunc(self);
 	if self.resetterFunc then
 		self.resetterFunc(self, newObj);
@@ -69,7 +71,7 @@ end
 FramePoolMixin = Mixin({}, ObjectPoolMixin);
 
 local function FramePoolFactory(framePool)
-	return CreateFrame(framePool.frameType, nil, framePool.parent, framePool.frameTemplate);
+	return CreateFrame(framePool.frameType, framePool.name and format("%s%d", framePool.name, framePool.numAllocatedObjects), framePool.parent, framePool.frameTemplate);
 end
 
 function FramePoolMixin:OnLoad(frameType, parent, frameTemplate, resetterFunc)

@@ -19,7 +19,7 @@ StaticPopupDialogs["NAME_TRANSMOG_OUTFIT"] = {
 		self.editBox:SetText("");
 	end,
 	EditBoxOnEnterPressed = function(self)
-		if ( self:GetParent().button1:IsEnabled() ) then
+		if ( self:GetParent().button1:IsEnabled() == 1 ) then
 			StaticPopup_OnClick(self:GetParent(), 1);
 		end
 	end,

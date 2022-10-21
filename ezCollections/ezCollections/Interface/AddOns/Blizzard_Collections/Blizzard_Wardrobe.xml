@@ -944,10 +944,21 @@
 				Mixin(self.StoreSubscriptionButton, SetShownMixin);
 				Mixin(self, WardrobeSetsDetailsItemMixin);
 				self:EnableMouse(true);
+				self:EnableMouseWheel(false);
 				self:SetScript("OnEnter", self.OnEnter);
 				self:SetScript("OnLeave", self.OnLeave);
 				self:SetScript("OnMouseDown", self.OnMouseDown);
 			</OnLoad>
+			<OnMouseWheel>
+				if WardrobeCollectionFrame.tooltipCycle then
+					if delta > 0 then
+						WardrobeCollectionFrame.tooltipSourceIndex = WardrobeCollectionFrame.tooltipSourceIndex - 1;
+					elseif delta &lt; 0 then
+						WardrobeCollectionFrame.tooltipSourceIndex = WardrobeCollectionFrame.tooltipSourceIndex + 1;
+					end
+					WardrobeCollectionFrame.tooltipContentFrame:RefreshAppearanceTooltip(true);
+				end
+			</OnMouseWheel>
 		</Scripts>
 	</Frame>
 
@@ -1101,7 +1112,7 @@
 					</Button>
 				</Frames>
 			</Frame>
-			<EditBox name="$parentSearchBox" parentKey="searchBox" inherits="SearchBoxTemplate" letters="40" motionScriptsWhileDisabled="true" frameLevel="10000">
+			<EditBox name="$parentSearchBox" parentKey="searchBox" inherits="SearchBoxTemplate" letters="40" motionScriptsWhileDisabled="true">
 				<Size x="115" y="20"/>
 				<Anchors>
 					<Anchor point="TOPRIGHT" x="-107" y="-35"/>
@@ -1275,23 +1286,207 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentTab1" relativePoint="TOPLEFT" x="195" y="-11"/>
 				</Anchors>
+				<Frames>
+					<ColorSelect parentKey="CS" hidden="true" />
+				</Frames>
+				<Layers>
+					<Layer>
+						<FontString parentKey="FontStringMeasureDummy" text="0" hidden="true" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self.sections =
+						{
+							ARMOR,
+							MAINHANDSLOT,
+							SECONDARYHANDSLOT,
+							RANGEDSLOT,
+						};
+						self.categories = { };
+						for category = 1, NUM_LE_TRANSMOG_COLLECTION_TYPES do
+							local name, isWeapon, canEnchant, canMainHand, canOffHand, canRanged = C_TransmogCollection.GetCategoryInfo(category);
+							table.insert(self.categories,
+							{
+								index = category,
+								name = name,
+								isWeapon = isWeapon,
+								canMainHand = canMainHand,
+								canOffHand = canOffHand,
+								canRanged = canRanged,
+								section = (function()
+									if not isWeapon then return 1; end
+									if canMainHand then return 2; end
+									if canOffHand then return 3; end
+									if canRanged then return 4; end
+								end)(),
+							});
+						end
+						table.sort(self.categories, function(a, b)
+							if a.section ~= b.section then return a.section &lt; b.section; end
+							return a.index &lt; b.index;
+						end);
+
+						-- Code "Borrowed" from All The Things addon
+						local CS = self.CS;
+						local function HexToARGB(hex)
+							return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6)), tonumber("0x"..hex:sub(7,8));
+						end
+						local function HexToRGB(hex)
+							return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6));
+						end
+						local function RGBToHex(r, g, b)
+							return string.format("ff%02x%02x%02x",
+								r &lt;= 255 and r >= 0 and r or 0,
+								g &lt;= 255 and g >= 0 and g or 0,
+								b &lt;= 255 and b >= 0 and b or 0);
+						end
+						local function ConvertColorRgbToHsv(r, g, b)
+							CS:SetColorRGB(r, g, b);
+							local h,s,v = CS:GetColorHSV()
+							return {h=h,s=s,v=v}
+						end
+						local red, green = ConvertColorRgbToHsv(1,0,0), ConvertColorRgbToHsv(0,1,0);
+						self.progress_colors = setmetatable({[1] = "ff15abff"}, {
+							__index = function(t, p)
+								local h;
+								p = tonumber(p);
+								if abs(red.h - green.h) > 180 then
+									local angle = (360 - abs(red.h - green.h)) * p;
+									if red.h &lt; green.h then
+										h = floor(red.h - angle);
+										if h &lt; 0 then h = 360 + h end
+									else
+										h = floor(red.h + angle);
+										if h > 360 then h = h - 360 end
+									end
+								else
+									h = floor(red.h-(red.h-green.h)*p)
+								end
+								CS:SetColorHSV(h, red.s-(red.s-green.s)*p, red.v-(red.v-green.v)*p);
+								local r,g,b = CS:GetColorRGB();
+								local color = RGBToHex(r * 255, g * 255, b * 255);
+								rawset(t, p, color);
+								return color;
+							end
+						});
+					</OnLoad>
+					<OnEnter>
+						local file, size, flags = GameTooltipTextRight2:GetFont();
+						self.FontStringMeasureDummy:SetFont(file, 16);
+						local digitWidth = self.FontStringMeasureDummy:GetStringWidth();
+
+						local function AddStats(name, collected, total)
+							if not collected or not total or total == 0 then return; end
+							local totalString = format("%d", total);
+							local percent = collected / total;
+							local color = self.progress_colors[percent];
+							local percentString = format("%.2f%%", 100 * percent);
+							GameTooltip:AddDoubleLine(
+								name,
+								format([[%s%d|r / %s|TInterface\AddOns\ezCollections\Interface\Common\spacer:1:%f|t|c%s%s|r]],
+									GREEN_FONT_COLOR_CODE,
+									collected,
+									totalString,
+									digitWidth * (6 + 8 - #totalString - #percentString),
+									color,
+									percentString),
+								HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b,
+								HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b);
+						end
+
+						if WardrobeCollectionFrame.activeFrame == WardrobeCollectionFrame.ItemsCollectionFrame then
+							GameTooltip:SetOwner(self, "ANCHOR_BOTTOM");
+							GameTooltip:SetText(self.sections[1]);
+							local function AddSection(section)
+								GameTooltip:AddLine(" ");
+								GameTooltip:AddLine(self.sections[section]);
+							end
+
+							local allCollected = 0;
+							local allTotal = 0;
+							local section = 1;
+							for _, category in ipairs(self.categories) do
+								local collected = C_TransmogCollection.GetCategoryCollectedCount(category.index);
+								local total = C_TransmogCollection.GetCategoryTotal(category.index);
+								allCollected = allCollected + collected;
+								allTotal = allTotal + total;
+								if section ~= category.section then
+									section = category.section;
+									AddSection(section);
+								end
+								AddStats(category.name, collected, total);
+							end
+							do
+								local collected = C_TransmogCollection.GetCategoryCollectedCount(nil);
+								local total = C_TransmogCollection.GetCategoryTotal(nil);
+								allCollected = allCollected + collected;
+								allTotal = allTotal + total;
+								GameTooltip:AddLine(" ");
+								AddStats(NORMAL_FONT_COLOR_CODE..ezCollections.L["Transmog.Items.Progress.Illusions"]..FONT_COLOR_CODE_CLOSE, collected, total);
+							end
+							GameTooltip:AddLine(" ");
+							AddStats(NORMAL_FONT_COLOR_CODE..ezCollections.L["Transmog.Items.Progress.Total"]..FONT_COLOR_CODE_CLOSE, allCollected, allTotal);
+							GameTooltip:Show();
+						elseif WardrobeCollectionFrame.activeFrame == WardrobeCollectionFrame.SetsCollectionFrame or WardrobeCollectionFrame.activeFrame == WardrobeCollectionFrame.SetsTransmogFrame then
+							local stats = C_TransmogSets.GetCollectionStats();
+							local function Get(tag)
+								local container = stats[tag];
+								return container and container[1] or 0, container and container[2] or 0;
+							end
+							GameTooltip:SetOwner(self, "ANCHOR_BOTTOM");
+							GameTooltip:SetText(ezCollections.L["Transmog.Sets.Filter.ArmorType"]);
+							AddStats(ezCollections.L["Transmog.Sets.Filter.ArmorType.Cloth"], Get("Cloth"));
+							AddStats(ezCollections.L["Transmog.Sets.Filter.ArmorType.Leather"], Get("Leather"));
+							AddStats(ezCollections.L["Transmog.Sets.Filter.ArmorType.Mail"], Get("Mail"));
+							AddStats(ezCollections.L["Transmog.Sets.Filter.ArmorType.Plate"], Get("Plate"));
+							AddStats(ezCollections.L["Transmog.Sets.Filter.ArmorType.Misc"], Get("Misc"));
+							GameTooltip:AddLine(" ");
+							GameTooltip:AddLine(CLASS);
+							for _, class in ipairs(CLASS_SORT_ORDER) do
+								local color = RAID_CLASS_COLORS[class];
+								if color then
+									AddStats(format("|cFF%s%s|r", ezCollections.RGBPercToHex(color.r, color.g, color.b), LOCALIZED_CLASS_NAMES_MALE[class]), Get(ezCollections.ClassNameToID[class]));
+								end
+							end
+							AddStats(ezCollections.L["Transmog.Sets.Filter.Classes.Any"], Get(0));
+							GameTooltip:AddLine(" ");
+							GameTooltip:AddLine(FACTION);
+							AddStats(format(ezCollections.L["Transmog.Sets.Progress.Races.Alliance"], FACTION_ALLIANCE), Get("Alliance"));
+							AddStats(format(ezCollections.L["Transmog.Sets.Progress.Races.Horde"], FACTION_HORDE), Get("Horde"));
+							AddStats(ezCollections.L["Transmog.Sets.Progress.Races.Neutral"], Get("Neutral"));
+							GameTooltip:AddLine(" ");
+							GameTooltip:AddLine(SOURCES);
+							AddStats(TRANSMOG_SET_PVE, Get("PvE"));
+							AddStats(TRANSMOG_SET_PVP, Get("PvP"));
+							AddStats(ezCollections.L["Transmog.Sets.Filter.Store"], Get("Store"));
+							GameTooltip:AddLine(" ");
+							AddStats(NORMAL_FONT_COLOR_CODE..ezCollections.L["Transmog.Sets.Filter.Core"]..FONT_COLOR_CODE_CLOSE, Get("Core"));
+							AddStats(NORMAL_FONT_COLOR_CODE..ezCollections.L["Transmog.Sets.Filter.Wowhead"]..FONT_COLOR_CODE_CLOSE, Get("Wowhead"));
+							local pveCollected, pveTotal = Get("PvE");
+							local pvpCollected, pvpTotal = Get("PvP");
+							local storeCollected, storeTotal = Get("Store");
+							GameTooltip:AddLine(" ");
+							AddStats(NORMAL_FONT_COLOR_CODE..ezCollections.L["Transmog.Sets.Progress.Total"]..FONT_COLOR_CODE_CLOSE, pveCollected + pvpCollected + storeCollected, pveTotal + pvpTotal + storeTotal);
+							GameTooltip:AddLine(ezCollections.L["Transmog.Sets.Progress.Note"], GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, 1);
+							GameTooltip:Show();
+						end
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
 			</StatusBar>
-			<Button name="$parentFilterButton" parentKey="FilterButton" inherits="UIMenuButtonStretchTemplate" text="FILTER" frameLevel="10000">
+			<Button name="$parentFilterButton" parentKey="FilterButton" inherits="UIResettableDropdownButtonTemplate" text="FILTER">
+				<!--KeyValues>
+					<KeyValue key="resetFunction" value="WardrobeFilterDropDown_ResetFilters" type="global"/>
+				</KeyValues-->
 				<Size x="93" y="22"/>
 				<Anchors>
 					<Anchor point="LEFT" relativeTo="$parentSearchBox" relativePoint="RIGHT" x="2" y="-1"/>
 				</Anchors>
-				<Layers>
-					<Layer level="ARTWORK">
-						<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
-							<Size x="10" y="12"/>
-							<Anchors>
-								<Anchor point="RIGHT" relativePoint="RIGHT" x="-5"/>
-							</Anchors>
-						</Texture>
-					</Layer>
-				</Layers>
 				<Scripts>
+					<OnLoad>
+						UIResettableDropdownButtonMixin_OnLoad(self, WardrobeFilterDropDown_ResetFilters);
+					</OnLoad>
 					<OnClick>
 						WardrobeFilterDropDown.setsSlotMask = ezCollections:GetCVar("transmogrifySetsSlotMask");
 						PlaySound("igMainMenuOptionCheckBoxOn");
@@ -1302,6 +1497,7 @@
 					</OnEnable>
 					<OnDisable>
 						self.Icon:SetDesaturated(true);
+						self.ResetButton:Hide();
 					</OnDisable>
 				</Scripts>
 			</Button>
@@ -1332,7 +1528,7 @@
 						</Anchors>
 					</Frame>
 					<Frame name="WardrobeModelRightClickDropDown" parentKey="RightClickDropDown" inherits="UIDropDownMenuTemplate" hidden="true"/>
-					<Frame parentKey="WeaponDropDown" name="$parentWeaponDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true" hidden="true">
+					<Frame parentKey="WeaponDropDown" name="WardrobeCollectionFrameWeaponDropDown" inherits="UIDropDownMenuTemplate" enableMouse="true" hidden="true">
 						<Size x="87" y="22"/>
 						<Anchors>
 							<Anchor point="TOPRIGHT" x="-6" y="-22"/>
@@ -1945,7 +2141,7 @@
 								</Layers>
 								<Scripts>
 									<OnLoad inherit="prepend">
-										self:SetPushedTextOffset(1, -1);
+										UIMenuButtonStretchMixin_OnLoad(self);
 										self.Text:ClearAllPoints();
 										self.Text:SetPoint("LEFT", 11, -1);
 										self.Text:SetSize(105, 10);
@@ -2370,15 +2566,6 @@
 				</Texture>				
 			</Layer>
 			<Layer level="ARTWORK">
-				<Texture parentKey="HiddenVisualCover" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-blackcover" useAtlasSize="true" hidden="true" alpha="0.6">
-					<Size x="46" y="45"/>
-					<TexCoords left="0.373046875" right="0.462890625" top="0.001953125" bottom="0.08984375"/>
-					<Anchors>
-						<Anchor point="CENTER"/>
-					</Anchors>
-				</Texture>
-			</Layer>
-			<Layer level="OVERLAY">
 				<Texture parentKey="StatusBorder" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-pink" useAtlasSize="true" hidden="true">
 					<Size x="44" y="43"/>
 					<TexCoords left="0.466796875" right="0.552734375" top="0.001953125" bottom="0.0859375"/>
@@ -2386,9 +2573,11 @@
 						<Anchor point="CENTER"/>
 					</Anchors>
 				</Texture>
-				<Texture parentKey="HiddenVisualIcon" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-icon-hidden" useAtlasSize="true" hidden="true" alpha="0.7">
-					<Size x="36" y="30"/>
-					<TexCoords left="0.8046875" right="0.875" top="0.171875" bottom="0.23046875"/>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="HiddenVisualCover" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-blackcover" useAtlasSize="true" hidden="true" alpha="0.6">
+					<Size x="46" y="45"/>
+					<TexCoords left="0.373046875" right="0.462890625" top="0.001953125" bottom="0.08984375"/>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
@@ -2403,6 +2592,19 @@
 			</Layer>			
 		</Layers>
 		<Frames>
+			<Frame parentKey="HiddenVisualIcon" setAllPoints="true" hidden="true">
+				<Layers>
+					<Layer>
+						<Texture file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-icon-hidden" useAtlasSize="true" alpha="0.7">
+							<Size x="36" y="30"/>
+							<TexCoords left="0.8046875" right="0.875" top="0.171875" bottom="0.23046875"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
 			<Button parentKey="UndoButton" hidden="true">
 				<Size x="24" y="22"/>
 				<Anchors>
@@ -2579,18 +2781,18 @@
 				</Texture>
 			</Layer>
 			<Layer level="ARTWORK">
-				<Texture parentKey="HiddenVisualCover" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-blackcover" useAtlasSize="true" hidden="true" alpha="0.6">
-					<Size x="28" y="28"/>
-					<TexCoords left="0.373046875" right="0.462890625" top="0.001953125" bottom="0.08984375"/>
+				<Texture parentKey="StatusBorder" atlas="transmog-frame-small-pink" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
+					<Size x="38" y="38"/>
+					<TexCoords left="0.900390625" right="0.974609375" top="0.001953125" bottom="0.076171875"/>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
-				<Texture parentKey="StatusBorder" atlas="transmog-frame-small-pink" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify">
-					<Size x="38" y="38"/>
-					<TexCoords left="0.900390625" right="0.974609375" top="0.001953125" bottom="0.076171875"/>
+				<Texture parentKey="HiddenVisualCover" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-frame-blackcover" useAtlasSize="true" hidden="true" alpha="0.6">
+					<Size x="28" y="28"/>
+					<TexCoords left="0.373046875" right="0.462890625" top="0.001953125" bottom="0.08984375"/>
 					<Anchors>
 						<Anchor point="CENTER"/>
 					</Anchors>
@@ -2609,16 +2811,22 @@
 						<Anchor point="CENTER"/>
 					</Anchors>
 				</Texture>
-				<Texture parentKey="HiddenVisualIcon" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-icon-hidden" useAtlasSize="true" hidden="true" alpha="0.7">
-					<Size x="22" y="18"/>
-					<TexCoords left="0.8046875" right="0.875" top="0.171875" bottom="0.23046875"/>
-					<Anchors>
-						<Anchor point="CENTER"/>
-					</Anchors>
-				</Texture>
 			</Layer>
 		</Layers>
 		<Frames>
+			<Frame parentKey="HiddenVisualIcon" setAllPoints="true" hidden="true">
+				<Layers>
+					<Layer>
+						<Texture file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" atlas="transmog-icon-hidden" useAtlasSize="true" alpha="0.7">
+							<Size x="22" y="18"/>
+							<TexCoords left="0.8046875" right="0.875" top="0.171875" bottom="0.23046875"/>
+							<Anchors>
+								<Anchor point="CENTER"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
 			<Frame parentKey="PendingFrame" setAllPoints="true" hidden="true">
 				<Layers>
 					<Layer level="ARTWORK">
@@ -3136,7 +3344,11 @@
 									</OnShow>
 									<OnUpdate>
 										local slot = WardrobeTransmogFrame.selectedSlotButton and WardrobeTransmogFrame.selectedSlotButton.slot;
-										if slot == "MAINHANDSLOT" or slot == "SECONDARYHANDSLOT" then
+										local show = slot == "MAINHANDSLOT" or slot == "SECONDARYHANDSLOT";
+										local mh = show and select(3, WardrobeCollectionFrame_GetInfoForEquippedSlot("MAINHANDSLOT", LE_TRANSMOG_TYPE_APPEARANCE));
+										local oh = show and select(3, WardrobeCollectionFrame_GetInfoForEquippedSlot("SECONDARYHANDSLOT", LE_TRANSMOG_TYPE_APPEARANCE));
+										show = show and ezCollections:AreWeaponsImpossibleToDisplayInPlayerModel(mh, oh);
+										if show then
 											if self:GetAlpha() &lt; 1 then
 												self:SetAlpha(self:GetAlpha() + elapsed * 2);
 											end
@@ -3184,7 +3396,7 @@
 							</OnEnter>
 						</Scripts>
 					</Button>
-					<Button name="$parentApplyButton" parentKey="ApplyButton" inherits="UIPanelButtonTemplate" text="APPLY">
+					<Button name="$parentApplyButton" parentKey="ApplyButton" inherits="ezCollectionsUIPanelButtonTemplate" text="APPLY">
 						<Size x="112" y="22"/>
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" x="0" y="-22"/>
@@ -3193,6 +3405,25 @@
 							<OnClick>
 								WardrobeTransmogFrame_ApplyPending(0);
 							</OnClick>
+							<OnEnter>
+								for _, slotButton in ipairs(WardrobeTransmogFrame.SlotButtons) do
+									if slotButton.failed then
+										GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+										GameTooltip:SetText(ezCollections.L["Tooltip.Transmog.ApplyUncollected.Header"], RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
+										GameTooltip:AddLine(ezCollections.L["Tooltip.Transmog.ApplyUncollected.Text"], HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, true);
+										GameTooltip:Show();
+
+										WardrobeTransmogFrame.hideFailedSlots = true;
+										WardrobeTransmogFrame_Update();
+										WardrobeTransmogFrame.hideFailedSlots = nil;
+										return;
+									end
+								end
+							</OnEnter>
+							<OnLeave>
+								GameTooltip_Hide(self);
+								WardrobeTransmogFrame.dirty = true;
+							</OnLeave>
 						</Scripts>
 					</Button>
 					<Frame name="$parentSpecDropDown" parentKey="SpecDropDown" inherits="UIDropDownMenuTemplate">
@@ -3436,7 +3667,7 @@
 						model.Border:SetAtlas("transmog-wardrobe-border-collected");
 
 						if GameTooltip:GetOwner() == model then
-							GameTooltip:SetOwner(self, "ANCHOR_BOTTOM");
+							GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -1);
 							GameTooltip:SetHyperlink("item:"..self.skin);
 							GameTooltip:Show();
 						end
@@ -3500,7 +3731,7 @@
 				end
 			</OnMouseDown>
 			<OnEnter>
-				GameTooltip:SetOwner(self, "ANCHOR_BOTTOM");
+				GameTooltip:SetOwner(self, "ANCHOR_BOTTOM", 0, -1);
 				GameTooltip:SetHyperlink("item:"..self.skin);
 				GameTooltip:Show();
 			</OnEnter>

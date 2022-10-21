@@ -22,7 +22,7 @@ function PetJournal_OnLoad(self)
 	self.ListScrollFrame.update = PetJournal_UpdatePetList;
 	self.ListScrollFrame.scrollBar.doNotHide = true;
 	HybridScrollFrame_CreateButtons(self.ListScrollFrame, "PetListButtonTemplate", 44, 0);
-	UIDropDownMenu_Initialize(self.petOptionsMenu, PetOptionsMenu_Init, "MENU");
+	ezCollections:UIDropDownMenu_Initialize(self.petOptionsMenu, PetOptionsMenu_Init, "MENU");
 end
 
 function PetJournal_OnEvent(self, event, ...)
@@ -59,6 +59,14 @@ function PetJournal_OnShow(self)
 	end
 	PetJournal_UpdatePetDisplay();
 	SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\Icons\INV_Misc_Rabbit]]);
+	PetJournalResetFiltersButton_UpdateVisibility();
+	-- Fix frame levels
+	self.LeftInset:SetFrameLevel(self:GetFrameLevel() + 1);
+	self.RightInset:SetFrameLevel(self:GetFrameLevel() + 1);
+	self.searchBox:SetFrameLevel(self:GetFrameLevel() + 2);
+	PetJournalFilterButton:SetFrameLevel(self:GetFrameLevel() + 2);
+	self.PetDisplay:SetFrameLevel(self:GetFrameLevel() + 2);
+	self.ListScrollFrame:SetFrameLevel(self:GetFrameLevel() + 2);
 end
 
 function PetJournal_OnHide(self)
@@ -163,6 +171,9 @@ function PetJournal_UpdatePetList()
 		else
 			button.name:SetText("");
 			button.icon:SetTexture([[Interface\AddOns\ezCollections\Interface\PetBattles\MountJournalEmptyIcon]]);
+			button.new:Hide();
+			button.newGlow:Hide();
+			button.SubscriptionOverlay:Hide();
 			button.index = nil;
 			button.spellID = 0;
 			button.selected = false;
@@ -376,7 +387,19 @@ function PetListDragButton_OnClick(self, button)
 	end
 end
 
+function PetListDragButton_OnDoubleClick(self, button)
+	ClearCursor();
+	local parent = self:GetParent();
+	if button == "LeftButton" and ezCollections.Config.Wardrobe.PetsDoubleClickIcon then
+		PetJournalSummonButton_UsePet(parent.spellID);
+	end
+end
+
 function PetListItem_OnClick(self, button)
+	if not self.spellID or self.spellID == 0 then
+		return;
+	end
+
 	if ( button ~= "LeftButton" ) then
 		local _, _, isCollected = C_PetJournal.GetPetInfoByIndex(self.index);
 		if isCollected then
@@ -398,6 +421,12 @@ function PetListItem_OnClick(self, button)
 	end
 end
 
+function PetListItem_OnDoubleClick(self, button)
+	if button == "LeftButton" and ezCollections.Config.Wardrobe.PetsDoubleClickName then
+		PetJournalSummonButton_UsePet(self.spellID);
+	end
+end
+
 function PetJournal_OnSearchTextChanged(self)
 	SearchBoxTemplate_OnTextChanged(self);
 	C_PetJournal.SetSearchFilter(self:GetText());
@@ -407,11 +436,18 @@ function PetJournal_ClearSearch()
 	PetJournal.searchBox:SetText("");
 end
 
-
 function PetJournalFilterDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, PetJournalFilterDropDown_Initialize, "MENU");
+	ezCollections:UIDropDownMenu_Initialize(self, PetJournalFilterDropDown_Initialize, "MENU");
 end
 
+function PetJournalFilterDropDown_ResetFilters()
+	C_PetJournal.SetDefaultFilters();
+	PetJournalFilterButton.ResetButton:Hide();
+end
+
+function PetJournalResetFiltersButton_UpdateVisibility()
+	PetJournalFilterButton.ResetButton:SetShown(not C_PetJournal.IsUsingDefaultFilters());
+end
 
 function PetJournalFilterDropDown_Initialize(self, level)
 	local info = UIDropDownMenu_CreateInfo();

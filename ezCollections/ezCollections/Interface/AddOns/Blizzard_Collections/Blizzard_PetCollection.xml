@@ -24,7 +24,7 @@
                     <Size x="90" y="44"/>
                     <TexCoords left="0.00781250" right="0.71093750" top="0.74609375" bottom="0.91796875"/>
                 </Texture>
-                <Texture atlas="PetList-ButtonBackground" parentKey="SubscriptionOverlay" file="Interface\AddOns\ezCollections\Textures\MountSubscriptionOverlay" alphaMode="ADD" hidden="true">
+                <Texture parentKey="SubscriptionOverlay" file="Interface\AddOns\ezCollections\Textures\MountSubscriptionOverlay" alphaMode="ADD" hidden="true">
                     <TexCoords left="0.00390625" right="0.8203125" top="0.00390625" bottom="0.18359375"/>
                 </Texture>
             </Layer>
@@ -96,6 +96,7 @@
                 <HighlightTexture name="$parentHighlight" file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
                 <Scripts>
                     <OnClick function="PetListDragButton_OnClick"/>
+                    <OnDoubleClick function="PetListDragButton_OnDoubleClick"/>
                     <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_LEFT");
                         local spellID = self:GetParent().spellID;
@@ -131,6 +132,7 @@
                 self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
             </OnLoad>
             <OnMouseDown function="PetListItem_OnClick"/>
+            <OnDoubleClick function="PetListItem_OnDoubleClick"/>
         </Scripts>
     </Button>
 
@@ -193,20 +195,8 @@
 					<Anchor point="TOPRIGHT" x="-6" y="-60" />
 					<Anchor point="BOTTOMLEFT" relativeTo="$parentLeftInset" relativePoint="BOTTOMRIGHT" x="20" y="0"/>
 				</Anchors>
-				<Scripts>
-					<OnLoad>
-						self.InsetBorderTopLeft:SetDrawLayer("OVERLAY");
-						self.InsetBorderTopRight:SetDrawLayer("OVERLAY");
-						self.InsetBorderBottomLeft:SetDrawLayer("OVERLAY");
-						self.InsetBorderBottomRight:SetDrawLayer("OVERLAY");
-						self.InsetBorderTop:SetDrawLayer("OVERLAY");
-						self.InsetBorderBottom:SetDrawLayer("OVERLAY");
-						self.InsetBorderLeft:SetDrawLayer("OVERLAY");
-						self.InsetBorderRight:SetDrawLayer("OVERLAY");
-					</OnLoad>
-				</Scripts>
 			</Frame>
-			<EditBox name="$parentSearchBox" inherits="SearchBoxTemplate" parentKey="searchBox" letters="40" frameLevel="10000">
+			<EditBox name="$parentSearchBox" inherits="SearchBoxTemplate" parentKey="searchBox" letters="40">
 				<Size x="145" y="20"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentLeftInset" x="15" y="-9"/>
@@ -216,22 +206,18 @@
 					<OnHide function="PetJournal_ClearSearch"/>
 				</Scripts>
 			</EditBox>
-			<Button name="$parentFilterButton" inherits="UIMenuButtonStretchTemplate" text="FILTER" frameLevel="10001">
+			<Button name="$parentFilterButton" inherits="UIResettableDropdownButtonTemplate" text="FILTER">
+				<!--KeyValues>
+					<KeyValue key="resetFunction" value="PetJournalFilterDropDown_ResetFilters" type="global"/>
+				</KeyValues-->
 				<Size x="93" y="22"/>
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeTo="$parentLeftInset" x="-5" y="-9"/>
 				</Anchors>
-				<Layers>
-					<Layer level="ARTWORK">
-						<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
-							<Size x="10" y="12"/>
-							<Anchors>
-								<Anchor point="RIGHT" x="-5"/>
-							</Anchors>
-						</Texture>
-					</Layer>
-				</Layers>
 				<Scripts>
+					<OnLoad>
+						UIResettableDropdownButtonMixin_OnLoad(self, PetJournalFilterDropDown_ResetFilters);
+					</OnLoad>
 					<OnClick>
 						PlaySound("igMainMenuOptionCheckBoxOn");
 						ToggleDropDownMenu(1, nil, PetJournalFilterDropDown, "PetJournalFilterButton", 74, 15);
@@ -265,7 +251,7 @@
 				</Layers>
 			</Frame>
 			<Frame name="$parentSubscriptionStatus" parentKey="SubscriptionStatus" useParentLevel="true" inherits="InsetFrameTemplate3">
-				<Size x="210" y="20"/>
+				<Size x="180" y="20"/>
 				<Anchors>
 					<Anchor point="TOP" x="0" y="-35" />
 				</Anchors>
@@ -285,7 +271,7 @@
 							<Layer level="ARTWORK">
 								<FontString name="$parentTimer" parentKey="Timer" inherits="GameFontHighlightSmall" justifyH="RIGHT">
 									<Anchors>
-										<Anchor point="RIGHT" relativePoint="LEFT" x="190" y="0" />
+										<Anchor point="RIGHT" relativePoint="LEFT" x="160" y="0" />
 									</Anchors>
 								</FontString>
 								<FontString parentKey="Label" inherits="GameFontNormalSmall" justifyH="LEFT">
@@ -548,7 +534,7 @@
 					</Slider>
 				</Frames>
 			</ScrollFrame>
-			<Button parentKey="SummonButton" name="$parentSummonButton" inherits="MagicButtonTemplate" text="BATTLE_PET_SUMMON" frameLevel="10002">
+			<Button parentKey="SummonButton" name="$parentSummonButton" inherits="MagicButtonTemplate" text="BATTLE_PET_SUMMON">
 				<Size x="140" y="22"/>
 				<Anchors>
 					<Anchor point="BOTTOMLEFT"/>

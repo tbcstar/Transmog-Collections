@@ -26,7 +26,7 @@ function MountJournal_OnLoad(self)
 	self.ListScrollFrame.update = MountJournal_UpdateMountList;
 	self.ListScrollFrame.scrollBar.doNotHide = true;
 	HybridScrollFrame_CreateButtons(self.ListScrollFrame, "MountListButtonTemplate", 44, 0);
-	UIDropDownMenu_Initialize(self.mountOptionsMenu, MountOptionsMenu_Init, "MENU");
+	ezCollections:UIDropDownMenu_Initialize(self.mountOptionsMenu, MountOptionsMenu_Init, "MENU");
 end
 
 function MountJournal_OnEvent(self, event, ...)
@@ -63,6 +63,14 @@ function MountJournal_OnShow(self)
 	end
 	MountJournal_UpdateMountDisplay();
 	SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\AddOns\ezCollections\Interface\Icons\MountJournalPortrait]]);
+	MountJournalResetFiltersButton_UpdateVisibility();
+	-- Fix frame levels
+	self.LeftInset:SetFrameLevel(self:GetFrameLevel() + 1);
+	self.RightInset:SetFrameLevel(self:GetFrameLevel() + 1);
+	self.searchBox:SetFrameLevel(self:GetFrameLevel() + 2);
+	MountJournalFilterButton:SetFrameLevel(self:GetFrameLevel() + 2);
+	self.MountDisplay:SetFrameLevel(self:GetFrameLevel() + 2);
+	self.ListScrollFrame:SetFrameLevel(self:GetFrameLevel() + 2);
 end
 
 function MountJournal_OnHide(self)
@@ -172,6 +180,9 @@ function MountJournal_UpdateMountList()
 		else
 			button.name:SetText("");
 			button.icon:SetTexture([[Interface\AddOns\ezCollections\Interface\PetBattles\MountJournalEmptyIcon]]);
+			button.new:Hide();
+			button.newGlow:Hide();
+			button.SubscriptionOverlay:Hide();
 			button.index = nil;
 			button.spellID = 0;
 			button.selected = false;
@@ -402,7 +413,19 @@ function MountListDragButton_OnClick(self, button)
 	end
 end
 
+function MountListDragButton_OnDoubleClick(self, button)
+	ClearCursor();
+	local parent = self:GetParent();
+	if button == "LeftButton" and ezCollections.Config.Wardrobe.MountsDoubleClickIcon then
+		MountJournalMountButton_UseMount(parent.spellID);
+	end
+end
+
 function MountListItem_OnClick(self, button)
+	if not self.spellID or self.spellID == 0 then
+		return;
+	end
+
 	if ( button ~= "LeftButton" ) then
 		local _, _, _, _, _, _, _, _, _, _, isCollected = C_MountJournal.GetDisplayedMountInfo(self.index);
 		if isCollected then
@@ -424,6 +447,12 @@ function MountListItem_OnClick(self, button)
 	end
 end
 
+function MountListItem_OnDoubleClick(self, button)
+	if button == "LeftButton" and ezCollections.Config.Wardrobe.MountsDoubleClickName then
+		MountJournalMountButton_UseMount(self.spellID);
+	end
+end
+
 function MountJournal_OnSearchTextChanged(self)
 	SearchBoxTemplate_OnTextChanged(self);
 	C_MountJournal.SetSearch(self:GetText());
@@ -434,7 +463,16 @@ function MountJournal_ClearSearch()
 end
 
 function MountJournalFilterDropDown_OnLoad(self)
-	UIDropDownMenu_Initialize(self, MountJournalFilterDropDown_Initialize, "MENU");
+	ezCollections:UIDropDownMenu_Initialize(self, MountJournalFilterDropDown_Initialize, "MENU");
+end
+
+function MountJournalFilterDropdown_ResetFilters()
+	C_MountJournal.SetDefaultFilters();
+	MountJournalFilterButton.ResetButton:Hide();
+end
+
+function MountJournalResetFiltersButton_UpdateVisibility()
+	MountJournalFilterButton.ResetButton:SetShown(not C_MountJournal.IsUsingDefaultFilters());
 end
 
 function MountJournalFilterDropDown_Initialize(self, level)

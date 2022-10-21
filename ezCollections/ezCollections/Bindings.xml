@@ -14,7 +14,7 @@
     <Binding name="EZCOLLECTIONS_MENU_COLLECTIONS" description="Open Collections Menu">
         ezCollections:MenuCollections();
     </Binding>
-    <Binding name="EZCOLLECTIONS_MENU_DAILY" description="Open Isengard Daily Quests Menu">
+    <Binding name="EZCOLLECTIONS_MENU_DAILY" description="Open Isengard Activity Menu">
         ezCollections:MenuDaily();
     </Binding>
     <Binding name="TOGGLECOLLECTIONS">
@@ -35,10 +35,10 @@
     <Binding name="TOGGLECOLLECTIONSPETJOURNAL">
         ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_PETS);
     </Binding>
-    <!--
     <Binding name="TOGGLECOLLECTIONSTOYBOX">
         ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_TOYS);
     </Binding>
+    <!--
     <Binding name="TOGGLECOLLECTIONSHEIRLOOM">
         ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_HEIRLOOMS);
     </Binding>

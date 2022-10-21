@@ -1,61 +1,10 @@
-local function GetOutfitSourcesFromCurrentEquipment(selectedSlotsOnly)
-	local sources = { };
-	local mainHandEnchant, offHandEnchant;
-	local hadInvalidSources = false;
-	for _, slotInfo in ipairs(TRANSMOG_SLOTS) do
-		local slot = GetInventorySlotInfo(slotInfo.slot);
-		local _, _, appliedSourceID, _, pendingSourceID, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, slotInfo.transmogType);
-		local sourceID = WardrobeOutfitMixin:GetSlotSourceID(slotInfo.slot, slotInfo.transmogType);
-		if sourceID ~= NO_TRANSMOG_SOURCE_ID and (not selectedSlotsOnly or appliedSourceID ~= 0 or pendingSourceID ~= 0 or hasPendingUndo) then
-			if slotInfo.transmogType == LE_TRANSMOG_TYPE_APPEARANCE then
-				if C_TransmogCollection.PlayerKnowsSource(sourceID) then
-					sources[slot] = sourceID;
-				else
-					hadInvalidSources = true;
-				end
-			elseif slotInfo.transmogType == LE_TRANSMOG_TYPE_ILLUSION then
-				if slotInfo.slot == "MAINHANDSLOT" then
-					mainHandEnchant = sourceID;
-				else
-					offHandEnchant = sourceID;
-				end
-			end
-		end
-	end
-	return sources, mainHandEnchant, offHandEnchant;
-end
-
-local function GetOutfitSourcesFromOutfitAndPending(outfitID)
-	local sources, mainHandEnchant, offHandEnchant = C_TransmogCollection.GetOutfitSources(outfitID);
-	local hadInvalidSources = false;
-	for _, slotInfo in ipairs(TRANSMOG_SLOTS) do
-		local slot = GetInventorySlotInfo(slotInfo.slot);
-		local _, _, appliedSourceID, _, pendingSourceID, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, slotInfo.transmogType);
-		local sourceID = WardrobeOutfitMixin:GetSlotSourceID(slotInfo.slot, slotInfo.transmogType);
-		if pendingSourceID ~= 0 or hasPendingUndo then
-			if slotInfo.transmogType == LE_TRANSMOG_TYPE_APPEARANCE then
-				if C_TransmogCollection.PlayerKnowsSource(sourceID) then
-					sources[slot] = sourceID;
-				else
-					hadInvalidSources = true;
-				end
-			elseif slotInfo.transmogType == LE_TRANSMOG_TYPE_ILLUSION then
-				if slotInfo.slot == "MAINHANDSLOT" then
-					mainHandEnchant = sourceID;
-				else
-					offHandEnchant = sourceID;
-				end
-			end
-		end
-	end
-	return sources, mainHandEnchant, offHandEnchant;
-end
 
 --===================================================================================================================================
 WardrobeOutfitDropDownMixin = { };
 
 function WardrobeOutfitDropDownTemplate_OnLoad(self)
 	Mixin(self, WardrobeOutfitDropDownMixin);
+	self.Text = _G[self:GetName().."Text"];
 	local button = _G[self:GetName().."Button"];
 	button:SetScript("OnClick", function(self)
 						PlaySound("igMainMenuOptionCheckBoxOn");
@@ -249,12 +198,94 @@ function WardrobeOutfitDropDownMixin:CheckOutfitForSave(name)
 	WardrobeOutfitFrame:EvaluateSaveState();
 end
 ]]
+
+function WardrobeOutfitDropDownMixin:GetOutfitSourcesFromBaseEquipment() -- Custom
+	local sources = { };
+	local mainHandEnchant, offHandEnchant;
+	local hadInvalidSources = false;
+	for _, slotInfo in ipairs(TRANSMOG_SLOTS) do
+		local slot = GetInventorySlotInfo(slotInfo.slot);
+		local _, _, _, canTransmogrify = C_Transmog.GetSlotInfo(slot, slotInfo.transmogType);
+		local sourceID = canTransmogrify and WardrobeCollectionFrame_GetInfoForEquippedSlot(slotInfo.slot, slotInfo.transmogType) or NO_TRANSMOG_SOURCE_ID;
+		if sourceID ~= NO_TRANSMOG_SOURCE_ID then
+			if slotInfo.transmogType == LE_TRANSMOG_TYPE_APPEARANCE then
+				if C_TransmogCollection.PlayerKnowsSource(sourceID) then
+					sources[slot] = sourceID;
+				else
+					hadInvalidSources = true;
+				end
+			elseif slotInfo.transmogType == LE_TRANSMOG_TYPE_ILLUSION then
+				if slotInfo.slot == "MAINHANDSLOT" then
+					mainHandEnchant = sourceID;
+				else
+					offHandEnchant = sourceID;
+				end
+			end
+		end
+	end
+	return sources, mainHandEnchant, offHandEnchant;
+end
+
+function WardrobeOutfitDropDownMixin:GetOutfitSourcesFromCurrentEquipment(selectedSlotsOnly) -- Custom
+	local sources = { };
+	local mainHandEnchant, offHandEnchant;
+	local hadInvalidSources = false;
+	for _, slotInfo in ipairs(TRANSMOG_SLOTS) do
+		local slot = GetInventorySlotInfo(slotInfo.slot);
+		local _, _, appliedSourceID, _, pendingSourceID, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, slotInfo.transmogType);
+		local sourceID = self:GetSlotSourceID(slotInfo.slot, slotInfo.transmogType);
+		if sourceID ~= NO_TRANSMOG_SOURCE_ID and (not selectedSlotsOnly or appliedSourceID ~= 0 or pendingSourceID ~= 0 or hasPendingUndo) then
+			if slotInfo.transmogType == LE_TRANSMOG_TYPE_APPEARANCE then
+				if C_TransmogCollection.PlayerKnowsSource(sourceID) then
+					sources[slot] = sourceID;
+				else
+					hadInvalidSources = true;
+				end
+			elseif slotInfo.transmogType == LE_TRANSMOG_TYPE_ILLUSION then
+				if slotInfo.slot == "MAINHANDSLOT" then
+					mainHandEnchant = sourceID;
+				else
+					offHandEnchant = sourceID;
+				end
+			end
+		end
+	end
+	return sources, mainHandEnchant, offHandEnchant;
+end
+
+function WardrobeOutfitDropDownMixin:GetOutfitSourcesFromOutfitAndPending(outfitID) -- Custom
+	local sources, mainHandEnchant, offHandEnchant = C_TransmogCollection.GetOutfitSources(outfitID);
+	local hadInvalidSources = false;
+	for _, slotInfo in ipairs(TRANSMOG_SLOTS) do
+		local slot = GetInventorySlotInfo(slotInfo.slot);
+		local _, _, appliedSourceID, _, pendingSourceID, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, slotInfo.transmogType);
+		local sourceID = self:GetSlotSourceID(slotInfo.slot, slotInfo.transmogType);
+		if pendingSourceID ~= 0 or hasPendingUndo then
+			if slotInfo.transmogType == LE_TRANSMOG_TYPE_APPEARANCE then
+				if C_TransmogCollection.PlayerKnowsSource(sourceID) then
+					sources[slot] = sourceID;
+				else
+					hadInvalidSources = true;
+				end
+			elseif slotInfo.transmogType == LE_TRANSMOG_TYPE_ILLUSION then
+				if slotInfo.slot == "MAINHANDSLOT" then
+					mainHandEnchant = sourceID;
+				else
+					offHandEnchant = sourceID;
+				end
+			end
+		end
+	end
+	return sources, mainHandEnchant, offHandEnchant;
+end
+
 function WardrobeOutfitDropDownMixin:CheckOutfitForSave(outfitID)
+	local isFromTransmogrify = self == WardrobeOutfitDropDown;
 	local selectedSources, selectedMainHandEnchant, selectedOffHandEnchant;
 	if outfitID then
-		selectedSources, selectedMainHandEnchant, selectedOffHandEnchant = GetOutfitSourcesFromOutfitAndPending(outfitID);
+		selectedSources, selectedMainHandEnchant, selectedOffHandEnchant = self:GetOutfitSourcesFromOutfitAndPending(outfitID);
 	else
-		selectedSources, selectedMainHandEnchant, selectedOffHandEnchant = GetOutfitSourcesFromCurrentEquipment(true);
+		selectedSources, selectedMainHandEnchant, selectedOffHandEnchant = self:GetOutfitSourcesFromCurrentEquipment(isFromTransmogrify);
 	end
 	WardrobeOutfitFrame:ShowPopup(WardrobeOutfitSaveFrame);
 	WardrobeOutfitSlotsSelectionFrame:Hide();
@@ -263,7 +294,8 @@ function WardrobeOutfitDropDownMixin:CheckOutfitForSave(outfitID)
 	WardrobeOutfitSlotsSelectionFrame:SetPoint("TOPLEFT", WardrobeOutfitSaveFrame.SlotsContainer, "TOPLEFT", 12, -12);
 	WardrobeOutfitSlotsSelectionFrame:SetPoint("BOTTOMRIGHT", WardrobeOutfitSaveFrame.SlotsContainer, "BOTTOMRIGHT", -12, 12);
 	WardrobeOutfitSlotsSelectionFrame:Show();
-	WardrobeOutfitSlotsSelectionFrame:SetSlots(selectedSources, selectedMainHandEnchant, selectedOffHandEnchant, GetOutfitSourcesFromCurrentEquipment());
+	WardrobeOutfitSlotsSelectionFrame.isFromTransmogrify = isFromTransmogrify;
+	WardrobeOutfitSlotsSelectionFrame:SetSlots(selectedSources, selectedMainHandEnchant, selectedOffHandEnchant, self:GetOutfitSourcesFromCurrentEquipment());
 	WardrobeOutfitSaveFrame.editedOutfitID = outfitID;
 	WardrobeOutfitSaveFrame:SetHeight(80 + 8 + WardrobeOutfitSaveFrame.SlotsContainer:GetHeight() + 8 + 8 + 20 + 64);
 	WardrobeOutfitSaveFrame.EditBox:SetText(outfitID and C_TransmogCollection.GetOutfitName(outfitID) or "");
@@ -467,7 +499,7 @@ function WardrobeOutfitFrameMixin:SaveOutfit(name)
 	end
 ]]
 	self.pendingOutfitSave = name;
-	C_TransmogCollection.SaveOutfit(name, GetOutfitSourcesFromCurrentEquipment());
+	C_TransmogCollection.SaveOutfit(name, self:GetOutfitSourcesFromCurrentEquipment());
 end
 
 function WardrobeOutfitFrameMixin:DeleteOutfit(outfitID)

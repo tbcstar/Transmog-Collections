@@ -1,24 +1,103 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
 	<Script file="DressUpFrames.lua"/>
+	<Script file="..\..\Core\ElvUI\DressingRoom.lua"/>
+
+	<Frame name="DressUpOutfitSlotFrameTemplate" virtual="true" mixin="DressUpOutfitDetailsSlotMixin" enableMouse="true">
+		<Size x="272" y="24"/>
+		<Layers>
+			<Layer level="BORDER">
+				<Texture name="$parentIcon" parentKey="Icon">
+					<Size x="20" y="20"/>
+					<Anchors>
+						<Anchor point="RIGHT" relativePoint="LEFT" x="20"/>
+					</Anchors>
+				</Texture>
+				<FontString parentKey="Name" inherits="GameFontNormalSmall2" justifyH="LEFT" maxLines="1">
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="$parentIcon" relativePoint="RIGHT" x="7"/>
+						<Anchor point="RIGHT"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="IconBorder">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeTo="$parentIcon"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentIcon"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="HiddenIcon" atlas="transmog-icon-hidden" useAtlasSize="false" file="Interface\AddOns\ezCollections\Interface\Transmogrify\Transmogrify" hidden="true">
+					<TexCoords left="0.8046875" right="0.875" top="0.171875" bottom="0.23046875" />
+					<Anchors>
+						<Anchor point="CENTER" relativeTo="$parentIcon"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="UndressSlotButton">
+				<Size x="12" y="12" />
+				<HitRectInsets left="-2" right="-2" top="-6" bottom="-6" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentIcon" relativePoint="LEFT" x="-2" y="0" />
+				</Anchors>
+				<NormalTexture file="Interface\AddOns\ezCollections\Interface\Common\CommonIcons">
+					<TexCoords left="0.12646484375" right="0.25146484375" top="0.5048828125" bottom="0.7548828125" />
+				</NormalTexture>
+				<PushedTexture file="Interface\AddOns\ezCollections\Interface\Common\CommonIcons" alpha="0.25">
+					<TexCoords left="0.12646484375" right="0.25146484375" top="0.5048828125" bottom="0.7548828125" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\AddOns\ezCollections\Interface\Common\CommonIcons" alpha="0.5" alphaMode="ADD">
+					<TexCoords left="0.12646484375" right="0.25146484375" top="0.5048828125" bottom="0.7548828125" />
+				</HighlightTexture>
+				<Scripts>
+					<OnLoad>
+						Mixin(self, SetShownMixin);
+					</OnLoad>
+					<OnClick>
+						if self:GetParent().transmogID then
+							PlaySound("gsTitleOptionOK");
+							DressUpModel:UndressSlot(self:GetParent().slotID, not self:GetParent().item);
+						end
+					</OnClick>
+					<OnUpdate>
+						local focus = GetMouseFocus();
+						self:SetAlpha(self:GetParent().transmogID and (focus == self or focus == self:GetParent()) and 1 or 0);
+					</OnUpdate>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				Mixin(self.HiddenIcon, SetShownMixin);
+				Mixin(self.IconBorder, SetAtlasMixin);
+				Mixin(self, DressUpOutfitDetailsSlotMixin);
+				self:SetScript("OnHide", self.OnHide);
+				self:SetScript("OnEnter", self.OnEnter);
+				self:SetScript("OnLeave", self.OnLeave);
+				self:SetScript("OnMouseUp", self.OnMouseUp);
+			</OnLoad>
+		</Scripts>
+	</Frame>
+
 	<Frame name="SideDressUpFrame" toplevel="true" parent="UIParent" enableMouse="true" hidden="true">
-		<Size>
-			<AbsDimension x="187" y="389"/>
-		</Size>
+		<!--KeyValues>
+			<KeyValue key="hasOutfitControls" value="false" type="boolean"/>
+		</KeyValues-->
+		<Size x="187" y="389"/>
 		<Layers>
 			<Layer level="BACKGROUND">
 				<Texture name="$parentTop" file="Interface\AuctionFrame\AuctionHouseDressUpFrame-Top">
-					<Size>
-						<AbsDimension x="256" y="256"/>
-					</Size>
+					<Size x="256" y="256"/>
 					<Anchors>
 						<Anchor point="TOPLEFT"/>
 					</Anchors>
 				</Texture>
 				<Texture file="Interface\AuctionFrame\AuctionHouseDressUpFrame-Bottom">
-					<Size>
-						<AbsDimension x="256" y="256"/>
-					</Size>
+					<Size x="256" y="256"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentTop" relativePoint="BOTTOMLEFT"/>
 					</Anchors>
@@ -26,22 +105,14 @@
 			</Layer>
 			<Layer level="ARTWORK">
 				<Texture parentKey="BGTopLeft" name="$parentBackgroundTop">
-					<Size>
-						<AbsDimension x="171" y="282"/>
-					</Size>
+					<Size x="171" y="282"/>
 					<Anchors>
-						<Anchor point="TOPLEFT">
-							<Offset>
-								<AbsDimension x="5" y="-14"/>
-							</Offset>
-						</Anchor>
+						<Anchor point="TOPLEFT" x="5" y="-14"/>
 					</Anchors>
 					<TexCoords left="0" right="0.61" top="0" bottom="1.0"/>
 				</Texture>
 				<Texture parentKey="BGBottomLeft" name="$parentBackgroundBot">
-					<Size>
-						<AbsDimension x="171" y="83"/>
-					</Size>
+					<Size x="171" y="83"/>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeTo="$parentBackgroundTop" relativePoint="BOTTOMLEFT"/>
 					</Anchors>
@@ -62,7 +133,7 @@
 					<OnLoad function="DressUpModel_OnLoad" />
 				</Scripts>
 				<Frames>
-					<Button parentKey="ResetButton" name="$parentResetButton" inherits="UIPanelButtonTemplate" text="RESET">
+					<Button parentKey="ResetButton" name="$parentResetButton" inherits="ezCollectionsUIPanelButtonTemplate" text="RESET">
 						<Size>
 							<AbsDimension x="80" y="22"/>
 						</Size>
@@ -115,13 +186,18 @@
 		</Frames>
 		<Scripts>
 			<OnLoad>
+				self.hasOutfitControls = false;
 				self.ResetButton = SideDressUpModel.ResetButton;
+				Mixin(self, DressUpModelFrameBaseMixin);
 			</OnLoad>
 			<OnShow function="SideDressUpFrame_OnShow"/>
 			<OnHide function="SideDressUpFrame_OnHide"/>
 		</Scripts>
 	</Frame> 
 	<Frame name="DressUpFrame" toplevel="true" enableMouse="true" parent="UIParent" hidden="true" inherits="ButtonFrameTemplate">
+		<!--KeyValues>
+			<KeyValue key="hasOutfitControls" value="true" type="boolean"/>
+		</KeyValues-->
 		<Attributes>
 			<Attribute name="UIPanelLayout-xoffset" type="number" value="15"/>
 			<Attribute name="UIPanelLayout-yoffset" type="number" value="-14"/>
@@ -134,51 +210,38 @@
 			<AbsInset left="0" right="30" top="0" bottom="45"/>
 		</HitRectInsets-->
 		<Frames>
-			<Frame name="MaximizeMinimizeFrame" inherits="MaximizeMinimizeButtonFrameTemplate">
+			<Frame parentKey="OutfitDropDown" name="$parentOutfitDropDown" inherits="WardrobeOutfitDropDownTemplate" mixin="DressUpOutfitMixin">
+				<KeyValues>
+					<KeyValue key="width" value="163" type="number"/>
+					<KeyValue key="minMenuStringWidth" value="127" type="number"/>
+					<KeyValue key="maxMenuStringWidth" value="190" type="number"/>
+				</KeyValues>
 				<Anchors>
-					<Anchor point="RIGHT" relativeTo="$parentCloseButton" relativePoint="LEFT" x="10" y="0"/>
+					<Anchor point="TOP" x="-23" y="-28"/>
 				</Anchors>
-				<Layers>
-					<Layer level="BACKGROUND">
-						<Texture atlas="UI-OuterBorderButtonPatch" useAtlasSize="true">
-							<Anchors>
-								<Anchor point="CENTER" relativePoint="LEFT" x="6" y="0"/>
-							</Anchors>
-						</Texture>
-					</Layer>
-				</Layers>
 				<Scripts>
 					<OnLoad>
-						MaximizeMinimizeButtonFrameMixin_OnLoad(self);
-						function OnMaximize(frame)
-							frame:GetParent():SetSize(450, 545);
-							frame:GetParent().BGTopLeft:SetSize(350, 350);
-							frame:GetParent().BGTopRight:SetSize(84, 350);
-							frame:GetParent().BGBotLeft:SetSize(350, 175);
-							frame:GetParent().BGBotRight:SetSize(84, 175);
-							UpdateUIPanelPositions(frame:GetParent());
-							PlaySound("igMainMenuOptionCheckBoxOn");
-						end
-
-						self:SetOnMaximizedCallback(OnMaximize);
-
-						function OnMinimize(frame)
-							frame:GetParent():SetSize(334, 423);
-							frame:GetParent().BGTopLeft:SetSize(256, 256);
-							frame:GetParent().BGTopRight:SetSize(62, 256);
-							frame:GetParent().BGBotLeft:SetSize(256, 128);
-							frame:GetParent().BGBotRight:SetSize(62, 128);
-							UpdateUIPanelPositions(frame:GetParent());
-							PlaySound("igMainMenuOptionCheckBoxOn");
-						end
-
-						self:SetOnMinimizedCallback(OnMinimize);
-
-						self:SetMinimizedCVar("miniDressUpFrame");
+						self.width = 163;
+						self.minMenuStringWidth = 127;
+						self.maxMenuStringWidth = 190;
+						WardrobeOutfitDropDownTemplate_OnLoad(self);
+						Mixin(self, DressUpOutfitMixin, SetShownMixin);
 					</OnLoad>
 				</Scripts>
 			</Frame>
-			<Button name="DressUpFrameCancelButton" inherits="UIPanelButtonTemplate" text="CLOSE">
+			<Frame parentKey="MaximizeMinimizeFrame" inherits="MaximizeMinimizeButtonFrameTemplate">
+				<Anchors>
+					<Anchor point="RIGHT" relativeTo="$parentCloseButton" relativePoint="LEFT" x="10" y="0"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						MaximizeMinimizeButtonFrameMixin_OnLoad(self);
+						Mixin(self, DressUpModelFrameMaximizeMinimizeMixin);
+						self:OnLoad();
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Button name="DressUpFrameCancelButton" inherits="ezCollectionsUIPanelButtonTemplate" text="CLOSE">
 				<Size x="80" y="22"/>
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-7" y="4"/>
@@ -187,7 +250,148 @@
 					<OnClick function="HideParentPanel"/>
 				</Scripts>
 			</Button>
-			<Button parentKey="ResetButton" name="DressUpFrameResetButton" inherits="UIPanelButtonTemplate" text="RESET">
+
+			<Button parentKey="ToggleOutfitDetailsButton">
+				<Size x="27" y="25"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-11" y="-30"/>
+				</Anchors>
+				<NormalTexture atlas="dressingroom-button-appearancelist-up" file="Interface\AddOns\ezCollections\Interface\DressUpFrame\DressingRoom">
+					<TexCoords left="0.9453125" right="0.998046875" top="0.083984375" bottom="0.1328125" />
+				</NormalTexture>
+				<PushedTexture atlas="dressingroom-button-appearancelist-down" file="Interface\AddOns\ezCollections\Interface\DressUpFrame\DressingRoom">
+					<TexCoords left="0.9453125" right="0.998046875" top="0.001953125" bottom="0.05078125" />
+				</PushedTexture>
+				<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD">
+					<Size x="24" y="23"/>
+					<Anchors>
+						<Anchor point="CENTER" x="0" y="0"/>
+					</Anchors>
+				</HighlightTexture>
+				<Scripts>
+					<OnClick>
+						PlaySound("igMainMenuOpen");
+						self:GetParent():ToggleOutfitDetails();
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT", -4, -4);
+						GameTooltip_SetTitle(GameTooltip, DRESSING_ROOM_APPEARANCE_LIST);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide"/>
+				</Scripts>
+			</Button>
+			<Frame name="$parentOutfitDetailsPanel" parentKey="OutfitDetailsPanel" mixin="DressUpOutfitDetailsPanelMixin" enableMouse="true" enableKeyboard="false">
+				<Size x="313" y="473"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-9" y="-29"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentBlackBackground" parentKey="BlackBackground">
+							<Size x="301" y="447"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" x="6" y="-19"/>
+							</Anchors>
+							<Color r="0" g="0" b="0"/>
+						</Texture>
+					</Layer>
+					<Layer level="BORDER">
+						<Texture parentKey="ClassBackground">
+							<Size x="301" y="445"/>
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeTo="$parentBlackBackground"/>
+								<Anchor point="BOTTOMRIGHT" relativeTo="$parentBlackBackground"/>
+							</Anchors>
+							<TexCoords left="0.1599099099099099" right="0.8378378378378378" top="0" bottom="0.9612068965517241"/>
+						</Texture>
+					</Layer>
+					<Layer level="OVERLAY">
+						<Texture atlas="dressingroom-sideframe" file="Interface\AddOns\ezCollections\Interface\DressUpFrame\DressingRoom" setAllPoints="true">
+							<TexCoords left="0.001953125" right="0.61328125" top="0.001953125" bottom="0.92578125" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<CheckButton name="$parentDisplayMeleeButton" parentKey="DisplayMeleeButton" inherits="UICheckButtonTemplate" hidden="true">
+						<Size x="24" y="24" />
+						<Scripts>
+							<OnClick>
+								PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff");
+								DressUpModel.displayedWeapon = self:GetChecked() and 1 or 0;
+								DressUpModel:RefreshDressFromSources();
+							</OnClick>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText(ezCollections.L["DressUp.DisplayMelee"]);
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parentDisplayRangedButton" parentKey="DisplayRangedButton" inherits="UICheckButtonTemplate" hidden="true">
+						<Size x="24" y="24" />
+						<Scripts>
+							<OnClick>
+								PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff");
+								DressUpModel.displayedWeapon = self:GetChecked() and 2 or 0;
+								DressUpModel:RefreshDressFromSources();
+							</OnClick>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText(ezCollections.L["DressUp.DisplayRanged"]);
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parentDisplayMainHandButton" parentKey="DisplayMainHandButton" inherits="UICheckButtonTemplate" hidden="true">
+						<Size x="24" y="24" />
+						<Scripts>
+							<OnClick>
+								PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff");
+								DressUpModel.displayedWeapon = self:GetChecked() and 3 or 0;
+								DressUpModel:RefreshDressFromSources();
+							</OnClick>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText(ezCollections.L["DressUp.DisplayMainHand"]);
+								GameTooltip:AddLine(ezCollections.L["DressUp.ConflictingWeapons"], GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true);
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</CheckButton>
+					<CheckButton name="$parentDisplayOffHandButton" parentKey="DisplayOffHandButton" inherits="UICheckButtonTemplate" hidden="true">
+						<Size x="24" y="24" />
+						<Scripts>
+							<OnClick>
+								PlaySound(self:GetChecked() and "igMainMenuOptionCheckBoxOn" or "igMainMenuOptionCheckBoxOff");
+								DressUpModel.displayedWeapon = self:GetChecked() and 4 or 0;
+								DressUpModel:RefreshDressFromSources();
+							</OnClick>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText(ezCollections.L["DressUp.DisplayOffHand"]);
+								GameTooltip:AddLine(ezCollections.L["DressUp.ConflictingWeapons"], GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b, true);
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</CheckButton>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						Mixin(self, DressUpOutfitDetailsPanelMixin, SetShownMixin);
+						self:SetScript("OnShow", self.OnShow);
+						self:SetScript("OnHide", self.OnHide);
+						self:SetScript("OnEvent", self.OnEvent);
+						self:SetScript("OnKeyDown", self.OnKeyDown);
+						self:OnLoad();
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Button parentKey="ResetButton" name="DressUpFrameResetButton" inherits="ezCollectionsUIPanelButtonTemplate" text="RESET">
 				<Size x="80" y="22"/>
 				<Anchors>
 					<Anchor point="RIGHT" relativeTo="DressUpFrameCancelButton" relativePoint="LEFT"/>
@@ -199,6 +403,29 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+			<Button parentKey="LinkButton" mixin="DressUpModelFrameLinkButtonMixin" inherits="ezCollectionsUIPanelButtonTemplate" text="LINK_TRANSMOG_OUTFIT">
+				<Size x="159" y="22"/>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="2" y="4"/>
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						Mixin(self, DressUpModelFrameLinkButtonMixin, SetShownMixin);
+						self:SetScript("OnClick", self.OnClick);
+						self:OnLoad();
+					</OnLoad>
+					<OnShow>
+						if DressUpFrameCustom and DressUpFrameUndressButton then -- Dresser
+							self:SetPoint("BOTTOMRIGHT", DressUpFrameUndressButton, "BOTTOMLEFT");
+						elseif DressUpFrame_UndressButton then -- ElvUI
+							self:SetPoint("BOTTOMRIGHT", DressUpFrame_UndressButton, "BOTTOMLEFT", -3, 0);
+						end
+					</OnShow>
+				</Scripts>
+				<Frames>
+					<Frame name="$parentDropDown" parentKey="DropDown" inherits="UIDropDownMenuTemplate"/>
+				</Frames>
+			</Button>
 			<DressUpModel name="DressUpModel" parentKey="DressUpModel" inherits="ModelWithControlsTemplate">
 				<Anchors>
 					<Anchor point="TOPLEFT" x="7" y="-63"/>
@@ -206,11 +433,20 @@
 				</Anchors>
 				<Scripts>
 					<OnLoad function="DressUpModel_OnLoad" />
+					<!--OnDressModel>
+						self:GetParent():OnDressModel();
+					</OnDressModel-->
 					<OnHide>
 						Model_OnHide(self);
 						--self:SetSheathed(false);
 					</OnHide>
 				</Scripts>
+			</DressUpModel>
+			<DressUpModel parentKey="DualWieldResetter">
+				<Size x="1" y="1" />
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+				</Anchors>
 			</DressUpModel>
 		</Frames>
 		<Layers>
@@ -221,16 +457,6 @@
 						<Anchor point="BOTTOMRIGHT" />
 					</Anchors>
 				</Texture>
-			</Layer>
-			<Layer level="ARTWORK">
-				<FontString name="$parentDescriptionText" inherits="GameFontNormalSmall" text="DRESSUP_FRAME_INSTRUCTIONS">
-					<Size y="36" />
-					<Anchors>
-						<Anchor point="TOP" y="-22" />
-						<Anchor point="LEFT" x="60" />
-						<Anchor point="RIGHT" x="-17" />
-					</Anchors>
-				</FontString>
 			</Layer>
 			<Layer level="OVERLAY">
 				<Texture name="$parentBackgroundTopLeft" parentKey="BGTopLeft">
@@ -273,11 +499,19 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
+				self.hasOutfitControls = true;
+				Mixin(self.OutfitDropDown, SetShownMixin);
+				Mixin(self.ToggleOutfitDetailsButton, SetShownMixin);
+				Mixin(self.ResetButton, SetShownMixin);
 				Mixin(self.ModelBackground, SetAtlasMixin);
+				Mixin(self, DressUpModelFrameMixin);
+				self:SetScript("OnShow", self.OnShow);
+				self:SetScript("OnHide", self.OnHide);
+				--self:SetScript("OnDressModel", self.OnDressModel);
+				self:OnLoad();
+
 				self.BGBottomLeft = self.BGBotLeft;
 				self.BGBottomRight = self.BGBotRight;
-				self.TitleText:SetText(DRESSUP_FRAME);
-
 				self.ModelBackground:SetParent(self.DressUpModel);
 				self.ModelBackground:SetDrawLayer("ARTWORK");
 				self.ModelBackground:ClearAllPoints();
@@ -298,13 +532,6 @@
 				DressUpBackgroundBotLeft = self.BGBotLeft;
 				DressUpBackgroundBotRight = self.BGBotRight;
 			</OnLoad>
-			<OnShow>
-				SetPortraitTexture(DressUpFramePortrait, "player");
-				PlaySound("igCharacterInfoOpen");
-			</OnShow>
-			<OnHide>
-				PlaySound("igCharacterInfoClose");
-			</OnHide>
 		</Scripts>
 	</Frame>
 </Ui>

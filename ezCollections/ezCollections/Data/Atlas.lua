@@ -31,6 +31,7 @@ ezCollections.Atlas =
     [917] = { [[Interface\AddOns\ezCollections\Interface\DressUpFrame\DressingRoomShaman]], 512, 512 },
     [918] = { [[Interface\AddOns\ezCollections\Interface\DressUpFrame\DressingRoomWarlock]], 512, 512 },
     [919] = { [[Interface\AddOns\ezCollections\Interface\DressUpFrame\DressingRoomWarrior]], 512, 512 },
+    [1878] = { [[Interface\AddOns\ezCollections\Interface\DressUpFrame\DressingRoom]], 512, 512 },
     -- Custom
     [10001] = { [[Interface\AddOns\ezCollections\Textures\RangedSlot]], 64, 64 },
 };
@@ -122,6 +123,29 @@ ezCollections.AtlasMember =
     ["dressingroom-background-shaman"] = { 917, 1, 479, 1, 501 },
     ["dressingroom-background-warlock"] = { 918, 1, 479, 1, 501 },
     ["dressingroom-background-warrior"] = { 919, 1, 479, 1, 501 },
+    ["dressingroom-itemborder-account"] = { 1878, 316, 356, 1, 41 },
+    ["dressingroom-itemborder-artifact"] = { 1878, 358, 398, 1, 41 },
+    ["dressingroom-itemborder-blue"] = { 1878, 400, 440, 1, 41 },
+    ["dressingroom-itemborder-error"] = { 1878, 442, 482, 1, 41 },
+    ["dressingroom-itemborder-gray"] = { 1878, 316, 356, 43, 83 },
+    ["dressingroom-itemborder-green"] = { 1878, 358, 398, 43, 83 },
+    ["dressingroom-itemborder-orange"] = { 1878, 400, 440, 43, 83 },
+    ["dressingroom-itemborder-purple"] = { 1878, 442, 482, 43, 83 },
+    ["dressingroom-itemborder-small-account"] = { 1878, 1, 29, 476, 504 },
+    ["dressingroom-itemborder-small-artifact"] = { 1878, 31, 59, 476, 504 },
+    ["dressingroom-itemborder-small-blue"] = { 1878, 61, 89, 476, 504 },
+    ["dressingroom-itemborder-small-error"] = { 1878, 91, 119, 476, 504 },
+    ["dressingroom-itemborder-small-gray"] = { 1878, 121, 149, 476, 504 },
+    ["dressingroom-itemborder-small-green"] = { 1878, 151, 179, 476, 504 },
+    ["dressingroom-itemborder-small-orange"] = { 1878, 181, 209, 476, 504 },
+    ["dressingroom-itemborder-small-purple"] = { 1878, 211, 239, 476, 504 },
+    ["dressingroom-itemborder-small-white"] = { 1878, 271, 299, 476, 504 },
+    ["dressingroom-itemborder-white"] = { 1878, 358, 398, 85, 125 },
+    ["dressingroom-itemborder-small-uncollected"] = { 1878, 241, 269, 476, 504 },
+    ["dressingroom-itemborder-uncollected"] = { 1878, 316, 356, 85, 125 },
+    ["dressingroom-itemborder-illusion"] = { 1878, 400, 440, 85, 125 },
+    ["dressingroom-itemborder-small-illusion"] = { 1878, 442, 470, 85, 113 },
+
     -- Custom
     ["transmog-nav-slot-ranged"] = { 10001, 0, 35, 0, 37 },
 }

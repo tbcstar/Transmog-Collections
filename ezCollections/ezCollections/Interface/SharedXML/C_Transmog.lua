@@ -184,6 +184,10 @@ function C_Transmog.SetCost(key, moneyCost, tokenCost) -- Custom
     end
 end
 
+function C_Transmog.IsAtTransmogNPC()
+    return WardrobeFrame and WardrobeFrame:IsShown();
+end
+
 function C_Transmog.SetPending(slot, transmogType, sourceID)
     local base, _, applied, _, pending, _, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, transmogType);
     if applied ~= 0 and sourceID == applied or applied == 0 and sourceID == base then
@@ -194,9 +198,11 @@ function C_Transmog.SetPending(slot, transmogType, sourceID)
     end
 
     _pending[slot] = _pending[slot] or { };
-    _pending[slot][transmogType] = sourceID;
     _pendingFailReasons[slot] = _pendingFailReasons[slot] or { };
-    _pendingFailReasons[slot][transmogType] = nil;
+    if _pending[slot][transmogType] ~= sourceID then
+        _pendingFailReasons[slot][transmogType] = nil;
+    end
+    _pending[slot][transmogType] = sourceID;
     if not _suppressUpdates then
         ezCollections:RaiseEvent("TRANSMOGRIFY_UPDATE", slot, transmogType);
     end
@@ -261,15 +267,16 @@ function C_Transmog.ValidateAllPending(defer)
         return;
     end
     _lastRequestedCost.Key = nil;
+    _suppressUpdates = true;
     for _, slotInfo in ipairs(TRANSMOG_SLOTS) do
         local slot = GetInventorySlotInfo(slotInfo.slot);
         local transmogType = slotInfo.transmogType;
         if _pending[slot] and _pending[slot][transmogType] then
             C_Transmog.SetPending(slot, transmogType, _pending[slot][transmogType]);
-        else
-            ezCollections:RaiseEvent("TRANSMOGRIFY_UPDATE", slot, transmogType);
         end
     end
+    _suppressUpdates = false;
+    ezCollections:RaiseEvent("TRANSMOGRIFY_UPDATE");
 end
 
 function C_Transmog.GetItemInfo()
@@ -281,48 +288,40 @@ function C_Transmog.CanTransmogItemWithItem()
 end
 
 function C_Transmog.LoadOutfit(outfitID)
-    _suppressUpdates = true;
-    C_Transmog.ClearPending();
     _lastRequestedCost.Key = nil;
-
-    local appearanceSources, mainHandEnchant, offHandEnchant = C_TransmogCollection.GetOutfitSources(outfitID);
-    for slot, sourceID in pairs(appearanceSources) do
-        C_Transmog.SetPending(slot, LE_TRANSMOG_TYPE_APPEARANCE, sourceID);
-    end
-    if mainHandEnchant then
-        C_Transmog.SetPending(GetInventorySlotInfo("MAINHANDSLOT"), LE_TRANSMOG_TYPE_ILLUSION, mainHandEnchant);
-    end
-    if offHandEnchant then
-        C_Transmog.SetPending(GetInventorySlotInfo("SECONDARYHANDSLOT"), LE_TRANSMOG_TYPE_ILLUSION, offHandEnchant);
-    end
-    _suppressUpdates = false;
-    ezCollections:RaiseEvent("TRANSMOGRIFY_UPDATE");
+    C_Transmog.LoadSources(C_TransmogCollection.GetOutfitSources(outfitID));
 end
 
-function C_Transmog.LoadSources(sourceIDTable, mainHandEnchant, offHandEnchant)
+function C_Transmog.LoadSources(sources, mainHandEnchant, offHandEnchant, clearExtra)
+    mainHandEnchant = mainHandEnchant ~= -1 and mainHandEnchant or nil;
+    offHandEnchant = offHandEnchant ~= -1 and offHandEnchant or nil;
+
     _suppressUpdates = true;
     C_Transmog.ClearPending();
-    --_lastRequestedCost.Key = nil; -- Needed?
 
-    for slot, sourceID in pairs(sourceIDTable) do
-        C_Transmog.SetPending(slot, LE_TRANSMOG_TYPE_APPEARANCE, sourceID);
+    for slot, sourceID in pairs(sources) do
+        if CanTransmogrify(slot) then
+            C_Transmog.SetPending(slot, LE_TRANSMOG_TYPE_APPEARANCE, sourceID);
+        end
     end
-    if ezCollections.Config.Wardrobe.HideExtraSlotsOnSetSelect then
+    if clearExtra and ezCollections.Config.Wardrobe.HideExtraSlotsOnSetSelect then
         for _, slotInfo in ipairs(TRANSMOG_SLOTS) do
             if slotInfo.transmogType == LE_TRANSMOG_TYPE_APPEARANCE and slotInfo.armorCategoryID then
                 local slot = GetInventorySlotInfo(slotInfo.slot);
                 local baseSourceID, baseVisualID, appliedSourceID, appliedVisualID, pendingSourceID, pendingVisualID, hasPendingUndo = C_Transmog.GetSlotVisualInfo(slot, LE_TRANSMOG_TYPE_APPEARANCE);
-                if not sourceIDTable[slot] and baseSourceID ~= 0 and appliedSourceID ~= ezCollections:GetHiddenVisualItem() and ezCollections:CanHideSlot(slotInfo.slot:gsub("SLOT", "")) then
+                if not sources[slot] and baseSourceID ~= 0 and appliedSourceID ~= ezCollections:GetHiddenVisualItem() and ezCollections:CanHideSlot(slotInfo.slot:gsub("SLOT", "")) then
                     C_Transmog.SetPending(slot, LE_TRANSMOG_TYPE_APPEARANCE, ezCollections:GetHiddenVisualItem());
                 end
             end
         end
     end
-    if mainHandEnchant ~= -1 then
-        C_Transmog.SetPending(GetInventorySlotInfo("MAINHANDSLOT"), LE_TRANSMOG_TYPE_ILLUSION, mainHandEnchant);
+    local slot = GetInventorySlotInfo("MAINHANDSLOT");
+    if mainHandEnchant and CanTransmogrify(slot) then
+        C_Transmog.SetPending(slot, LE_TRANSMOG_TYPE_ILLUSION, mainHandEnchant);
     end
-    if offHandEnchant ~= -1 then
-        C_Transmog.SetPending(GetInventorySlotInfo("SECONDARYHANDSLOT"), LE_TRANSMOG_TYPE_ILLUSION, offHandEnchant);
+    slot = GetInventorySlotInfo("SECONDARYHANDSLOT");
+    if offHandEnchant and CanTransmogrify(slot) then
+        C_Transmog.SetPending(slot, LE_TRANSMOG_TYPE_ILLUSION, offHandEnchant);
     end
     _suppressUpdates = false;
     ezCollections:RaiseEvent("TRANSMOGRIFY_UPDATE");

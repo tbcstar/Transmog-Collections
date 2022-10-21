@@ -149,7 +149,7 @@
 		</Layers>
 		<Scripts>
 			<OnMouseDown>
-				if ( self:IsEnabled() ) then
+				if ( self:IsEnabled() == 1 ) then
 					local name = self:GetName();
 					_G[name.."Left"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Down]]);
 					_G[name.."Middle"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Down]]);
@@ -161,7 +161,7 @@
 				end
 			</OnMouseDown>
 			<OnMouseUp>
-				if ( self:IsEnabled() ) then
+				if ( self:IsEnabled() == 1 ) then
 					local name = self:GetName();
 					_G[name.."Left"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Left-Up]]);
 					_G[name.."Middle"]:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-SilverButtonLG-Mid-Up]]);

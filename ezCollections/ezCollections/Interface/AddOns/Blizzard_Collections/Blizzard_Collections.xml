@@ -239,7 +239,6 @@
 			<OnLoad>
 				CollectionsJournalTitleText:SetText(COLLECTIONS);
 				SetPortraitToTexture(CollectionsJournalPortrait, [[Interface\AddOns\ezCollections\Interface\Icons\MountJournalPortrait]]);
-				CollectionsJournalTab3.isDisabled = true;
 				CollectionsJournalTab4.isDisabled = true;
 				PanelTemplates_SetNumTabs(self, 6);
 

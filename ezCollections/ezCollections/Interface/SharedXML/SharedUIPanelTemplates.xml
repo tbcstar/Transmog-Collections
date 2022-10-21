@@ -522,7 +522,7 @@
 		</Scripts>
 	</Button>
 
-	<Button name="UIMenuButtonStretchTemplate" virtual="true">
+	<Button name="UIMenuButtonStretchTemplate" mixin="UIMenuButtonStretchMixin" virtual="true">
 		<Size x="40" y="26"/>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -597,82 +597,7 @@
 			</Layer>
 		</Layers>
 		<Scripts>
-			<OnLoad>
-				self:SetPushedTextOffset(1, -1);
-			</OnLoad>
-			<OnMouseDown>
-				if ( self:IsEnabled() == 1 ) then
-					self.TopLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					self.TopRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					self.BottomLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					self.BottomRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					self.TopMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					self.MiddleLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					self.MiddleRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					self.BottomMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					self.MiddleMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Down]]);
-					if ( self.Icon ) then
-						if ( not self.Icon.oldPoint ) then
-							local point, relativeTo, relativePoint, x, y = self.Icon:GetPoint(1);
-							self.Icon.oldPoint = point;
-							self.Icon.oldX = x;
-							self.Icon.oldY = y;
-						end
-						self.Icon:SetPoint(self.Icon.oldPoint, self.Icon.oldX + 1, self.Icon.oldY - 1);
-					end
-				end
-			</OnMouseDown>
-			<OnMouseUp>
-				if ( self:IsEnabled() == 1 ) then
-					self.TopLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.TopRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.BottomLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.BottomRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.TopMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.MiddleLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.MiddleRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.BottomMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.MiddleMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					if ( self.Icon ) then
-						self.Icon:SetPoint(self.Icon.oldPoint, self.Icon.oldX, self.Icon.oldY);
-					end
-				end
-			</OnMouseUp>
-			<OnShow>
-				if ( self:IsEnabled() == 1 ) then
-					-- we need to reset our textures just in case we were hidden before a mouse up fired
-					self.TopLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.TopRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.BottomLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.BottomRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.TopMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.MiddleLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.MiddleRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.BottomMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-					self.MiddleMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				end
-			</OnShow>
-			<OnEnable>
-				self.TopLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				self.TopRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				self.BottomLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				self.BottomRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				self.TopMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				self.MiddleLeft:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				self.MiddleRight:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				self.BottomMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-				self.MiddleMiddle:SetTexture([[Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Up]]);
-			</OnEnable>
-			<OnEnter>
-				if(self.tooltipText ~= nil) then
-					GameTooltip_AddNewbieTip(self, self.tooltipText, 1.0, 1.0, 1.0, self.newbieText);
-				end
-			</OnEnter>
-			<OnLeave>
-				if(self.tooltipText ~= nil) then
-					GameTooltip:Hide();
-				end
-			</OnLeave>
+			<OnLoad function="UIMenuButtonStretchMixin_OnLoad" />
 		</Scripts>
 		<ButtonText parentKey="Text" name="$parentText">
 			<Anchors>
@@ -685,6 +610,40 @@
 		<HighlightTexture file="Interface\AddOns\ezCollections\Interface\Buttons\UI-Silver-Button-Highlight" alphaMode="ADD">
 			<TexCoords left="0" right="1.0" top="0.03" bottom="0.7175"/>
 		</HighlightTexture>
+	</Button>
+	<!-- Based on UIMenuButtonStretchTemplate.
+		Includes a Reset button (red cicle with yellow x) that appears on the top right of the dropdown button (hidden by default).
+		You can specify a "resetFunction" on the dropdown button as a keyValue and the Reset button will call it on click.
+		Ex. <KeyValues>
+				<KeyValue key="resetFunction" value="MountJournalFilterDropdown_ResetFilters" type="global"/>
+			</KeyValues> -->
+	<Button name="UIResettableDropdownButtonTemplate" inherits="UIMenuButtonStretchTemplate" mixin="UIResettableDropdownButtonMixin" virtual="true">
+		<Size x="93" y="22"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Icon" file="Interface\ChatFrame\ChatFrameExpandArrow">
+					<Size x="10" y="12"/>
+					<Anchors>
+						<Anchor point="RIGHT" x="-5"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button parentKey="ResetButton" hidden="true">
+				<Size x="23" y="23"/>
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-3" y="0"/>
+				</Anchors>
+				<NormalTexture atlas="auctionhouse-ui-filter-redx" file="Interface\AddOns\ezCollections\Interface\AuctionFrame\AuctionHouse">
+					<Size x="23" y="23"/>
+					<TexCoords left="0.9404296875" right="0.9853515625" top="0.001953125" bottom="0.091796875" />
+				</NormalTexture>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad function="UIResettableDropdownButtonMixin_OnLoad" />
+		</Scripts>
 	</Button>
 
 	<EditBox name="InputBoxInstructionsTemplate" inherits="InputBoxTemplate" virtual="true">
@@ -747,6 +706,7 @@
 				<Scripts>
 					<OnClick>
 						self:GetParent():Maximize();
+						PlaySound("igMainMenuOptionCheckBoxOn");
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-Panel-BiggerButton-Up"/>
@@ -758,6 +718,7 @@
 				<Scripts>
 					<OnClick>
 						self:GetParent():Minimize();
+						PlaySound("igMainMenuOptionCheckBoxOn");
 					</OnClick>
 				</Scripts>
 				<NormalTexture file="Interface\Buttons\UI-Panel-SmallerButton-Up"/>

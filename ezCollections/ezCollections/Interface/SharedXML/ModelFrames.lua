@@ -54,6 +54,7 @@ function Model_OnLoad(self, maxZoom, minZoom, defaultRotation, onMouseUp)
 	self.onMouseUpFunc = onMouseUp or Model_OnMouseUp;
 
 	self.rotation = self.defaultRotation;
+	self.SetRotation = self.SetFacing;
 	self:SetRotation(self.rotation);
 	self:RegisterEvent("UI_SCALE_CHANGED");
 	self:RegisterEvent("DISPLAY_SIZE_CHANGED");

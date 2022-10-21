@@ -36,11 +36,11 @@
 		<BarColor r="0.03125" g="0.85" b="0.0" />
 	</StatusBar>
 
-	<CheckButton name="CollectionsSpellButtonTemplate" inherits="SecureFrameTemplate" virtual="true">
+	<CheckButton name="CollectionsSpellButtonTemplate" virtual="true">
 		<Size x="50" y="50" />
 		<Layers>
-			<Layer level="ARTWORK">
-				<Texture parentKey="iconTexture" setAllPoints="true" hidden="true">
+			<Layer level="BACKGROUND">
+				<Texture parentKey="iconTexture" hidden="true">
 					<Size x="42" y="42" />
 					<Anchors>
 						<Anchor point="CENTER" x="0" y="1"/>
@@ -48,7 +48,7 @@
 					<TexCoords left="0.04347826" right="0.95652173" top="0.04347826" bottom="0.95652173"/>
 				</Texture>
 
-				<Texture parentKey="iconTextureUncollected" setAllPoints="true" alpha=".18" hidden="true" desaturated="true">
+				<Texture parentKey="iconTextureUncollected" alpha=".18" hidden="true" desaturated="true">
 					<Size x="42" y="41" />
 					<Anchors>
 						<Anchor point="CENTER" x="0" y="2"/>
@@ -56,7 +56,9 @@
 					<TexCoords left="0.063" right="0.938" top="0.063" bottom="0.917"/>
 				</Texture>
 
-				<Texture parentKey="slotFrameUncollectedInnerGlow" setAllPoints="true" alpha=".18" hidden="true" atlas="collections-itemborder-uncollected-innerglow" useAtlasSize="true">
+				<Texture parentKey="slotFrameUncollectedInnerGlow" alpha=".18" hidden="true" atlas="collections-itemborder-uncollected-innerglow" useAtlasSize="true" file="Interface\AddOns\ezCollections\Interface\Collections\Collections">
+					<Size x="42" y="41" />
+					<TexCoords left="0.359375" right="0.44140625" top="0.013671875" bottom="0.09375" />
 					<Anchors>
 						<Anchor point="CENTER" x="0" y="2"/>
 					</Anchors>
@@ -71,7 +73,7 @@
 			</Layer>
 
 			<Layer level="OVERLAY" textureSubLevel="2">
-				<FontString parentKey="new" inherits="GameFontHighlight" maxLines="1" justifyH="CENTER" text="NEW_CAPS" hidden="true">
+				<FontString name="$parentnew" parentKey="new" inherits="GameFontHighlight" maxLines="1" justifyH="CENTER" text="NEW_CAPS" hidden="true">
 					<Anchors>
 						<Anchor point="CENTER" x="8" y="0" relativePoint="TOPLEFT"/>
 					</Anchors>
@@ -80,22 +82,25 @@
 					</Shadow>
 				</FontString>
 
-				<Texture parentKey="newGlow" atlas="collections-newglow" hidden="true">
+				<Texture parentKey="newGlow" atlas="collections-newglow" hidden="true" file="Interface\AddOns\ezCollections\Interface\Collections\Collections">
+					<TexCoords left="0.51171875" right="0.626953125" top="0.013671875" bottom="0.0859375" />
 					<Anchors>
-						<Anchor point="TOPLEFT" relativeKey="$parent.new" x="-20" y="10"/>
-						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.new" x="20" y="-10"/>
+						<Anchor point="TOPLEFT" relativeTo="$parentnew" x="-20" y="10"/>
+						<Anchor point="BOTTOMRIGHT" relativeTo="$parentnew" x="20" y="-10"/>
 					</Anchors>
 				</Texture>
 			</Layer>
 
 			<Layer level="OVERLAY" textureSubLevel="1">
-				<Texture parentKey="slotFrameCollected" atlas="collections-itemborder-collected">
+				<Texture parentKey="slotFrameCollected" atlas="collections-itemborder-collected" file="Interface\AddOns\ezCollections\Interface\Collections\Collections">
+					<TexCoords left="0.24609375" right="0.35546875" top="0.013671875" bottom="0.123046875" />
 					<Size x="56" y="56" />
 					<Anchors>
 						<Anchor point="CENTER" x="0"/>
 					</Anchors>
 				</Texture>
-				<Texture parentKey="slotFrameUncollected" atlas="collections-itemborder-uncollected" hidden="true" useAtlasSize="false">
+				<Texture parentKey="slotFrameUncollected" atlas="collections-itemborder-uncollected" hidden="true" useAtlasSize="false" file="Interface\AddOns\ezCollections\Interface\Collections\Collections">
+					<TexCoords left="0.30078125" right="0.49609375" top="0.19921875" bottom="0.39453125" />
 					<Size x="50" y="50" />
 					<Anchors>
 						<Anchor point="CENTER" x="0" y="2"/>
@@ -113,7 +118,9 @@
 			<Frame parentKey="cooldownWrapper" setAllPoints="true">
 				<Layers>
 					<Layer level="OVERLAY" textureSubLevel="2">
-						<Texture parentKey="slotFavorite" atlas="collections-icon-favorites" useAtlasSize="true" hidden="true">
+						<Texture parentKey="slotFavorite" atlas="collections-icon-favorites" useAtlasSize="true" hidden="true" file="Interface\AddOns\ezCollections\Interface\Collections\Collections">
+							<Size x="31" y="33" />
+							<TexCoords left="0.181640625" right="0.2421875" top="0.013671875" bottom="0.078125" />
 							<Anchors>
 								<Anchor point="TOPLEFT" x="-12" y="13" relativePoint="TOPLEFT"/>
 							</Anchors>

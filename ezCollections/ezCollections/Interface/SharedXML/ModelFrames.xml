@@ -23,7 +23,7 @@
 				</Texture>
 			</Layer>
 			<Layer level="HIGHLIGHT">
-				<Texture file="Interface\AddOns\ezCollections\Interface\Common\UI-ModelControlPanel">
+				<Texture file="Interface\AddOns\ezCollections\Interface\Common\UI-ModelControlPanel" parentKey="highlight">
 					<Size x="16" y="16"/>
 					<Anchors>
 						<Anchor point="CENTER"/>
