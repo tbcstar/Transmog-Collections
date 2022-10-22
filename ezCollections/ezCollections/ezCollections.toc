@@ -1,7 +1,7 @@
 ## Interface: 30300
 ## Title: |cFF00B0E8ez|rCollections
 ## Notes: Adds clientside support for Collections and Transmogrification features on ezwow.org, as well as retail UI for mounts and companions
-## Notes-ruRU: Добавляет клиентскую поддержку для коллекций и трансмогрификации на ezwow.org, а также интерфейс транспорта и спутников из новых версий WoW
+## Notes-zhCN: 为 TBCstar上的收藏和幻化功能添加客户端支持，以及坐骑和同伴的零售 UI
 ## Author: ZEUStiger
 ## Version: 2.4.3
 ## SavedVariables: ezCollectionsConfig, ezCollectionsCache
@@ -25,7 +25,7 @@ Interface\SharedXML\Pools.lua
 Interface\SharedXML\SharedTooltipTemplates.lua
 Interface\FrameXML\Constants.lua
 Interface\FrameXML\Localization.enUS.lua
-Interface\FrameXML\Localization.ruRU.lua
+Interface\FrameXML\Localization.zhCN.lua
 Interface\FrameXML\Fonts.xml
 Interface\FrameXML\FontStyles.xml
 Interface\FrameXML\UIParent.lua
@@ -48,7 +48,7 @@ Interface\FrameXML\ActionButtonTemplate.xml
 
 # Localization
 Locales\enUS.lua
-Locales\ruRU.lua
+Locales\zhCN.lua
 
 # Core Code
 ezCollections.xml
@@ -68,18 +68,18 @@ Core\ElvUI\MicroBar.lua
 Data\Atlas.lua
 Data\Camera.lua
 Data\Encounters.enUS.lua
-Data\Encounters.ruRU.lua
+Data\Encounters.zhCN.lua
 Data\Holidays.enUS.lua
-Data\Holidays.ruRU.lua
+Data\Holidays.zhCN.lua
 Data\Instances.enUS.lua
-Data\Instances.ruRU.lua
+Data\Instances.zhCN.lua
 Data\ItemSet.lua
 Data\ItemToMount.lua
 Data\ItemToPet.lua
 Data\Mounts.enUS.lua
-Data\Mounts.ruRU.lua
+Data\Mounts.zhCN.lua
 Data\Pets.enUS.lua
-Data\Pets.ruRU.lua
+Data\Pets.zhCN.lua
 Data\Set.lua
 Data\Skin.lua
 

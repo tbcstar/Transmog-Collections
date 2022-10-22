@@ -1,8 +1,8 @@
 ## Interface: 30300
 ## Title: |cFF00B0E8ez|rCollections|cFF00B0E8 [Dressing Room]|r
-## Title-ruRU: |cFF00B0E8ez|rCollections|cFF00B0E8 [Примерочная]|r
+## Title-zhCN: |cFF00B0E8ez|rCollections|cFF00B0E8 [更衣室]|r
 ## Notes: Adds support for new features to the Dressing Room UI
-## Notes-ruRU: Добавлеяет поддержку новых возможностей в интерфейс Примерочной
+## Notes-zhCN: 为更衣室 UI 添加了对新功能的支持
 ## Author: ZEUStiger
 ## Dependencies: ezCollections
 ## X-Part-Of: ezCollections

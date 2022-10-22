@@ -2,7 +2,7 @@
 ## Title: |cFF00B0E8ez|rCollections|cFF00B0E8 [Loader]|r
 ## Title-ruRU: |cFF00B0E8ez|rCollections|cFF00B0E8 [Загрузчик]|r
 ## Notes: Ensures that |cFF00B0E8ez|rCollections are loaded as early as possible
-## Notes-ruRU: Обеспечивает загрузку |cFF00B0E8ez|rCollections как можно раньше, перед другими аддонами
+## Notes-zhCN: 确保尽早加载|cFF00B0E8ez|rCollections
 ## Author: ZEUStiger
 ## Dependencies: ezCollections
 ## OptionalDeps: ezCollectionsDressUp
