@@ -62,6 +62,7 @@ function GameTooltip:SetToyByItemID(itemID)
 		local reqs = { };
 		local footer = { };
 		local foundCooldown = false;
+		local onEquipTriggers = { };
 		for i = 1, 20 do
 			local line = _G[self:GetName().."TextLeft"..i];
 			if line and line:IsShown() and line:GetText() and line:GetText() ~= "" and line:GetText() ~= " " then
@@ -70,9 +71,17 @@ function GameTooltip:SetToyByItemID(itemID)
 				if i == 1 then
 					table.insert(lines, { text, r, g, b, 0 });
 					table.insert(lines, { TOY, 0x88/0xFF, 0xAA/0xFF, 1, 0 });
-				elseif ezCollections.IsSameColor(r, g, b, 0, 1, 0) and
-					(text:find(ITEM_SPELL_TRIGGER_ONUSE) == 1 or text:find(ITEM_SPELL_TRIGGER_ONEQUIP) == 1) then -- Spell
+				elseif ezCollections.IsSameColor(r, g, b, 0, 1, 0) and text:find(ITEM_SPELL_TRIGGER_ONUSE) == 1 then -- Spell
 					table.insert(lines, { text, r, g, b, 1 });
+					if onEquipTriggers then
+						for _, line in ipairs(onEquipTriggers) do
+							tDeleteItem(lines, line);
+						end
+						onEquipTriggers = nil;
+					end
+				elseif ezCollections.IsSameColor(r, g, b, 0, 1, 0) and text:find(ITEM_SPELL_TRIGGER_ONEQUIP) == 1 and onEquipTriggers then -- Spell
+					table.insert(lines, { text:gsub(ITEM_SPELL_TRIGGER_ONEQUIP, ITEM_SPELL_TRIGGER_ONUSE), r, g, b, 1 });
+					table.insert(onEquipTriggers, lines[#lines]);
 				elseif text:match(ezCollections.FormatToPattern(ITEM_COOLDOWN_TIME)) then
 					table.insert(lines, { text, r, g, b, 0 }); foundCooldown = true;
 				elseif ezCollections.IsSameColor(r, g, b, 1, 0.8235, 0) and text:sub(1, 1) == "\"" then -- Description

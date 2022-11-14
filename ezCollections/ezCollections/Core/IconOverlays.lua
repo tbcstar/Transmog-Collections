@@ -871,6 +871,7 @@ addons =
                     end
                 end);
                 Hook(M, "LOOT_OPENED", "LOOT_SLOT_CLEARED", "LOOT_CLOSED", function()
+                    if not ElvLootFrame then return; end
                     for i, frame in ipairs(ElvLootFrame.slots) do
                         checkNonBagItem(GetLootSlotLink(i), frame.icon);
                     end
@@ -1173,11 +1174,18 @@ addons =
         Hook = function()
             local config = AddonConfig("Auc-Advanced");
             -- Snatcher fix: GetItemIcon(outfitlink) returns nothing, while SetNormalTexture requires at least one nil parameter
-            hooksecurefunc(AucSearchUI.Searchers.Snatch, "MakeGuiConfig", function(self, gui)
-                local icon = self.Private.frame.icon;
+            local snatch = AucSearchUI.Searchers.Snatch;
+            local private = snatch.Private;
+            local function SnatchHook()
+                local icon = private.frame.icon;
                 local old = icon.SetNormalTexture;
                 function icon:SetNormalTexture(texture) old(self, texture or nil) end
-            end);
+            end
+            if snatch.MakeGuiConfig then
+                hooksecurefunc(snatch, "MakeGuiConfig", SnatchHook);
+            else
+                SnatchHook();
+            end
             -- CompactUI
             if AucAdvanced.Settings.GetSetting("util.compactui.activated") then
                 hooksecurefunc(AucAdvanced.Modules.Util.CompactUI.Private, "HookAH", function()
@@ -1200,7 +1208,7 @@ addons =
             end
             -- Appraiser
             local private = AucAdvanced.Modules.Util.Appraiser.Private;
-            hooksecurefunc(private, "CreateFrames", function()
+            local function HookAppraiser()
                 local frame = private.frame;
                 Hook(frame, "SelectItem", "Reselect", function()
                     checkNonBagItem(frame.salebox.sig and frame.salebox.link, frame.salebox.icon);
@@ -1214,7 +1222,12 @@ addons =
                     end
                 end);
                 frame.scroller:SetScript("OnValueChanged", frame.SetScroll);
-            end);
+            end
+            if private.CreateFrames then
+                hooksecurefunc(private, "CreateFrames", HookAppraiser);
+            else
+                HookAppraiser();
+            end
         end,
         GetDefaults = function()
             return
@@ -1305,6 +1318,48 @@ addons =
                     checkNonBagItem(row.rollID and GetLootRollItemLink(row.rollID), _G[row.button:GetName().."IconTexture"]);
                 end
             end);
+        end,
+    },
+    ["ItemDB"] =
+    {
+        Hook = function()
+            local ItemDB = LibStub("AceAddon-3.0"):GetAddon("ItemDB", true);
+            if ItemDB then
+                local LibInventory = LibStub("LibInventory-2.1");
+                local frame;
+                local function newQueryItem()
+                    checkNonBagItem(nil, _G[frame:GetName().."ItemIconTexture"]);
+                end
+                local function newSetItemRef(link, text)
+                    checkNonBagItem(strsub(link, 1, 5) == "item:" and text, _G[frame:GetName().."ItemIconTexture"]);
+                end
+                local function process()
+                    local owner = GameTooltip:GetOwner();
+                    local focus = GetMouseFocus();
+                    for i = 1, 8 do
+                        frame = _G["ItemDB_Browser_ItemButton"..i];
+                        if frame:IsShown() then
+                            pcall(frame:GetScript("OnClick"), frame);
+                            -- Also fix the bugs with tooltips not updating on mouse scroll, why not
+                            if owner == frame or focus == frame then
+                                GameTooltip:Hide();
+                                pcall(frame:GetScript("OnEnter"), frame);
+                            end
+                        end
+                    end
+                end
+                Hook(ItemDB, "ItemList_Update", function()
+                    if not ItemDB_Browser:IsShown() then return; end
+                    -- Awful, horrible, terrible way to access item id, because ItemDB doesn't expose those variables elsewhere, and has all the globals upvalued except for SetItemRef
+                    local oldSetItemRef = SetItemRef;
+                    local oldQueryItem = LibInventory.QueryItem;
+                    SetItemRef = newSetItemRef;
+                    LibInventory.QueryItem = newQueryItem;
+                    pcall(process);
+                    SetItemRef = oldSetItemRef;
+                    LibInventory.QueryItem = oldQueryItem;
+                end);
+            end
         end,
     },
 };

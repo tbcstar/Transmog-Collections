@@ -48,6 +48,14 @@ local function PrepareFilter()
     _search = ezCollections:PrepareSearchQuery(_search);
 end
 
+local oIsFlyableArea = IsFlyableArea;
+local function IsFlyableArea()
+    if CanHearthAndResurrectFromArea() and not GetWintergraspWaitTime() then
+        return false; -- Wintergrasp during battle
+    end
+    return oIsFlyableArea();
+end
+
 local function IsMountUsable(mountID)
     local _, type = ezCollections:GetMountInfo(mountID);
     local withScaling = nil;

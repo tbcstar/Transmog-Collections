@@ -2966,7 +2966,8 @@
 					</OnLoad>
 					<OnClick>
 						HideUIPanel(WardrobeFrame);
-						if not ezCollections.Config.Wardrobe.WindowsLockCollections then
+						local config = ezCollections.Config.Windows[self:GetParent():GetName()];
+						if not config.Layout and not config.Lock then
 							CollectionsJournal:ClearAllPoints();
 							CollectionsJournal:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", WardrobeFrame:GetLeft(), WardrobeFrame:GetBottom());
 						end

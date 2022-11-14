@@ -2369,6 +2369,19 @@ function WardrobeItemsModelMixin:OnEnter()
 			GameTooltip:AddLine(sourceText, 1, 1, 1, 1);
 		end
 
+		local enchant = ezCollections:GetEnchantFromScroll(self.visualInfo.sourceID);
+		if enchant then
+			local variants = ezCollections:GetScrollVariantsFromEnchant(enchant);
+			if variants then
+				for _, variant in ipairs(variants) do
+					if variant ~= self.visualInfo.sourceID then
+						local _, name = C_TransmogCollection.GetIllusionSourceInfo(variant);
+						GameTooltip:AddLine(format(ezCollections.L["Tooltip.Transmog.EnchantVariantFormat"], name), GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
+					end
+				end
+			end
+		end
+
 		if ezCollections.Developer then
 			GameTooltip:AddLine("ID "..self.visualInfo.sourceID.."  ||  "..(ezCollections:GetEnchantFromScroll(self.visualInfo.sourceID) or ezCollections:GetHiddenEnchant()), 0.25, 0.25, 0.25, 1, 1);
 		elseif ezCollections.Config.Wardrobe.ShowItemID and not C_TransmogCollection.IsAppearanceHiddenVisual(self.visualInfo.sourceID) then
@@ -4457,9 +4470,22 @@ function WardrobeSetsCollectionMixin:OpenVariantSetsDropDown()
 			UIDropDownMenu_AddButton(info);
 		end
 	end
+
+	UIDropDownMenu_AddSeparator();
+
+	info.disabled = false;
+	info.checked = nil;
+	info.text = TRANSMOG_OUTFIT_POST_IN_CHAT;
+	info.func = function()
+		local hyperlink = C_TransmogSets.GetSetHyperlink(selectedSetID);
+		if not ChatEdit_InsertLink(hyperlink) then
+			ChatFrame_OpenChat(hyperlink);
+		end
+	end;
+	UIDropDownMenu_AddButton(info);
 end
 
-function WardrobeSetsCollectionMixin:GetDefaultSetIDForBaseSet(baseSetID)
+function WardrobeSetsCollectionMixin:GetDefaultSetIDForBaseSet(baseSetID, ignoreNew)
 	if not C_TransmogSets.GetBaseSetsFilter(LE_TRANSMOG_SET_FILTER_GROUP) then return baseSetID; end
 
 	local variantSets = SetsDataProvider:GetVariantSets(baseSetID);
@@ -4471,7 +4497,7 @@ function WardrobeSetsCollectionMixin:GetDefaultSetIDForBaseSet(baseSetID)
 		end
 	end
 
-	if ( SetsDataProvider:IsBaseSetNew(baseSetID) ) then
+	if not ignoreNew and ( SetsDataProvider:IsBaseSetNew(baseSetID) ) then
 		if ( C_TransmogSets.SetHasNewSources(baseSetID) ) and HasVariantSet(baseSetID) then
 			return baseSetID;
 		else
@@ -4513,6 +4539,11 @@ end
 
 function WardrobeSetsCollectionMixin:SelectSetFromButton(setID)
 	CloseDropDownMenus();
+	if IsModifiedClick("CHATLINK") then
+		if ChatEdit_InsertLink(C_TransmogSets.GetSetHyperlink(self:GetDefaultSetIDForBaseSet(setID, true))) then
+			return;
+		end
+	end
 	self:SelectSet(self:GetDefaultSetIDForBaseSet(setID));
 end
 
@@ -4631,6 +4662,7 @@ local function WardrobeSetsCollectionScrollFrame_FavoriteDropDownInit(self)
 	info.disabled = nil;
 
 	local isFavorite = baseSet.favoriteSetID;
+	local targetSetID = WardrobeCollectionFrame.SetsCollectionFrame:GetDefaultSetIDForBaseSet(self.baseSetID, true);
 	if not C_TransmogSets.GetBaseSetsFilter(LE_TRANSMOG_SET_FILTER_GROUP) then isFavorite = baseSet.favorite; end
 	if isFavorite then
 		if ( useDescription ) then
@@ -4643,7 +4675,6 @@ local function WardrobeSetsCollectionScrollFrame_FavoriteDropDownInit(self)
 			C_TransmogSets.SetIsFavorite(baseSet.favoriteSetID, false);
 		end
 	else
-		local targetSetID = WardrobeCollectionFrame.SetsCollectionFrame:GetDefaultSetIDForBaseSet(self.baseSetID);
 		if ( useDescription ) then
 			local setInfo = C_TransmogSets.GetSetInfo(targetSetID);
 			info.text = format(TRANSMOG_SETS_FAVORITE_WITH_DESCRIPTION, setInfo.description);
@@ -4657,6 +4688,19 @@ local function WardrobeSetsCollectionScrollFrame_FavoriteDropDownInit(self)
 
 	UIDropDownMenu_AddButton(info);
 	info.disabled = nil;
+
+	info.text = TRANSMOG_OUTFIT_POST_IN_CHAT;
+	if useDescription then
+		local setInfo = C_TransmogSets.GetSetInfo(targetSetID);
+		info.text = format("%s (%s)", info.text, setInfo.description);
+	end
+	info.func = function()
+		local hyperlink = C_TransmogSets.GetSetHyperlink(targetSetID);
+		if not ChatEdit_InsertLink(hyperlink) then
+			ChatFrame_OpenChat(hyperlink);
+		end
+	end;
+	UIDropDownMenu_AddButton(info);
 
 	info.text = CANCEL;
 	info.func = nil;
@@ -5232,6 +5276,11 @@ end
 
 function WardrobeSetsTransmogMixin:SelectSet(setID)
 	self.selectedSetID = setID;
+	if IsModifiedClick("CHATLINK") then
+		if ChatEdit_InsertLink(C_TransmogSets.GetSetHyperlink(setID)) then
+			return;
+		end
+	end
 	self:LoadSet(setID);
 	self:ResetPage();
 end
@@ -5303,6 +5352,15 @@ function WardrobeSetsTransmogMixin:OpenRightClickDropDown()
 		WardrobeCollectionFrame_SetTab(TAB_SETS);
 		WardrobeCollectionFrame.SetsCollectionFrame:SelectSet(setID);
 		WardrobeCollectionFrame.SetsCollectionFrame:ScrollToSet(C_TransmogSets.GetBaseSetID(setID));
+	end;
+	UIDropDownMenu_AddButton(info);
+
+	info.text = TRANSMOG_OUTFIT_POST_IN_CHAT;
+	info.func = function()
+		local hyperlink = C_TransmogSets.GetSetHyperlink(setID);
+		if not ChatEdit_InsertLink(hyperlink) then
+			ChatFrame_OpenChat(hyperlink);
+		end
 	end;
 	UIDropDownMenu_AddButton(info);
 

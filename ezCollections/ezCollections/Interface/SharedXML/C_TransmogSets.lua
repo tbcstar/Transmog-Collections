@@ -279,6 +279,24 @@ function C_TransmogSets.GetCollectionStats() -- Custom
     return result;
 end
 
+function C_TransmogSets.GetSetHyperlink(transmogSetID)
+    local setInfo = C_TransmogSets.GetSetInfo(transmogSetID);
+    if not setInfo then return; end
+
+    local baseSet = ezCollections.Cache.Sets[transmogSetID];
+    while baseSet and baseSet.baseSetID do
+        baseSet = ezCollections.Cache.Sets[baseSet.baseSetID];
+    end
+    local useDescription = baseSet and baseSet.Variants and #baseSet.Variants > 0;
+
+    local name = (baseSet or setInfo).name;
+    if useDescription and setInfo.description then
+        name = format("%s (%s)", name, setInfo.description);
+    end
+
+    return format("|cffff80ff|Hitem:0:transmogset:%d|h[%s]|h|r", transmogSetID, format(ezCollections.L["Link.Set"], name));
+end
+
 -- Sets
 
 function C_TransmogSets.GetAllSets()

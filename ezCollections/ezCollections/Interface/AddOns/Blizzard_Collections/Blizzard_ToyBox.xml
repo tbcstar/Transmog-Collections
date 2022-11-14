@@ -4,6 +4,23 @@
 	
 	<CheckButton name="ToySpellButtonTemplate" inherits="CollectionsSpellButtonTemplate" virtual="true">
 		<Frames>
+			<Frame parentKey="active" setAllPoints="true">
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture file="Interface\Buttons\CheckButtonHilight" alphaMode="ADD">
+							<Size x="42" y="42"/>
+							<Anchors>
+								<Anchor point="CENTER" x="0" y="2"/>
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						Mixin(self, SetShownMixin);
+					</OnLoad>
+				</Scripts>
+			</Frame>
 			<Button parentKey="SubscriptionOverlay" hidden="false">
 				<Size x="16" y="16" />
 				<Anchors>

@@ -381,7 +381,12 @@ function MountJournalMountButton_UseMount(mountID)
 		end)
 	--]]
 	else
-		C_MountJournal.ClearFanfare(mountID);
+		if C_MountJournal.NeedsFanfare(mountID) then
+			C_MountJournal.ClearFanfare(mountID);
+			MountJournal_HideMountDropdown();
+			MountJournal_UpdateMountList();
+			MountJournal_UpdateMountDisplay();
+		end
 		C_MountJournal.SummonByID(mountID);
 	end
 end

@@ -123,6 +123,24 @@ function ToyBoxOptionsMenu_Init(self, level)
 		info.notCheckable = true;
 		info.func = function() ezCollections:SendAddonMessage(format("DEV:%sLOCKTOY:%d", ezCollections:HasToy(toyID) and "" or "UN", toyID)); end;
 		UIDropDownMenu_AddButton(info);
+
+		info = UIDropDownMenu_CreateInfo();
+		info.text = "Add Item";
+		info.notCheckable = true;
+		info.func = function() ezCollections:SendAddonCommand(format(".additem %d", ToyBox.menuItemID)); end;
+		UIDropDownMenu_AddButton(info);
+
+		info = UIDropDownMenu_CreateInfo();
+		info.text = "Delete Item";
+		info.notCheckable = true;
+		info.func = function() ezCollections:SendAddonCommand(format(".additem %d -1", ToyBox.menuItemID)); end;
+		UIDropDownMenu_AddButton(info);
+
+		info = UIDropDownMenu_CreateInfo();
+		info.text = "Clear Cooldown";
+		info.notCheckable = true;
+		info.func = function() table.wipe(ezCollections.ItemCooldowns); SendChatMessage(".cooldown", "SAY"); end;
+		UIDropDownMenu_AddButton(info);
 	end
 end
 
@@ -274,6 +292,8 @@ function ToySpellButton_UpdateButton(self)
 	end
 
 	CollectionsSpellButton_UpdateCooldown(self);
+
+	self.active:SetShown(ezCollections.ActiveToys[self.itemID]);
 end
 
 function ToyBox_UpdateButtons()

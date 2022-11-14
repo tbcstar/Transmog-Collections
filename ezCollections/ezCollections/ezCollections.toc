@@ -1,9 +1,9 @@
 ## Interface: 30300
 ## Title: |cFF00B0E8ez|rCollections
-## Notes: Adds clientside support for Collections and Transmogrification features on ezwow.org, as well as retail UI for mounts and companions
-## Notes-zhCN: 为 TBCstar上的收藏和幻化功能添加客户端支持，以及坐骑和同伴的零售 UI
+## Notes: Adds clientside support for Collections and Transmogrification features on www.tbcstar.com, as well as retail UI for mounts and companions
+## Notes-zhCN: 为 www.tbcstar.com 上的收藏和幻化功能添加客户端支持，以及坐骑和同伴的零售版 UI
 ## Author: ZEUStiger
-## Version: 2.4.3
+## Version: 2.4.4
 ## SavedVariables: ezCollectionsConfig, ezCollectionsCache
 
 embeds.xml

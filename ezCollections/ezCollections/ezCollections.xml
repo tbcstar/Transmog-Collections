@@ -51,19 +51,19 @@
 	<Button name="ezCollectionsMovingHeaderTemplate" virtual="true">
 		<Size y="22" />
 		<Anchors>
-			<Anchor point="TOP" x="-5" />
+			<Anchor point="TOP" />
 			<Anchor point="LEFT" x="55" />
-			<Anchor point="RIGHT" x="-20" />
+			<Anchor point="RIGHT" x="-23" />
 		</Anchors>
 		<Scripts>
 			<OnMouseDown>
-				if self:GetParent() == WardrobeFrame and ezCollections.Config.Wardrobe.WindowsLockTransmogrify then return; end
-				if self:GetParent() == CollectionsJournal and ezCollections.Config.Wardrobe.WindowsLockCollections then return; end
+				local config = ezCollections.Config.Windows[self:GetParent():GetName()];
+				if config.Layout or config.Lock then return; end
 				self:GetParent():StartMoving();
 			</OnMouseDown>
 			<OnMouseUp>
-				if self:GetParent() == WardrobeFrame and ezCollections.Config.Wardrobe.WindowsLockTransmogrify then return; end
-				if self:GetParent() == CollectionsJournal and ezCollections.Config.Wardrobe.WindowsLockCollections then return; end
+				local config = ezCollections.Config.Windows[self:GetParent():GetName()];
+				if config.Layout or config.Lock then return; end
 				self:GetParent():StopMovingOrSizing();
 
 				do return end

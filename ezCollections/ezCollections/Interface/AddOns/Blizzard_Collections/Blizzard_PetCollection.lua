@@ -355,7 +355,12 @@ function PetJournalSummonButton_UsePet(petID)
 		end)
 	--]]
 	else
-		C_PetJournal.ClearFanfare(petID);
+		if C_PetJournal.PetNeedsFanfare(petID) then
+			C_PetJournal.ClearFanfare(petID);
+			PetJournal_HidePetDropdown();
+			PetJournal_UpdatePetList();
+			PetJournal_UpdatePetDisplay();
+		end
 		C_PetJournal.SummonPetByGUID(petID);
 	end
 end

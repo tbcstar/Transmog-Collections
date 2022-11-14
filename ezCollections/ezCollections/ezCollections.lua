@@ -97,6 +97,10 @@ local RACE_ID_TO_NAME =
     "ANY",
 };
 
+local ACTIONBUTTON_UPDATE_STATE = 1;
+local ACTIONBUTTON_UPDATE_USABLE = 2;
+local ACTIONBUTTON_UPDATE_COOLDOWN = 3;
+
 local oGetInventoryItemID = GetInventoryItemID;
 
 -- ---------
@@ -329,6 +333,23 @@ function addon:OnInitialize()
                     end
                     return result;
                 end)(),
+            },
+            Windows =
+            {
+                UpgradedConfig244 = false,
+                ["**"] =
+                {
+                    Strata = "HIGH",
+                    Layout = true,
+                    Lock = false,
+                    Clamp = true,
+                    Escape = true,
+                },
+                DressUpFrame =
+                {
+                    Strata = "MEDIUM",
+                    Blizzard = false,
+                },
             },
             Wardrobe =
             {
@@ -718,9 +739,24 @@ function addon:OnInitialize()
     updateSpecButton();
 
     -- Windows
+    local getWindows;
     local windowStratas;
     local updateWindows;
     do
+        if not ezCollections.Config.Windows.UpgradedConfig244 and ezCollections.Cache and ezCollections.Cache.AddonVersion and ezCollections.Cache.AddonVersion < ADDON_VERSION then
+            ezCollections.Config.Windows["WardrobeFrame"     ].Strata = ezCollections.Config.Wardrobe.WindowsStrata;
+            ezCollections.Config.Windows["WardrobeFrame"     ].Layout = ezCollections.Config.Wardrobe.WindowsLayoutTransmogrify and ezCollections.Config.Wardrobe.WindowsLockTransmogrify;
+            ezCollections.Config.Windows["WardrobeFrame"     ].Lock   = ezCollections.Config.Wardrobe.WindowsLockTransmogrify;
+            ezCollections.Config.Windows["WardrobeFrame"     ].Clamp  = ezCollections.Config.Wardrobe.WindowsClampToScreen;
+            ezCollections.Config.Windows["WardrobeFrame"     ].Escape = ezCollections.Config.Wardrobe.WindowsCloseWithEscape;
+            ezCollections.Config.Windows["CollectionsJournal"].Strata = ezCollections.Config.Wardrobe.WindowsStrata;
+            ezCollections.Config.Windows["CollectionsJournal"].Layout = ezCollections.Config.Wardrobe.WindowsLayoutCollections and ezCollections.Config.Wardrobe.WindowsLockCollections;
+            ezCollections.Config.Windows["CollectionsJournal"].Lock   = ezCollections.Config.Wardrobe.WindowsLockCollections;
+            ezCollections.Config.Windows["CollectionsJournal"].Clamp  = ezCollections.Config.Wardrobe.WindowsClampToScreen;
+            ezCollections.Config.Windows["CollectionsJournal"].Escape = ezCollections.Config.Wardrobe.WindowsCloseWithEscape;
+        end
+        ezCollections.Config.Windows.UpgradedConfig244 = true;
+        getWindows = function() return { "CollectionsJournal", "WardrobeFrame", "DressUpFrame" }; end;
         windowStratas =
         {
             "BACKGROUND",
@@ -730,30 +766,51 @@ function addon:OnInitialize()
             "DIALOG",
         };
         updateWindows = function(togglingLayout)
-            for _, window in ipairs({ WardrobeFrame, CollectionsJournal }) do
-                if ezCollections.Config.Wardrobe.WindowsCloseWithEscape then
-                    table.insert(UISpecialFrames, window:GetName());
-                else
-                    tDeleteItem(UISpecialFrames, window:GetName());
+            local dressUpAddon = IsAddOnLoaded("ezCollectionsDressUp");
+            for _, windowName in ipairs(getWindows()) do
+                local window = _G[windowName];
+                local config = ezCollections.Config.Windows[windowName];
+                if windowName == "DressUpFrame" then
+                    if not config.Blizzard and not dressUpAddon then break; end
+                    GetUIPanelWidth(window); -- Trigger GetUIPanelWindowInfo so that it creates the attributes UIPanelLayout-defined and UIPanelLayout-enabled
                 end
-                window:SetFrameStrata(ezCollections.Config.Wardrobe.WindowsStrata);
-                window:SetClampedToScreen(ezCollections.Config.Wardrobe.WindowsClampToScreen);
+
+                if not config.Layout and config.Escape then
+                    if not tContains(UISpecialFrames, windowName) then
+                        table.insert(UISpecialFrames, windowName);
+                    end
+                else
+                    tDeleteItem(UISpecialFrames, windowName);
+                end
+                window:SetMovable(not config.Layout);
+                window:SetFrameStrata(config.Strata);
+                window:SetClampedToScreen(not config.Layout and config.Clamp);
                 local wasOpen;
                 if togglingLayout then
                     wasOpen = window:IsShown();
                     HideUIPanel(window);
                 end
-                if window == WardrobeFrame then
-                    window:SetAttribute("UIPanelLayout-enabled", ezCollections.Config.Wardrobe.WindowsLockTransmogrify and ezCollections.Config.Wardrobe.WindowsLayoutTransmogrify);
-                else
-                    window:SetAttribute("UIPanelLayout-enabled", ezCollections.Config.Wardrobe.WindowsLockCollections and ezCollections.Config.Wardrobe.WindowsLayoutCollections);
-                end
+                window:SetAttribute("UIPanelLayout-enabled", config.Layout);
                 UpdateUIPanelPositions(window);
                 if wasOpen then
                     ShowUIPanel(window);
                 end
+
+                if windowName == "DressUpFrame" then
+                    if not window.MovingHeader and not config.Layout and not config.Lock then
+                        window.MovingHeader = CreateFrame("Button", nil, window, "ezCollectionsMovingHeaderTemplate");
+                    end
+                    if window.MovingHeader then
+                        local elvuiSkin = ElvUI and ezCollections:DelveInto(ElvUI[1], "private", "skins", "blizzard", "enable") and ezCollections:DelveInto(ElvUI[1], "private", "skins", "blizzard", "dressingroom");
+                        local elvuiEnh = ElvUI and ezCollections:DelveInto(ElvUI[1], "db", "enhanced", "blizzard", "dressUpFrame", "enable");
+                        window.MovingHeader:SetPoint("LEFT", elvuiSkin and (dressUpAddon and 0 or 12) or (dressUpAddon and 55 or 68), 0);
+                        window.MovingHeader:SetPoint("RIGHT", (dressUpAddon and -23 or -58) - (dressUpAddon and 22 or elvuiEnh and 20 or 0), 0);
+                        window.MovingHeader:SetPoint("TOP", 0, dressUpAddon and 0 or -13);
+                    end
+                end
             end
         end
+        C_Timer.After(0, updateWindows); -- Let ezCollectionsDressUp load
     end
     updateWindows();
 
@@ -1040,6 +1097,11 @@ function addon:OnInitialize()
                     end
                 end
             else
+                if pUiMicroMenu then -- pretty_actionbar
+                    CollectionsMicroButtonAlert.Arrow:SetPoint("TOP", CollectionsMicroButtonAlert, "BOTTOM", 40, 4);
+                    CollectionsMicroButtonAlert:SetPoint("BOTTOM", CollectionsMicroButton, "TOP", -40, 20);
+                    CollectionsMicroButtonAlert:SetScale(UIParent:GetEffectiveScale() / CollectionsMicroButton:GetEffectiveScale());
+                end
                 MainMenuMicroButton_ShowAlert(CollectionsMicroButtonAlert, L["Tutorial.MicroButton"], LE_FRAME_TUTORIAL_EZCOLLECTIONS_MICRO_BUTTON);
             end
         end);
@@ -1429,6 +1491,14 @@ function addon:OnInitialize()
                         func = function() InterfaceOptionsFrame_OpenToCategory(panels["itemButtons"]); end,
                         dialogControl = "ezCollectionsOptionsMediumButtonTemplate",
                     },
+                    panelWindows =
+                    {
+                        type = "input",
+                        name = L["Config.Integration.Windows"],
+                        order = 155.65,
+                        func = function() InterfaceOptionsFrame_OpenToCategory(panels["windows"]); end,
+                        dialogControl = "ezCollectionsOptionsMediumButtonTemplate",
+                    },
                     panelDressUp =
                     {
                         type = "input",
@@ -1626,111 +1696,6 @@ function addon:OnInitialize()
                                 func = function()
                                     StaticPopup_Hide("EZCOLLECTIONS_CONFIRM_FAVORITES_MERGE");
                                     StaticPopup_Show("EZCOLLECTIONS_CONFIRM_FAVORITES_SPLIT");
-                                end,
-                            },
-                        },
-                    },
-                    windows =
-                    {
-                        type = "group",
-                        name = L["Config.Wardrobe.Windows"],
-                        inline = true,
-                        order = 75,
-                        args =
-                        {
-                            closeWithEscape =
-                            {
-                                type = "toggle",
-                                name = L["Config.Wardrobe.CloseWithEscape"],
-                                width = "full",
-                                order = 100,
-                                get = function(info) return ezCollections.Config.Wardrobe.WindowsCloseWithEscape; end,
-                                set = function(info, value) ezCollections.Config.Wardrobe.WindowsCloseWithEscape = value; updateWindows(); end,
-                            },
-                            strata =
-                            {
-                                type = "select",
-                                name = L["Config.Wardrobe.Strata"],
-                                order = 200,
-                                values = windowStratas,
-                                get = function(info) for k, v in ipairs(windowStratas) do if v == ezCollections.Config.Wardrobe.WindowsStrata then return k; end end end,
-                                set = function(info, value) ezCollections.Config.Wardrobe.WindowsStrata = windowStratas[value]; updateWindows(); end,
-                            },
-                            clampToScreen =
-                            {
-                                type = "toggle",
-                                name = L["Config.Wardrobe.ClampToScreen"],
-                                width = "full",
-                                order = 300,
-                                get = function(info) return ezCollections.Config.Wardrobe.WindowsClampToScreen; end,
-                                set = function(info, value) ezCollections.Config.Wardrobe.WindowsClampToScreen = value; updateWindows(); end,
-                            },
-                            lb1 = { type = "description", name = " ", order = 399 },
-                            lockTransmogrify =
-                            {
-                                type = "toggle",
-                                name = L["Config.Wardrobe.LockTransmogrify"],
-                                width = "full",
-                                order = 400,
-                                get = function(info) return ezCollections.Config.Wardrobe.WindowsLockTransmogrify; end,
-                                set = function(info, value) ezCollections.Config.Wardrobe.WindowsLockTransmogrify = value; updateWindows(ezCollections.Config.Wardrobe.WindowsLayoutTransmogrify); end,
-                            },
-                            layoutTransmogrify =
-                            {
-                                type = "toggle",
-                                name = L["Config.Wardrobe.LayoutTransmogrify"],
-                                desc = L["Config.Wardrobe.LayoutTransmogrify.Desc"],
-                                descStyle = "inline",
-                                width = "full",
-                                order = 450,
-                                disabled = function() return not ezCollections.Config.Wardrobe.WindowsLockTransmogrify; end,
-                                get = function(info) return ezCollections.Config.Wardrobe.WindowsLayoutTransmogrify; end,
-                                set = function(info, value) ezCollections.Config.Wardrobe.WindowsLayoutTransmogrify = value; updateWindows(true); end,
-                            },
-                            etherealWindowSound =
-                            {
-                                type = "toggle",
-                                name = L["Config.Wardrobe.EtherealWindowSound"],
-                                desc = L["Config.Wardrobe.EtherealWindowSound.Desc"],
-                                descStyle = "inline",
-                                width = "full",
-                                order = 475,
-                                get = function(info) return ezCollections.Config.Wardrobe.EtherealWindowSound; end,
-                                set = function(info, value) ezCollections.Config.Wardrobe.EtherealWindowSound = value; end,
-                            },
-                            lb2 = { type = "description", name = " ", order = 499 },
-                            lockCollections =
-                            {
-                                type = "toggle",
-                                name = L["Config.Wardrobe.LockCollections"],
-                                width = "full",
-                                order = 500,
-                                get = function(info) return ezCollections.Config.Wardrobe.WindowsLockCollections; end,
-                                set = function(info, value) ezCollections.Config.Wardrobe.WindowsLockCollections = value; updateWindows(ezCollections.Config.Wardrobe.WindowsLayoutCollections); end,
-                            },
-                            layoutCollections =
-                            {
-                                type = "toggle",
-                                name = L["Config.Wardrobe.LayoutCollections"],
-                                desc = L["Config.Wardrobe.LayoutCollections.Desc"],
-                                descStyle = "inline",
-                                width = "full",
-                                order = 550,
-                                disabled = function() return not ezCollections.Config.Wardrobe.WindowsLockCollections; end,
-                                get = function(info) return ezCollections.Config.Wardrobe.WindowsLayoutCollections; end,
-                                set = function(info, value) ezCollections.Config.Wardrobe.WindowsLayoutCollections = value; updateWindows(true); end,
-                            },
-                            lb3 = { type = "description", name = " ", order = 599 },
-                            resetPositions =
-                            {
-                                type = "execute",
-                                name = L["Config.Wardrobe.ResetPositions"],
-                                order = 600,
-                                func = function()
-                                    WardrobeFrame:ClearAllPoints();
-                                    WardrobeFrame:SetPoint("CENTER", UIParent, "CENTER");
-                                    CollectionsJournal:ClearAllPoints();
-                                    CollectionsJournal:SetPoint("CENTER", UIParent, "CENTER");
                                 end,
                             },
                         },
@@ -2362,6 +2327,14 @@ function addon:OnInitialize()
                         name = L["Config.Integration.ItemButtons"],
                         order = 0.6,
                         func = function() InterfaceOptionsFrame_OpenToCategory(panels["itemButtons"]); end,
+                        dialogControl = "ezCollectionsOptionsMediumButtonTemplate",
+                    },
+                    panelWindows =
+                    {
+                        type = "input",
+                        name = L["Config.Integration.Windows"],
+                        order = 0.65,
+                        func = function() InterfaceOptionsFrame_OpenToCategory(panels["windows"]); end,
                         dialogControl = "ezCollectionsOptionsMediumButtonTemplate",
                     },
                     panelDressUp =
@@ -3467,6 +3440,127 @@ function addon:OnInitialize()
                     IconOverlays = ezCollections.IconOverlays:MakeOptions(),
                 },
             },
+            windows =
+            {
+                type = "group",
+                name = format(L["Config.Integration.CategoryFormat"], L["Config.Integration.Windows"]),
+                childGroups = "tab",
+                args = (function()
+                    local result = { };
+                    for i, windowName in ipairs(getWindows()) do
+                        local config = ezCollections.Config.Windows[windowName];
+                        local disable = windowName == "DressUpFrame" and not config.Blizzard and not IsAddOnLoaded("ezCollectionsDressUp");
+                        local reloadUINeeded = false;
+                        result[windowName] =
+                        {
+                            type = "group",
+                            name = L["Config.Integration.Windows."..windowName],
+                            order = i,
+                            args =
+                            {
+                                strata =
+                                {
+                                    type = "select",
+                                    name = L["Config.Wardrobe.Strata"],
+                                    order = 100,
+                                    values = windowStratas,
+                                    disabled = function() return disable; end,
+                                    get = function(info) for k, v in ipairs(windowStratas) do if v == config.Strata then return k; end end end,
+                                    set = function(info, value) config.Strata = windowStratas[value]; updateWindows(); end,
+                                },
+                                layout =
+                                {
+                                    type = "toggle",
+                                    name = L["Config.Wardrobe.Layout"],
+                                    desc = L["Config.Wardrobe.Layout.Desc"],
+                                    descStyle = "inline",
+                                    width = "full",
+                                    order = 200,
+                                    disabled = function() return disable; end,
+                                    get = function(info) return config.Layout; end,
+                                    set = function(info, value) config.Layout = value; updateWindows(true); end,
+                                },
+                                lock =
+                                {
+                                    type = "toggle",
+                                    name = L["Config.Wardrobe.Lock"],
+                                    width = "full",
+                                    order = 300,
+                                    disabled = function() return config.Layout or disable; end,
+                                    get = function(info) return config.Lock or info.option.disabled(); end,
+                                    set = function(info, value) config.Lock = value; updateWindows(config.Layout); end,
+                                },
+                                clamp =
+                                {
+                                    type = "toggle",
+                                    name = L["Config.Wardrobe.Clamp"],
+                                    width = "full",
+                                    order = 400,
+                                    disabled = function() return config.Layout or disable; end,
+                                    get = function(info) return config.Clamp or info.option.disabled(); end,
+                                    set = function(info, value) config.Clamp = value; updateWindows(); end,
+                                },
+                                escape =
+                                {
+                                    type = "toggle",
+                                    name = L["Config.Wardrobe.Escape"],
+                                    width = "full",
+                                    order = 500,
+                                    disabled = function() return config.Layout or disable; end,
+                                    get = function(info) return config.Escape or info.option.disabled(); end,
+                                    set = function(info, value) config.Escape = value; updateWindows(); end,
+                                },
+                                resetPositions =
+                                {
+                                    type = "execute",
+                                    name = L["Config.Wardrobe.ResetPositions"],
+                                    order = 900,
+                                    disabled = function() return config.Layout or disable; end,
+                                    func = function()
+                                        local window = _G[windowName];
+                                        window:ClearAllPoints();
+                                        window:SetPoint("CENTER", UIParent, "CENTER");
+                                    end,
+                                },
+                                etherealWindowSound =
+                                {
+                                    type = "toggle",
+                                    name = L["Config.Wardrobe.EtherealWindowSound"],
+                                    desc = L["Config.Wardrobe.EtherealWindowSound.Desc"],
+                                    descStyle = "inline",
+                                    width = "full",
+                                    order = 1000,
+                                    hidden = function() return windowName ~= "WardrobeFrame"; end,
+                                    get = function(info) return ezCollections.Config.Wardrobe.EtherealWindowSound; end,
+                                    set = function(info, value) ezCollections.Config.Wardrobe.EtherealWindowSound = value; end,
+                                },
+                                dressUpBlizzard =
+                                {
+                                    type = "toggle",
+                                    name = L["Config.Integration.Windows.DressUpBlizzard"],
+                                    desc = L["Config.Integration.Windows.DressUpBlizzard.Desc"],
+                                    descStyle = "inline",
+                                    width = "full",
+                                    order = 1100,
+                                    hidden = function() return windowName ~= "DressUpFrame"; end,
+                                    get = function(info) return config.Blizzard; end,
+                                    set = function(info, value) config.Blizzard = value; reloadUINeeded = true; end,
+                                },
+                                reload =
+                                {
+                                    type = "execute",
+                                    name = L["Config.RestoreItemIcons.ReloadUI"],
+                                    desc = L["Config.RestoreItemIcons.ReloadUI.Desc"],
+                                    order = 2000,
+                                    hidden = function() return not reloadUINeeded; end,
+                                    func = function() ReloadUI(); end,
+                                },
+                            },
+                        };
+                    end
+                    return result;
+                end)(),
+            },
             dressUp =
             {
                 type = "group",
@@ -3838,6 +3932,7 @@ function addon:OnInitialize()
     AddPanel("minimapButtons");
     AddPanel("actionButtons");
     AddPanel("itemButtons");
+    AddPanel("windows");
     AddPanel("dressUp");
     AddPanel("bindings");
 
@@ -4435,7 +4530,30 @@ ezCollections =
         return self.Cache.ScrollToEnchant[scroll];
     end,
     GetScrollFromEnchant = function(self, enchant)
-        return self.Cache.EnchantToScroll[enchant];
+        local scroll = self.Cache.EnchantToScroll[enchant];
+        if type(scroll) == "table" then
+            local availableVariant;
+            for _, variant in ipairs(scroll) do
+                if ezCollections:HasAvailableSkin(variant) then
+                    -- Prefer the first scroll variant the player owns
+                    if ezCollections:HasSkin(variant) then
+                        return variant;
+                    end
+                    if not availableVariant then
+                        availableVariant = variant;
+                    end
+                end
+            end
+            -- If the players doesn't own any scroll variant - fallback to the first scroll available from a subscription (if any), otherwise to the first variant
+            return availableVariant or scroll[1];
+        end
+        return scroll;
+    end,
+    GetScrollVariantsFromEnchant = function(self, enchant)
+        local scroll = self.Cache.EnchantToScroll[enchant];
+        if type(scroll) == "table" then
+            return scroll;
+        end
     end,
     GetDressableFromRecipe = function(self, recipe)
         return self.Cache.RecipeToDressable[GetItemID(recipe)];
@@ -4469,6 +4587,21 @@ ezCollections =
         item = item and GetItemID(item);
         if item then
             if self:IsSkinSource(item) then
+                local toy = self:GetToyIDByItem(item);
+                if toy then
+                    local skin = self:HasSkin(item);
+                    local toy = self:HasToy(toy);
+                    if skin ~= nil and toy ~= nil then
+                        return skin and toy;
+                    elseif skin ~= nil then
+                        return skin;
+                    elseif toy ~= nil then
+                        return toy;
+                    else
+                        return;
+                    end
+                end
+
                 return self:HasSkin(item);
             end
 
@@ -4967,6 +5100,7 @@ ezCollections =
     -- Toys
     ItemIDXToyID = { },
     ItemNameXToyItemID = { },
+    ActiveToys = { },
     ActiveToySubscriptionEndTime = 0,
     ActiveToySubscriptionInfo = nil,
     ActiveToySubscriptionToys = { },
@@ -5368,9 +5502,12 @@ ezCollections =
             ezCollections.Callbacks.ToyListUpdated();
         end,
         ToyListUpdated = function()
-            ezCollections:RaiseEvent("TOYS_UPDATED");
-            ezCollectionsUpdateActionBars();
+            ezCollections.Callbacks.ToyStatusUpdated();
             ezCollections.IconOverlays:Update();
+        end,
+        ToyStatusUpdated = function(actionButtonUpdateType)
+            ezCollections:RaiseEvent("TOYS_UPDATED");
+            ezCollectionsUpdateActionBars(actionButtonUpdateType);
         end,
         AddToy = function(toyID)
             ezCollections.Alerts.AddToy(toyID);
@@ -6084,7 +6221,7 @@ function addon:PLAYER_LOGOUT(event)
     end
 end
 function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
-    if prefix ~= ADDON_PREFIX then return; end
+    if prefix ~= ADDON_PREFIX or sender ~= "" then return; end
 
     match(message, "VERSIONCHECK", function(version)
         self:PLAYER_LOGIN(event);
@@ -6274,7 +6411,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
             C_TransmogCollection.WipeAppearanceCache();
             C_Transmog.ValidateAllPending(true);
             ezCollections:RaiseEvent("TRANSMOG_COLLECTION_UPDATED");
-            ezCollections.Callbacks.ToyListUpdated();
+            ezCollections.Callbacks.ToyStatusUpdated(ACTIONBUTTON_UPDATE_USABLE);
         end);
         match(data, "STOP:", function(holiday)
             ezCollections.ActiveHolidays[tonumber(holiday)] = nil;
@@ -6282,7 +6419,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
             C_TransmogCollection.WipeAppearanceCache();
             C_Transmog.ValidateAllPending(true);
             ezCollections:RaiseEvent("TRANSMOG_COLLECTION_UPDATED");
-            ezCollections.Callbacks.ToyListUpdated();
+            ezCollections.Callbacks.ToyStatusUpdated(ACTIONBUTTON_UPDATE_USABLE);
         end);
     end);
     match(message, "SUBSCRIPTION:", function(data)
@@ -6418,8 +6555,20 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
                 for _, scrollToEnchant in ipairs({ strsplit(":", scrollToEnchants) }) do
                     if scrollToEnchant ~= "" and scrollToEnchant ~= "END" then
                         local scroll, enchant = strsplit("=", scrollToEnchant);
-                        ezCollections.Cache.ScrollToEnchant[tonumber(scroll)] = tonumber(enchant);
-                        ezCollections.Cache.EnchantToScroll[tonumber(enchant)] = tonumber(scroll);
+                        scroll = tonumber(scroll);
+                        enchant = tonumber(enchant);
+                        -- Scroll to enchant is 1:1
+                        ezCollections.Cache.ScrollToEnchant[scroll] = enchant;
+                        -- Enchant to scroll is 1:many
+                        local stored = ezCollections.Cache.EnchantToScroll[enchant];
+                        if not stored then
+                            stored = scroll;
+                        elseif type(stored) == "number" then
+                            stored = { stored, scroll };
+                        elseif type(stored) == "table" then
+                            table.insert(stored, scroll);
+                        end
+                        ezCollections.Cache.EnchantToScroll[enchant] = stored;
                     end
                 end
             end);
@@ -6799,7 +6948,7 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
         match(result, "COOLDOWN:", function(result)
             for _, cooldown in ipairs({ strsplit(":", result) }) do
                 if cooldown == "END" then
-                    ezCollections.Callbacks.ToyListUpdated();
+                    ezCollections.Callbacks.ToyStatusUpdated(ACTIONBUTTON_UPDATE_COOLDOWN);
                 elseif cooldown ~= "" then
                     local itemID, dataString = strsplit("=", cooldown, 2);
                     local start, duration, enabled = strsplit(",", dataString);
@@ -6809,6 +6958,18 @@ function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
                     enabled = enabled == "1";
                     if itemID then
                         ezCollections.ItemCooldowns[itemID] = { GetTime() - start, duration, enabled };
+                    end
+                end
+            end
+        end);
+        match(result, "ACTIVE:", function(result)
+            for _, itemID in ipairs({ strsplit(":", result) }) do
+                if itemID == "END" then
+                    ezCollections.Callbacks.ToyStatusUpdated(ACTIONBUTTON_UPDATE_STATE);
+                elseif itemID ~= "" then
+                    itemID = tonumber(itemID);
+                    if itemID then
+                        ezCollections.ActiveToys[math.abs(itemID)] = itemID > 0 or nil;
                     end
                 end
             end
@@ -7010,12 +7171,12 @@ end
 
 function addon:PLAYER_REGEN_ENABLED()
     inCombat = false;
-    ezCollectionsUpdateActionBars(true);
+    ezCollectionsUpdateActionBars(ACTIONBUTTON_UPDATE_USABLE);
 end
 
 function addon:PLAYER_REGEN_DISABLED()
     inCombat = true;
-    ezCollectionsUpdateActionBars(true);
+    ezCollectionsUpdateActionBars(ACTIONBUTTON_UPDATE_USABLE);
 end
 
 local companionUpdateDeferred = false;
@@ -7049,7 +7210,7 @@ function addon:SPELL_UPDATE_USABLE(event)
     ezCollections:RaiseEvent("MOUNT_JOURNAL_USABILITY_CHANGED");
     if ezCollections.Config.ActionButtons.Mounts and ezCollections.Config.ActionButtons.MountsPerf and math.abs(lastActionBarUpdateTime - GetTime()) > 0.01 then
         lastActionBarUpdateTime = GetTime();
-        ezCollectionsUpdateActionBars(true);
+        ezCollectionsUpdateActionBars(ACTIONBUTTON_UPDATE_USABLE);
     end
 end
 
@@ -7154,6 +7315,16 @@ function ezCollectionsUpdateActionBars() end
 function addon:HookActionBars()
     local HookBartender4, specialButtons;
 
+    local function Demacroify(type, id, subType, subID)
+        if type == "macro" then
+            local name, link = GetMacroItem(id);
+            if name and link and ezCollections.Config.ActionButtons.Toys then
+                id = GetItemID(link);
+                type = id and "item";
+            end
+        end
+        return type, id, subType, subID;
+    end
     local function IsCompanionUsable(id)
         return ezCollections.Config.ActionButtons.Mounts and PlayerIsAlive() and not inCombat and ezCollections:IsMountScalingAllowed() and IsOutdoors() and C_MountJournal.IsMountUsable(id, true);
     end
@@ -7227,8 +7398,16 @@ function addon:HookActionBars()
     -- Blizzard
     hooksecurefunc("ActionButton_UpdateUsable", UpdateUsable);
 if ezCollections.Config.ActionButtons.Toys then
+    hooksecurefunc("ActionButton_UpdateState", function(self)
+        local type, id, subType, subID = Demacroify(GetActionInfo(self.action));
+        if type == "item" then
+            if C_ToyBox.GetToyInfo(id) and PlayerHasToy(id) then
+                self:SetChecked(ezCollections.ActiveToys[id]);
+            end
+        end
+    end);
     hooksecurefunc("ActionButton_UpdateCooldown", function(self)
-        local type, id, subType, subID = GetActionInfo(self.action);
+        local type, id, subType, subID = Demacroify(GetActionInfo(self.action));
         if type == "item" then
             if C_ToyBox.GetToyInfo(id) and PlayerHasToy(id) then
                 local start, duration, enable = ezCollections:GetItemCooldown(id);
@@ -7237,7 +7416,7 @@ if ezCollections.Config.ActionButtons.Toys then
         end
     end);
     hooksecurefunc("ActionButton_SetTooltip", function(self)
-        local type, id, subType, subID = GetActionInfo(self.action);
+        local type, id, subType, subID = Demacroify(GetActionInfo(self.action));
         if type == "item" then
             if GetItemCount(id) == 0 and C_ToyBox.GetToyInfo(id) and PlayerHasToy(id) then
                 if ( GetCVar("UberTooltips") == "1" ) then
@@ -7282,28 +7461,26 @@ if ezCollections.Config.ActionButtons.Toys then
     end);
 end
 if ezCollections.Config.ActionButtons.Toys and ezCollections.Config.ActionButtons.Addons.ButtonForge then
-    hooksecurefunc("SecureCmdUseItem", function(name, bag, slot, unit) -- ButtonForge
+    local function ButtonForge_UseItem(name) -- ButtonForge
         local id = name and type(name) == "string" and ezCollections:GetToyItemByName(name);
         if id and GetItemCount(id) == 0 and IsItemUsable(id) then
             UseToy(id);
         end
-    end);
+    end
+    hooksecurefunc("EquipItemByName", ButtonForge_UseItem);
+    hooksecurefunc("SecureCmdUseItem", ButtonForge_UseItem);
 end
     local actionBarPrefixes = { "ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton", "MultiBarRightButton", "MultiBarLeftButton" };
-    local function UpdateBlizzard(usable)
+    local function UpdateBlizzard(type)
         for _, bar in pairs(actionBarPrefixes) do
             for i = 1, 12 do
                 local button = _G[bar..i];
                 if button then
                     local slot = ActionButton_GetPagedID(button) or ActionButton_CalculateAction(button) or button:GetAttribute("action");
                     if slot and HasAction(slot) then
-                        if usable then
-                            ActionButton_UpdateUsable(button);
-                        else
-                            ActionButton_UpdateState(button);
-                            ActionButton_UpdateUsable(button);
-                            ActionButton_UpdateCooldown(button);
-                        end
+                        if not type or type == ACTIONBUTTON_UPDATE_STATE then ActionButton_UpdateState(button); end
+                        if not type or type == ACTIONBUTTON_UPDATE_USABLE then ActionButton_UpdateUsable(button); end
+                        if not type or type == ACTIONBUTTON_UPDATE_COOLDOWN then ActionButton_UpdateCooldown(button); end
                     end
                 end
             end
@@ -7342,24 +7519,20 @@ end
             function Button:SetTooltip()
                 ActionButton_SetTooltip(self);
             end
-            function Button:ezCollectionsUpdate(usable)
-                if usable then
-                    ActionButton_UpdateUsable(self);
-                else
-                    self:Update();
-                    ActionButton_UpdateState(self);
-                    ActionButton_UpdateUsable(self);
-                    ActionButton_UpdateCooldown(self);
-                end
+            function Button:ezCollectionsUpdate(type)
+                if not type then self:Update(); end
+                if not type or type == ACTIONBUTTON_UPDATE_STATE then ActionButton_UpdateState(self); end
+                if not type or type == ACTIONBUTTON_UPDATE_USABLE then ActionButton_UpdateUsable(self); end
+                if not type or type == ACTIONBUTTON_UPDATE_COOLDOWN then ActionButton_UpdateCooldown(self); end
             end
         end
     end
-    local function UpdateBartender4(usable)
+    local function UpdateBartender4(type)
         if not ezCollections.Config.ActionButtons.Addons.Bartender then return; end
         if Bartender4 then
             for _, bar in Bartender4.Bar:GetAll() do
                 if bar.ForAll then
-                    bar:ForAll("ezCollectionsUpdate", usable);
+                    bar:ForAll("ezCollectionsUpdate", type);
                 end
             end
         end
@@ -7384,9 +7557,16 @@ end
             end);
             hooksecurefunc(BFButton, "UpdateUsableItem", function(self) UpdateItem(self.WIcon, self.WNormalTexture, self.ItemId); end);
             hooksecurefunc(BFButton, "UpdateUsableMacro", function(self) UpdateMacro(self.WIcon, self.WNormalTexture, self.MacroIndex); end);
+            hooksecurefunc(BFButton, "UpdateCheckedItem", function(self)
+                local id = self.ItemId;
+                if ezCollections.Config.ActionButtons.Toys and id and C_ToyBox.GetToyInfo(id) and PlayerHasToy(id) then
+                    self.Widget:SetChecked(ezCollections.ActiveToys[id]);
+                end
+            end);
             hooksecurefunc(BFButton, "UpdateCooldownItem", function(self)
-                if ezCollections.Config.ActionButtons.Toys and C_ToyBox.GetToyInfo(self.ItemId) and PlayerHasToy(self.ItemId) then
-                    local start, duration, enable = ezCollections:GetItemCooldown(self.ItemId);
+                local id = self.ItemId;
+                if ezCollections.Config.ActionButtons.Toys and id and C_ToyBox.GetToyInfo(id) and PlayerHasToy(id) then
+                    local start, duration, enable = ezCollections:GetItemCooldown(id);
                     CooldownFrame_SetTimer(self.WCooldown, start, duration, enable);
                 end
             end);
@@ -7398,19 +7578,35 @@ end
                     GameTooltip:SetToyByItemID(id);
                 end
             end);
+            hooksecurefunc(BFButton, "TranslateMacro", function(self)
+                if self.Mode == "macro" and self.MacroMode == "item" and type(self.ItemId) == "string" and self.ItemLink then
+                    local id = GetItemID(self.ItemLink);
+                    if id then
+                        self.ItemId = id;
+                        BFButton.FullRefresh(self);
+                    end
+                end
+            end);
+            function BFButton:UpdateTooltipMacro()
+                self = self.ParentButton or self; --This is a sneaky cheat incase the widget was used to get here...
+
+                if (self.MacroMode == "spell") then
+                    self:UpdateTooltipSpell();
+                elseif (self.MacroMode == "item") then
+                    self:UpdateTooltipItem();
+                elseif (self.MacroMode == "companion") then
+                    self:UpdateTooltipCompanion();
+                end
+            end
         end
     end
-    local function UpdateButtonForge(usable)
+    local function UpdateButtonForge(type)
         if not ezCollections.Config.ActionButtons.Addons.ButtonForge then return; end
         if BFEventFrames then
             HookButtonForge();
-            if usable then
-                BFEventFrames["Usable"]:OnEvent();
-            else
-                BFEventFrames["Checked"]:OnEvent();
-                BFEventFrames["Usable"]:OnEvent();
-                BFEventFrames["Cooldown"]:OnEvent();
-            end
+            if not type or type == ACTIONBUTTON_UPDATE_STATE then BFEventFrames["Checked"]:OnEvent(); end
+            if not type or type == ACTIONBUTTON_UPDATE_USABLE then BFEventFrames["Usable"]:OnEvent(); end
+            if not type or type == ACTIONBUTTON_UPDATE_COOLDOWN then BFEventFrames["Cooldown"]:OnEvent(); end
         end
     end
 
@@ -7435,8 +7631,17 @@ end
                         end
                         return usable or IsUsableAction(self._state_action);
                     end
+                    function Action:IsCurrentlyActive()
+                        local type, id, subType, subID = Demacroify(GetActionInfo(self._state_action));
+                        if ezCollections.Config.ActionButtons.Toys and type == "item" then
+                            if C_ToyBox.GetToyInfo(id) and PlayerHasToy(id) then
+                                return ezCollections.ActiveToys[id];
+                            end
+                        end
+                        return IsCurrentAction(self._state_action);
+                    end
                     function Action:GetCooldown()
-                        local type, id, subType, subID = GetActionInfo(self._state_action);
+                        local type, id, subType, subID = Demacroify(GetActionInfo(self._state_action));
                         if ezCollections.Config.ActionButtons.Toys and type == "item" then
                             if C_ToyBox.GetToyInfo(id) and PlayerHasToy(id) then
                                 return ezCollections:GetItemCooldown(id);
@@ -7445,7 +7650,7 @@ end
                         return GetActionCooldown(self._state_action);
                     end
                     function Action:SetTooltip()
-                        local type, id, subType, subID = GetActionInfo(self._state_action);
+                        local type, id, subType, subID = Demacroify(GetActionInfo(self._state_action));
                         if ezCollections.Config.ActionButtons.Toys and type == "item" then
                             if GetItemCount(id) == 0 and C_ToyBox.GetToyInfo(id) and PlayerHasToy(id) then
                                 return GameTooltip:SetToyByItemID(id);
@@ -7457,37 +7662,38 @@ end
             end
         end
     end
-    local function UpdateLibActionButtonFor(lib, usable)
+    local function UpdateLibActionButtonFor(lib, type)
         if not ezCollections.Config.ActionButtons.Addons.LibActionButton then return; end
         if lib then
             HookLibActionButton(lib);
             local script = lib.eventFrame and lib.eventFrame:GetScript("OnEvent");
             if script then
-                if usable then
-                    script(lib.eventFrame, "ACTIONBAR_UPDATE_USABLE");
-                    --script(lib.eventFrame, "SPELL_UPDATE_USABLE");
-                else
+                if not type or type == ACTIONBUTTON_UPDATE_STATE then
                     script(lib.eventFrame, "ACTIONBAR_UPDATE_STATE");
+                end
+                if not type or type == ACTIONBUTTON_UPDATE_USABLE then
                     script(lib.eventFrame, "ACTIONBAR_UPDATE_USABLE");
-                    script(lib.eventFrame, "ACTIONBAR_UPDATE_COOLDOWN");
                     --script(lib.eventFrame, "SPELL_UPDATE_USABLE");
+                end
+                if not type or type == ACTIONBUTTON_UPDATE_COOLDOWN then
+                    script(lib.eventFrame, "ACTIONBAR_UPDATE_COOLDOWN");
                     --script(lib.eventFrame, "SPELL_UPDATE_COOLDOWN");
                 end
             end
         end
     end
-    local function UpdateLibActionButton(usable)
+    local function UpdateLibActionButton(type)
         if not ezCollections.Config.ActionButtons.Addons.LibActionButton then return; end
-        UpdateLibActionButtonFor(LibStub("LibActionButton-1.0", true), usable);
-        UpdateLibActionButtonFor(LibStub("LibActionButton-1.0-ElvUI", true), usable);
+        UpdateLibActionButtonFor(LibStub("LibActionButton-1.0", true), type);
+        UpdateLibActionButtonFor(LibStub("LibActionButton-1.0-ElvUI", true), type);
     end
 
     -- Finalize
-    function ezCollectionsUpdateActionBars(usable)
-        UpdateBlizzard(usable);
-        UpdateBartender4(usable);
-        UpdateButtonForge(usable);
-        UpdateLibActionButton(usable);
+    function ezCollectionsUpdateActionBars(type)
+        UpdateBlizzard(type);
+        UpdateBartender4(type);
+        UpdateButtonForge(type);
+        UpdateLibActionButton(type);
     end
     ezCollectionsUpdateActionBars();
 end
@@ -7782,6 +7988,23 @@ ChatFrame_OnHyperlinkShow = function(self, link, text, button, ...)
         else
             DEFAULT_CHAT_FRAME:AddMessage(TRANSMOG_OUTFIT_LINK_INVALID, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b);
         end
+    elseif ( strsub(link, 1, 18) == "item:0:transmogset" ) then
+        local setID = tonumber(link:match("^item:0:transmogset:(%d+)"));
+        if setID then
+            if ( IsModifiedClick("CHATLINK") ) then
+                local hyperlink = C_TransmogSets.GetSetHyperlink(setID);
+                if not ChatEdit_InsertLink(hyperlink) then
+                    ChatFrame_OpenChat(hyperlink);
+                end
+            else
+                if not CollectionsJournal:IsVisible() or not WardrobeCollectionFrame:IsVisible() then
+                    ToggleCollectionsJournal(COLLECTIONS_JOURNAL_TAB_INDEX_APPEARANCES);
+                end
+                WardrobeCollectionFrame_SetTab(2);
+                WardrobeCollectionFrame.SetsCollectionFrame:SelectSet(setID);
+                WardrobeCollectionFrame.SetsCollectionFrame:ScrollToSet(C_TransmogSets.GetBaseSetID(setID));
+            end
+        end
     end
     return oChatFrame_OnHyperlinkShow(self, link, text, button, ...);
 end
@@ -7906,14 +8129,8 @@ local function TooltipHandlerItem(tooltip)
     if ezCollections.Config.TooltipCollection.Toys or ezCollections.Config.TooltipCollection.ToyUnlock and tooltip:GetName() then
         local toyID = ezCollections:GetToyIDByItem(id);
         if toyID then
-            if ezCollections.Config.TooltipCollection.Toys then
-                local line = _G[tooltip:GetName().."TextLeft2"];
-                if line and line:IsShown() and line:GetText()then
-                    line:SetText(format("|cFF88AAFF%s|r|n%s", TOY, line:GetText()));
-                    show = true;
-                end
-            end
             if ezCollections.Config.TooltipCollection.ToyUnlock and ezCollections.Config.TooltipCollection.ToyUnlockEmbed and ezCollections:HasToy(toyID) == false then
+                local anyLine, useLine, replacementText;
                 for i = 1, 20 do
                     local line = _G[tooltip:GetName().."TextLeft"..i];
                     if line and line:IsShown() and line:GetText() and line:GetText() ~= "" and line:GetText() ~= " " then
@@ -7921,21 +8138,38 @@ local function TooltipHandlerItem(tooltip)
                         local r, g, b = line:GetTextColor();
                         if IsSameColor(r, g, b, 0, 1, 0) then
                             local s, e = text:find(ITEM_SPELL_TRIGGER_ONUSE);
-                            if not s then
-                                s, e = text:find(ITEM_SPELL_TRIGGER_ONEQUIP);
-                            end
-                            if s and e then
-                                line:SetText(format("%s|n|n%s", ITEM_TOY_ONUSE, text:sub(e + 2)));
-                                show = true;
+                            local prefix = ITEM_TOY_ONUSE;
+                            if s == 1 and e then
+                                useLine = useLine or line;
+                                replacementText = format("%s|n|n%s", prefix, text:sub(e + 2));
                                 break;
+                            else
+                                s, e = text:find(ITEM_SPELL_TRIGGER_ONEQUIP);
+                                prefix = prefix:gsub(ITEM_SPELL_TRIGGER_ONUSE, ITEM_SPELL_TRIGGER_ONEQUIP);
+                                if s == 1 and e then
+                                    anyLine = anyLine or line;
+                                    replacementText = format("%s|n|n%s", prefix, text:sub(e + 2));
+                                end
                             end
                         end
                     end
+                end
+                local line = useLine or anyLine;
+                if line then
+                    line:SetText(replacementText);
+                    show = true;
                 end
             end
             if ezCollections.Config.TooltipCollection.ToyUnlock and not ezCollections.Config.TooltipCollection.ToyUnlockEmbed and ezCollections:HasToy(toyID) == false then
                 if not separator then separator = true; tooltip:AddLine(" "); end
                 tooltip:AddLine(L["Tooltip.Toys"], color.r, color.g, color.b, false);
+            end
+            if ezCollections.Config.TooltipCollection.Toys then
+                local line = _G[tooltip:GetName().."TextLeft2"];
+                if line and line:IsShown() and line:GetText()then
+                    line:SetText(format("|cFF88AAFF%s|r|n%s", TOY, line:GetText()));
+                    show = true;
+                end
             end
         end
     end

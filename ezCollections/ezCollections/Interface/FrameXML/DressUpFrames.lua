@@ -555,7 +555,7 @@ function DressUpFrame_Show(frame, model)
 		end
 		-- Attempt to minimize the panel as much as possible
 		ShowUIPanel(frame);
-		if frame == DressUpFrame and UIPanelWindows["DressUpFrame"] and UIPanelNotShown(frame) then
+		if frame == DressUpFrame and UIPanelWindows["DressUpFrame"] and ezCollections.Config.Windows["DressUpFrame"].Layout and UIPanelNotShown(frame) then
 			HideUIPanel(frame);
 			if frame.MaximizeMinimizeFrame --[[and not frame.MaximizeMinimizeFrame:IsMinimized()]] then
 				local isAutomaticAction = true;

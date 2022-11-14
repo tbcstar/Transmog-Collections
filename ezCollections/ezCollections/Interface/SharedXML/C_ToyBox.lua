@@ -121,7 +121,11 @@ function C_ToyBox.RefreshToys() -- Custom
             return isFavoriteA;
         end
 
-        return nameA < nameB;
+        if nameA ~= nameB then
+            return nameA < nameB;
+        end
+
+        return a < b;
     end);
 end
 
@@ -130,6 +134,14 @@ function C_ToyBox.GetToys() -- Custom
 end
 
 function UseToy(itemID)
+    if ezCollections.ActiveToys[itemID] then
+        local toyID = ezCollections:GetToyIDByItem(itemID);
+        if toyID then
+            ezCollections:SendAddonMessage(format("TOY:DEACTIVATE:%d", toyID));
+        end
+        return;
+    end
+
     if not PlayerHasToy(itemID) then
         return;
     end
@@ -191,8 +203,11 @@ end
 
 function C_ToyBox.GetToyInfo(itemID)
     local itemID = ezCollections:GetToyInfoByItem(itemID);
-    local name = itemID and GetItemInfo(itemID);
-    local icon = itemID and GetItemIcon(itemID);
+    local name, icon, _;
+    if itemID then
+        name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID);
+        icon = icon or GetItemIcon(itemID);
+    end
     return itemID, name or "", icon;
 end
 

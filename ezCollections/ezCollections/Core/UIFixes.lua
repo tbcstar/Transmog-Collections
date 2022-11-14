@@ -86,6 +86,83 @@ C_Timer.After(0, function() -- Delay so XLoot can load
     end);
 end);
 
+-- Patch ElvUI to support LOOT_SLOT_CHANGED
+C_Timer.After(0, function() -- Delay so ElvUI can load
+    if not ElvUI then return; end
+    local E = unpack(ElvUI);
+    local M = E:GetModule("Misc", true);
+    if not M then return; end
+    if M.LOOT_SLOT_CHANGED then return; end -- Already patched
+
+    local function patch()
+        function M:LOOT_SLOT_CHANGED(_, i)
+            local lootFrame = ElvLootFrame;
+            if not lootFrame:IsShown() then return end
+
+            local slot = lootFrame.slots[i]
+            if not slot then return; end
+            local texture, item, quantity, quality, _, isQuestItem, questId, isActive = GetLootSlotInfo(i)
+            local color = ITEM_QUALITY_COLORS[quality]
+
+            if texture and string.find(texture, "INV_Misc_Coin") then
+                item = string.gsub(item, "\n", ", ")
+            end
+
+            if quantity and (quantity > 1) then
+                slot.count:SetText(quantity)
+                slot.count:Show()
+            else
+                slot.count:Hide()
+            end
+
+            if quality and (quality > 1) then
+                slot.drop:SetVertexColor(color.r, color.g, color.b)
+                slot.drop:Show()
+            else
+                slot.drop:Hide()
+            end
+
+            slot.quality = quality
+            slot.name:SetText(item)
+            if color then
+                slot.name:SetTextColor(color.r, color.g, color.b)
+            end
+            slot.icon:SetTexture(texture)
+
+            local questTexture = slot.questTexture
+            if questId and not isActive then
+                questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG)
+                questTexture:Show()
+            elseif questId or isQuestItem then
+                questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER)
+                questTexture:Show()
+            else
+                questTexture:Hide()
+            end
+
+            -- Check for FasterLooting scripts or w/e (if bag is full)
+            if texture then
+                slot:Enable()
+                slot:Show()
+            end
+
+            if GetMouseFocus() == slot then
+                local script = slot:GetScript("OnEnter");
+                if script then
+                    script(slot);
+                end
+            end
+        end
+        M:RegisterEvent("LOOT_SLOT_CHANGED");
+    end
+
+    if ElvLootFrame then
+        patch();
+    elseif M.LoadLoot then
+        hooksecurefunc(M, "LoadLoot", patch);
+    end
+end);
+
 -- Fix InterfaceOptionsFrame_OpenToCategory not actually opening the category (and not even scrolling to it)
 -- Taken from addon BlizzBugsSuck (https://www.wowinterface.com/downloads/info17002-BlizzBugsSuck.html) and edited to not be global
 do

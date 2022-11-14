@@ -7,7 +7,8 @@
 			<OnClick>
 				if self:GetID() == 6 and self:GetParent() == CollectionsJournal then
 					HideUIPanel(CollectionsJournal);
-					if not ezCollections.Config.Wardrobe.WindowsLockTransmogrify then
+					local config = ezCollections.Config.Windows[self:GetParent():GetName()];
+					if not config.Layout and not config.Lock then
 						WardrobeFrame:ClearAllPoints();
 						WardrobeFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", CollectionsJournal:GetLeft(), CollectionsJournal:GetBottom());
 					end
@@ -17,7 +18,8 @@
 					return;
 				elseif self:GetID() ~= 6 and self:GetParent() == WardrobeFrame then
 					HideUIPanel(WardrobeFrame);
-					if not ezCollections.Config.Wardrobe.WindowsLockCollections then
+					local config = ezCollections.Config.Windows[self:GetParent():GetName()];
+					if not config.Layout and not config.Lock then
 						CollectionsJournal:ClearAllPoints();
 						CollectionsJournal:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", WardrobeFrame:GetLeft(), WardrobeFrame:GetBottom());
 					end
@@ -81,7 +83,8 @@
 					</OnLoad>
 					<OnClick>
 						HideUIPanel(CollectionsJournal);
-						if not ezCollections.Config.Wardrobe.WindowsLockTransmogrify then
+						local config = ezCollections.Config.Windows[self:GetParent():GetName()];
+						if not config.Layout and not config.Lock then
 							WardrobeFrame:ClearAllPoints();
 							WardrobeFrame:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", CollectionsJournal:GetLeft(), CollectionsJournal:GetBottom());
 						end

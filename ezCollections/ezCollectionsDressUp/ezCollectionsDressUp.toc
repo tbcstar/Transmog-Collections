@@ -2,7 +2,7 @@
 ## Title: |cFF00B0E8ez|rCollections|cFF00B0E8 [Dressing Room]|r
 ## Title-zhCN: |cFF00B0E8ez|rCollections|cFF00B0E8 [更衣室]|r
 ## Notes: Adds support for new features to the Dressing Room UI
-## Notes-zhCN: 为更衣室 UI 添加了对新功能的支持
+## Notes-zhCN: 支持更衣室 UI 的新功能
 ## Author: ZEUStiger
 ## Dependencies: ezCollections
 ## X-Part-Of: ezCollections
