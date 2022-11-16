@@ -6221,7 +6221,7 @@ function addon:PLAYER_LOGOUT(event)
     end
 end
 function addon:CHAT_MSG_ADDON(event, prefix, message, distribution, sender)
-    if prefix ~= ADDON_PREFIX or sender ~= "" then return; end
+    if prefix ~= ADDON_PREFIX then return; end
 
     match(message, "VERSIONCHECK", function(version)
         self:PLAYER_LOGIN(event);
