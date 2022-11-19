@@ -19,7 +19,7 @@ Transmogrify.PageItemLimit = 8
 --最小物品id
 Transmogrify.MinItemEntry = 1;
 --最大物品id
-Transmogrify.MaxItemEntry = 70000;
+Transmogrify.MaxItemEntry = 7000000 ;
 
 --[[
 允许幻化的物品品质
@@ -60,7 +60,7 @@ Transmogrify.GoldCost = 100000;
 Transmogrify.Model = 2;
 
 --收集模式下是否开启账号共享(该设置仅收集模式下生效)
-Transmogrify.AccountMode = false;
+Transmogrify.AccountMode = true;
 
 --收集模式下查询玩家藏品事件更新间隔(该设置仅收集模式下生效)
 --时间越短体验越友好
@@ -68,11 +68,11 @@ Transmogrify.AccountMode = false;
 --单位:毫秒 (1000毫秒 = 1秒)
 Transmogrify.UpdateSkinsEventTime = 1000;
 
---是否开启牌子
+--是否开启徽章
 Transmogrify.RequireToken = true;
---牌子ID
-Transmogrify.TokenEntry = 49426;
---牌子数量
+--徽章ID
+Transmogrify.TokenEntry = 600003;
+--徽章数量
 Transmogrify.TokenAmount = 1;
 
 --是否允许跨甲幻化
@@ -93,7 +93,7 @@ VisualWeapon.Enable = true;
 --在幻化需要消耗金币基础上幻光系统的倍率,如果1.0则和幻化消耗的金币一样
 VisualWeapon.GoldModifier = 1.0;
 
---在幻化需要消耗牌子的基础上幻光系统的倍率,如果1.0则和幻化消耗的牌子数一样,为0则表示幻光不需要消耗牌子(如果幻化开启了需要牌子的情况下)
+--在幻化需要消耗徽章的基础上幻光系统的倍率,如果1.0则和幻化消耗的徽章数一样,为0则表示幻光不需要消耗徽章(如果幻化开启了需要徽章的情况下)
 VisualWeapon.TokenModifier = 1.0;
 
 --[[
@@ -109,7 +109,7 @@ VisualWeapon.Model = 2;
 
 --收集模式下是否开启账号共享
 --该设置仅收集模式下生效
-VisualWeapon.AccountMode = false;
+VisualWeapon.AccountMode = true;
 
 --如果幻光模式为<持有模式>,该设定将设置是否需要消耗该附魔卷轴,把<持有模式>转变为<消耗模式>.
 -- true -> 需要消耗
@@ -195,7 +195,7 @@ STORE.Enable = true;
 --商城地址格式,%d将替代物品id
 --如果一个id为123456,的商品,商城地址为http://huanhuashangcheng.com/item-123456.html
 --格式则为 huanhuashangcheng.com/item-%d.html
-STORE.UrlFormat = "huanhuashangcheng.com/item-%d.html";
+STORE.UrlFormat = "www.tbcstar.com/item-%d.html";
 
 --商城CDKey使用后获得的外观是否发放到该账户的所有角色中
 STORE.CDKeyAccountShare = false;
@@ -272,7 +272,7 @@ Transmogrify.Locales = {
     {"你所选择的物品不存在.", nil, nil, nil, nil, nil, nil, nil, nil},
     {"这个位置还没有装备物品.", nil, nil, nil, nil, nil, nil, nil, nil},
     
-    {"你的牌子%s不够", nil, nil, nil, nil, nil, nil, nil, nil},
+    {"你的徽章%s不够", nil, nil, nil, nil, nil, nil, nil, nil},
     {"钱不够", nil, nil, nil, nil, nil, nil, nil, nil},
     {"上一页", nil, nil, nil, nil, nil, nil, nil, nil},
     {"下一页(%s/%s)", nil, nil, nil, nil, nil, nil, nil, nil},

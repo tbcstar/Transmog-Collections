@@ -1129,7 +1129,7 @@ if (STORE.Enable) then
     
 end
 
-print("Deleting non-existing transmogrification entries...")
+print("正在删除不存在的幻化条目...")
 CharDBQuery("DELETE FROM _transmogrification_character WHERE NOT EXISTS (SELECT 1 FROM item_instance WHERE item_instance.guid = _transmogrification_character.GUID)")
 
 RegisterPlayerEvent(3, OnLogin)
